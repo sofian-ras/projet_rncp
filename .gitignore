@@ -1,0 +1,20 @@
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache / compiled
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Tooling cache
+.pytest_cache/
+.ipynb_checkpoints/
+
+# OS/editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

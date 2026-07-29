@@ -1,0 +1,62 @@
+2026-03-04 08:55:12 | INFO     | __main__:executer_entrainement:119 - ============================================================
+2026-03-04 08:55:12 | INFO     | __main__:executer_entrainement:120 - 🚀 DEBUT ENTRAINEMENT MODELES ML
+2026-03-04 08:55:12 | INFO     | __main__:executer_entrainement:121 - ============================================================
+2026-03-04 08:55:12 | INFO     | __main__:executer_entrainement:132 - ✓ Grille chargée : 283920 lignes
+2026-03-04 08:55:12 | INFO     | __main__:preparer_features:36 - 🔧 Préparation features...
+2026-03-04 08:55:12 | INFO     | __main__:preparer_features:52 -   Features retenues : ['annee', 'semaine', 'lat_discrete', 'lon_discrete']
+2026-03-04 08:55:12 | INFO     | __main__:preparer_features:53 -   Shape X : (283920, 4)
+2026-03-04 08:55:12 | INFO     | __main__:preparer_features:54 -   Distribution y : {0: 279549, 1: 4371}
+2026-03-04 08:55:12 | INFO     | __main__:executer_entrainement:145 - 
+✓ Split données :
+2026-03-04 08:55:12 | INFO     | __main__:executer_entrainement:146 -   Train : 227136 | Test : 56784
+2026-03-04 08:55:12 | INFO     | __main__:executer_entrainement:147 -   Distribution train : {0: 223639, 1: 3497}
+2026-03-04 08:55:12 | INFO     | __main__:executer_entrainement:148 -   Distribution test : {0: 55910, 1: 874}
+2026-03-04 08:55:12 | INFO     | __main__:entrainer_modeles:61 - ============================================================
+2026-03-04 08:55:12 | INFO     | __main__:entrainer_modeles:62 - 🤖 ENTRAINEMENT MODELES
+2026-03-04 08:55:12 | INFO     | __main__:entrainer_modeles:63 - ============================================================
+2026-03-04 08:55:12 | INFO     | __main__:entrainer_modeles:69 - 
+📦 Entraînement XGBoost...
+2026-03-04 08:55:16 | INFO     | modeles:evaluator_modele:96 - 📊 Évaluation modèle : xgboost
+2026-03-04 08:55:16 | INFO     | modeles:evaluator_modele:123 -   Accuracy : 0.9853
+2026-03-04 08:55:16 | INFO     | modeles:evaluator_modele:124 -   F1-Score : 0.1106
+2026-03-04 08:55:16 | INFO     | modeles:evaluator_modele:126 -   AUC-ROC  : 0.9694
+2026-03-04 08:55:16 | INFO     | modeles:sauvegarder_modele:54 - ✓ Modèle sauvegardé : C:\Users\Administrateur\Documents\Projet_RNCP\oiseaux_migrateurs_npdc\modeles\pipeline_ml.pkl
+2026-03-04 08:55:16 | DEBUG    | modeles:_sauvegarder_metadata:149 - Metadata sauvegardée : pipeline_ml_metadata.json
+2026-03-04 08:55:16 | INFO     | __main__:entrainer_modeles:85 - 
+🌲 Entraînement Random Forest...
+2026-03-04 08:55:21 | INFO     | modeles:evaluator_modele:96 - 📊 Évaluation modèle : random_forest
+2026-03-04 08:55:22 | INFO     | modeles:evaluator_modele:123 -   Accuracy : 0.9854
+2026-03-04 08:55:22 | INFO     | modeles:evaluator_modele:124 -   F1-Score : 0.1266
+2026-03-04 08:55:22 | INFO     | modeles:evaluator_modele:126 -   AUC-ROC  : 0.9715
+2026-03-04 08:55:22 | INFO     | modeles:sauvegarder_modele:54 - ✓ Modèle sauvegardé : C:\Users\Administrateur\Documents\Projet_RNCP\oiseaux_migrateurs_npdc\modeles\random_forest.pkl
+2026-03-04 08:55:22 | DEBUG    | modeles:_sauvegarder_metadata:149 - Metadata sauvegardée : random_forest_metadata.json
+2026-03-04 08:55:22 | INFO     | __main__:entrainer_modeles:99 - 
+📈 Entraînement Logistic Regression...
+2026-03-04 08:55:22 | INFO     | modeles:evaluator_modele:96 - 📊 Évaluation modèle : logistic_regression
+2026-03-04 08:55:22 | INFO     | modeles:evaluator_modele:123 -   Accuracy : 0.9846
+2026-03-04 08:55:22 | INFO     | modeles:evaluator_modele:124 -   F1-Score : 0.0000
+2026-03-04 08:55:22 | INFO     | modeles:evaluator_modele:126 -   AUC-ROC  : 0.8190
+2026-03-04 08:55:22 | INFO     | modeles:sauvegarder_modele:54 - ✓ Modèle sauvegardé : C:\Users\Administrateur\Documents\Projet_RNCP\oiseaux_migrateurs_npdc\modeles\logistic_regression.pkl
+2026-03-04 08:55:22 | DEBUG    | modeles:_sauvegarder_metadata:149 - Metadata sauvegardée : logistic_regression_metadata.json
+2026-03-04 08:55:22 | INFO     | __main__:entrainer_modeles:111 - 
+
+2026-03-04 08:55:22 | INFO     | modeles:comparer_modeles:175 - 
+============================================================
+2026-03-04 08:55:22 | INFO     | modeles:comparer_modeles:176 - 📊 COMPARAISON MODELES
+2026-03-04 08:55:22 | INFO     | modeles:comparer_modeles:177 - ============================================================
+2026-03-04 08:55:22 | INFO     | modeles:comparer_modeles:178 -                     accuracy  f1_score   auc_roc       tn    fp     fn    tp
+RandomForest        0.985418  0.126582  0.971518  55896.0  14.0  814.0  60.0
+XGBoost             0.985278  0.110638  0.969387  55896.0  14.0  822.0  52.0
+LogisticRegression  0.984608  0.000000  0.819023  55910.0   0.0  874.0   0.0
+2026-03-04 08:55:22 | INFO     | modeles:comparer_modeles:179 - ============================================================
+
+2026-03-04 08:55:22 | INFO     | __main__:executer_entrainement:156 - 
+✓ Comparaison sauvegardée : C:\Users\Administrateur\Documents\Projet_RNCP\oiseaux_migrateurs_npdc\modeles\evaluations.csv
+2026-03-04 08:55:22 | INFO     | __main__:executer_entrainement:158 - 
+============================================================
+2026-03-04 08:55:22 | INFO     | __main__:executer_entrainement:159 - ✓ ENTRAINEMENT TERMINE
+2026-03-04 08:55:22 | INFO     | __main__:executer_entrainement:160 - ============================================================
+2026-03-04 08:55:22 | INFO     | __main__:executer_entrainement:161 - Modèles disponibles dans : C:\Users\Administrateur\Documents\Projet_RNCP\oiseaux_migrateurs_npdc\modeles
+2026-03-04 08:55:22 | INFO     | __main__:executer_entrainement:162 -   - pipeline_ml.pkl (XGBoost)
+2026-03-04 08:55:22 | INFO     | __main__:executer_entrainement:163 -   - random_forest.pkl
+2026-03-04 08:55:22 | INFO     | __main__:executer_entrainement:164 -   - logistic_regression.pkl

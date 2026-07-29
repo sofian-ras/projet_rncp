@@ -1,0 +1,28 @@
+2026-05-19 10:43:41 | INFO     | __main__:executer_eda:233 - ============================================================
+2026-05-19 10:43:41 | INFO     | __main__:executer_eda:234 - 📊 DEBUT ANALYSE EXPLORATOIRE
+2026-05-19 10:43:41 | INFO     | __main__:executer_eda:235 - ============================================================
+2026-05-19 10:43:41 | INFO     | __main__:charger_donnees:54 - ✓ Observations chargées : 9997
+2026-05-19 10:43:41 | INFO     | __main__:charger_donnees:55 - ✓ Grille chargée : 283920
+2026-05-19 10:43:41 | INFO     | __main__:charger_donnees:56 - ✓ Météo chargée : 3653
+2026-05-19 10:43:41 | INFO     | __main__:executer_eda:247 - 
+--- SAISONNALITE ---
+2026-05-19 10:43:41 | INFO     | __main__:analyser_saisonnalite:62 - 📊 Analyse saisonnalité...
+2026-05-19 10:43:42 | INFO     | __main__:analyser_saisonnalite:94 -   ✓ Graphique saisonnalité sauvegardé
+2026-05-19 10:43:42 | INFO     | __main__:executer_eda:250 - 
+--- CARTE DENSITE ---
+2026-05-19 10:43:42 | INFO     | __main__:creer_carte_densite:100 - 🗺️ Création carte densité...
+2026-05-19 10:43:42 | INFO     | __main__:creer_carte_densite:129 -   ✓ Carte sauvegardée : carte_densite.html
+2026-05-19 10:43:42 | INFO     | __main__:executer_eda:253 - 
+--- CORRELATIONS METEO ---
+2026-05-19 10:43:42 | INFO     | __main__:analyser_correlations:135 - 🔗 Analyse corrélations...
+2026-05-19 10:43:42 | INFO     | __main__:analyser_correlations:200 -   ✓ Heatmap corrélations sauvegardée
+2026-05-19 10:43:42 | INFO     | __main__:executer_eda:256 - 
+--- TESTS STATISTIQUES ---
+2026-05-19 10:43:42 | INFO     | __main__:test_independance_chi2:207 - 📈 Tests d'indépendance (χ²)...
+2026-05-19 10:43:42 | INFO     | __main__:test_independance_chi2:217 -   χ² = 0.0000, p-value = 1.00e+00, ddl = 0
+2026-05-19 10:43:42 | INFO     | __main__:test_independance_chi2:222 -   ✗ Pas de saisonnalité significative
+2026-05-19 10:43:42 | INFO     | __main__:executer_eda:259 - 
+============================================================
+2026-05-19 10:43:42 | INFO     | __main__:executer_eda:260 - ✓ EXPLORATION TERMINEE
+2026-05-19 10:43:42 | INFO     | __main__:executer_eda:261 - Sorties : C:\Users\Administrateur\Documents\Projet_RNCP\oiseaux_migrateurs_npdc\outputs\eda
+2026-05-19 10:43:42 | INFO     | __main__:executer_eda:262 - ============================================================

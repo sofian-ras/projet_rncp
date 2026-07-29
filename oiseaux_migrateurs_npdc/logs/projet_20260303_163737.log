@@ -1,0 +1,15 @@
+2026-03-03 16:37:37 | INFO     | __main__:executer_acquisition:184 - ============================================================
+2026-03-03 16:37:37 | INFO     | __main__:executer_acquisition:185 - 🌍 DEBUT ACQUISITION DONNEES
+2026-03-03 16:37:37 | INFO     | __main__:executer_acquisition:186 - ============================================================
+2026-03-03 16:37:37 | INFO     | __main__:telecharger_observations_espece:49 - 🐦 Téléchargement Hirondelle rustique...
+2026-03-03 16:37:38 | INFO     | __main__:telecharger_observations_espece:94 -   ✓ 0 observations téléchargées pour Hirondelle rustique
+2026-03-03 16:37:38 | INFO     | __main__:telecharger_observations_espece:49 - 🐦 Téléchargement Cigogne blanche...
+2026-03-03 16:37:38 | INFO     | __main__:telecharger_observations_espece:94 -   ✓ 0 observations téléchargées pour Cigogne blanche
+2026-03-03 16:37:38 | INFO     | __main__:telecharger_observations_espece:49 - 🐦 Téléchargement Martinet noir...
+2026-03-03 16:37:38 | INFO     | __main__:telecharger_observations_espece:94 -   ✓ 0 observations téléchargées pour Martinet noir
+2026-03-03 16:37:38 | INFO     | __main__:telecharger_observations_espece:49 - 🐦 Téléchargement Bergeronnette printanière...
+2026-03-03 16:37:39 | INFO     | __main__:telecharger_observations_espece:94 -   ✓ 0 observations téléchargées pour Bergeronnette printanière
+2026-03-03 16:37:39 | INFO     | __main__:executer_acquisition:202 - ✓ Données GBIF sauvegardées : C:\Users\Administrateur\Documents\Projet_RNCP\oiseaux_migrateurs_npdc\donnees\brutes\observations_gbif.csv
+2026-03-03 16:37:39 | INFO     | __main__:executer_acquisition:204 - ============================================================
+2026-03-03 16:37:39 | INFO     | __main__:executer_acquisition:205 - ✓ ACQUISITION TERMINEE
+2026-03-03 16:37:39 | INFO     | __main__:executer_acquisition:206 - ============================================================

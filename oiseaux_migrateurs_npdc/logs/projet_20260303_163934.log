@@ -1,0 +1,9 @@
+2026-03-03 16:39:34 | INFO     | __main__:executer_nettoyage:183 - ============================================================
+2026-03-03 16:39:34 | INFO     | __main__:executer_nettoyage:184 - 🧹 DEBUT NETTOYAGE ET ETL
+2026-03-03 16:39:34 | INFO     | __main__:executer_nettoyage:185 - ============================================================
+2026-03-03 16:39:34 | INFO     | __main__:charger_et_nettoyer:38 - 📂 Chargement observations : observations_gbif.csv
+2026-03-03 16:39:34 | INFO     | __main__:charger_et_nettoyer:59 -   Observations initiales : 0
+2026-03-03 16:39:34 | WARNING  | __main__:charger_et_nettoyer:62 -   Aucune observation disponible après chargement
+2026-03-03 16:39:34 | WARNING  | __main__:executer_nettoyage:199 - Aucune observation exploitable. Sauvegarde d'un parquet vide et arrêt du pipeline ETL.
+2026-03-03 16:39:34 | INFO     | __main__:executer_nettoyage:205 - ✓ Observations nettoyées (vides) sauvegardées
+2026-03-03 16:39:34 | INFO     | __main__:executer_nettoyage:207 - ✓ NETTOYAGE TERMINE (sans données observations)

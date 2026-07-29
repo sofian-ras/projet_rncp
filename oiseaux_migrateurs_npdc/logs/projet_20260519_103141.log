@@ -1,0 +1,51 @@
+2026-05-19 10:31:41 | INFO     | __main__:executer_acquisition:200 - ============================================================
+2026-05-19 10:31:41 | INFO     | __main__:executer_acquisition:201 - 🌍 DEBUT ACQUISITION DONNEES
+2026-05-19 10:31:41 | INFO     | __main__:executer_acquisition:202 - ============================================================
+2026-05-19 10:31:41 | INFO     | __main__:telecharger_observations_espece:61 - 🐦 Téléchargement Hirondelle rustique...
+2026-05-19 10:31:42 | INFO     | __main__:telecharger_observations_espece:110 -   ✓ 0 observations téléchargées pour Hirondelle rustique
+2026-05-19 10:31:42 | INFO     | __main__:telecharger_observations_espece:61 - 🐦 Téléchargement Cigogne blanche...
+2026-05-19 10:31:42 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 300 observations
+2026-05-19 10:31:44 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 600 observations
+2026-05-19 10:31:46 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 900 observations
+2026-05-19 10:31:49 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 1200 observations
+2026-05-19 10:31:51 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 1500 observations
+2026-05-19 10:31:53 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 1800 observations
+2026-05-19 10:31:55 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 2100 observations
+2026-05-19 10:31:57 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 2400 observations
+2026-05-19 10:31:59 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 2700 observations
+2026-05-19 10:32:01 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 3000 observations
+2026-05-19 10:32:03 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 3300 observations
+2026-05-19 10:32:05 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 3600 observations
+2026-05-19 10:32:07 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 3900 observations
+2026-05-19 10:32:08 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 4200 observations
+2026-05-19 10:32:10 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 4500 observations
+2026-05-19 10:32:12 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 4800 observations
+2026-05-19 10:32:14 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 5100 observations
+2026-05-19 10:32:16 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 5400 observations
+2026-05-19 10:32:18 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 5700 observations
+2026-05-19 10:32:20 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 6000 observations
+2026-05-19 10:32:22 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 6300 observations
+2026-05-19 10:32:24 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 6600 observations
+2026-05-19 10:32:26 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 6900 observations
+2026-05-19 10:32:28 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 7200 observations
+2026-05-19 10:32:30 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 7500 observations
+2026-05-19 10:32:32 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 7800 observations
+2026-05-19 10:32:34 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 8100 observations
+2026-05-19 10:32:36 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 8400 observations
+2026-05-19 10:32:38 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 8700 observations
+2026-05-19 10:32:40 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 9000 observations
+2026-05-19 10:32:41 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 9300 observations
+2026-05-19 10:32:43 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 9600 observations
+2026-05-19 10:32:45 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 9900 observations
+2026-05-19 10:32:47 | DEBUG    | __main__:telecharger_observations_espece:97 -   ✓ Récupéré 10000 observations
+2026-05-19 10:32:48 | INFO     | __main__:telecharger_observations_espece:110 -   ✓ 10000 observations téléchargées pour Cigogne blanche
+2026-05-19 10:32:48 | INFO     | __main__:telecharger_observations_espece:61 - 🐦 Téléchargement Martinet noir...
+2026-05-19 10:32:49 | INFO     | __main__:telecharger_observations_espece:110 -   ✓ 0 observations téléchargées pour Martinet noir
+2026-05-19 10:32:49 | INFO     | __main__:telecharger_observations_espece:61 - 🐦 Téléchargement Bergeronnette printanière...
+2026-05-19 10:32:49 | INFO     | __main__:telecharger_observations_espece:110 -   ✓ 0 observations téléchargées pour Bergeronnette printanière
+2026-05-19 10:32:49 | INFO     | __main__:executer_acquisition:221 - ✓ Données GBIF sauvegardées : C:\Users\Administrateur\Documents\Projet_RNCP\oiseaux_migrateurs_npdc\donnees\brutes\observations_gbif.csv
+2026-05-19 10:32:49 | INFO     | __main__:executer_acquisition:224 - 🌦️ Téléchargement météo Open-Meteo...
+2026-05-19 10:32:55 | INFO     | __main__:executer_acquisition:239 - ✓ Données météo sauvegardées : C:\Users\Administrateur\Documents\Projet_RNCP\oiseaux_migrateurs_npdc\donnees\brutes\meteo_npdc.csv
+2026-05-19 10:32:55 | INFO     | __main__:executer_acquisition:243 - ============================================================
+2026-05-19 10:32:55 | INFO     | __main__:executer_acquisition:244 - ✓ ACQUISITION TERMINEE
+2026-05-19 10:32:55 | INFO     | __main__:executer_acquisition:245 - ============================================================

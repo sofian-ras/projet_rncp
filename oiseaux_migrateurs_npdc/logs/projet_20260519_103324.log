@@ -1,0 +1,26 @@
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:232 - ============================================================
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:233 - 🧹 DEBUT NETTOYAGE ET ETL
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:234 - ============================================================
+2026-05-19 10:33:24 | INFO     | __main__:charger_et_nettoyer:38 - 📂 Chargement observations : observations_gbif.csv
+2026-05-19 10:33:24 | INFO     | __main__:charger_et_nettoyer:59 -   Observations initiales : 10000
+2026-05-19 10:33:24 | INFO     | __main__:charger_et_nettoyer:67 -   Après suppression nulls : 10000 (-0)
+2026-05-19 10:33:24 | INFO     | __main__:charger_et_nettoyer:71 -   Après validation coords : 10000 (-0)
+2026-05-19 10:33:24 | INFO     | __main__:charger_et_nettoyer:75 -   Après filtrage région : 10000
+2026-05-19 10:33:24 | INFO     | __main__:charger_et_nettoyer:95 -   Après suppression doublons : 9997 (-0)
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:264 - ✓ Observations nettoyées sauvegardées
+2026-05-19 10:33:24 | INFO     | __main__:creer_grille_hebdomadaire:142 - 📊 Création grille hebdomadaire...
+2026-05-19 10:33:24 | INFO     | __main__:creer_grille_hebdomadaire:183 -   Grille créée : 283920 lignes
+2026-05-19 10:33:24 | INFO     | __main__:creer_grille_hebdomadaire:184 -   Équilibre classes : {0: 279542, 1: 4378}
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:273 - ✓ Grille hebdomadaire sauvegardée
+2026-05-19 10:33:24 | INFO     | __main__:traiter_meteo:226 - ✓ Données météo nettoyées : 3653 lignes
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:281 - ✓ Données météo traitées sauvegardées
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:284 - ============================================================
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:285 - 📈 STATISTIQUES FINALES
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:286 - ============================================================
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:287 - Total observations nettoyées : 9997
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:288 - Espèces : 1
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:289 - Plage temporelle : 2020-01-01 00:00:00 à 2024-12-31 00:00:00
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:290 - Zone géographique : 49.50°N à 51.50°N
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:292 - ============================================================
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:293 - ✓ NETTOYAGE TERMINE
+2026-05-19 10:33:24 | INFO     | __main__:executer_nettoyage:294 - ============================================================

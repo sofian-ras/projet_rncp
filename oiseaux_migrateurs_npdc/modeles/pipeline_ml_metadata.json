@@ -1,0 +1,14 @@
+{
+  "nom_modele": "pipeline_ml",
+  "date_sauvegarde": "2026-05-19T11:00:08.610587",
+  "metriques": {
+    "accuracy": 0.9864442448577064,
+    "f1_score": 0.09733216065669892,
+    "auc_roc": 0.9426932650095875,
+    "tn": 223891,
+    "fp": 61,
+    "fn": 3018,
+    "tp": 166
+  },
+  "metadata": {}
+}

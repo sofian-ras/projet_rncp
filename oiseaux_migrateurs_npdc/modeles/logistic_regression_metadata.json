@@ -1,0 +1,14 @@
+{
+  "nom_modele": "logistic_regression",
+  "date_sauvegarde": "2026-05-19T11:00:58.016634",
+  "metriques": {
+    "accuracy": 0.9859819667511975,
+    "f1_score": 0.0,
+    "auc_roc": 0.8543415328948809,
+    "tn": 223952,
+    "fp": 0,
+    "fn": 3184,
+    "tp": 0
+  },
+  "metadata": {}
+}

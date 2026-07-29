@@ -1,0 +1,43 @@
+2026-03-03 16:40:28 | INFO     | __main__:executer_acquisition:199 - ============================================================
+2026-03-03 16:40:28 | INFO     | __main__:executer_acquisition:200 - 🌍 DEBUT ACQUISITION DONNEES
+2026-03-03 16:40:28 | INFO     | __main__:executer_acquisition:201 - ============================================================
+2026-03-03 16:40:28 | INFO     | __main__:telecharger_observations_espece:61 - 🐦 Téléchargement Hirondelle rustique...
+2026-03-03 16:40:39 | INFO     | __main__:telecharger_observations_espece:109 -   ✓ 0 observations téléchargées pour Hirondelle rustique
+2026-03-03 16:40:39 | INFO     | __main__:telecharger_observations_espece:61 - 🐦 Téléchargement Cigogne blanche...
+2026-03-03 16:40:43 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 300 observations
+2026-03-03 16:40:45 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 600 observations
+2026-03-03 16:40:47 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 900 observations
+2026-03-03 16:40:49 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 1200 observations
+2026-03-03 16:40:51 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 1500 observations
+2026-03-03 16:40:53 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 1800 observations
+2026-03-03 16:40:55 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 2100 observations
+2026-03-03 16:40:57 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 2400 observations
+2026-03-03 16:41:00 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 2700 observations
+2026-03-03 16:41:02 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 3000 observations
+2026-03-03 16:41:04 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 3300 observations
+2026-03-03 16:41:06 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 3600 observations
+2026-03-03 16:41:08 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 3900 observations
+2026-03-03 16:41:10 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 4200 observations
+2026-03-03 16:41:12 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 4500 observations
+2026-03-03 16:41:16 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 4800 observations
+2026-03-03 16:41:19 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 5100 observations
+2026-03-03 16:41:21 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 5400 observations
+2026-03-03 16:41:23 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 5700 observations
+2026-03-03 16:41:25 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 6000 observations
+2026-03-03 16:41:26 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 6300 observations
+2026-03-03 16:41:28 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 6600 observations
+2026-03-03 16:41:30 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 6900 observations
+2026-03-03 16:41:32 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 7200 observations
+2026-03-03 16:41:38 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 7500 observations
+2026-03-03 16:41:42 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 7800 observations
+2026-03-03 16:41:44 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 8100 observations
+2026-03-03 16:41:45 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 8400 observations
+2026-03-03 16:41:48 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 8700 observations
+2026-03-03 16:41:50 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 9000 observations
+2026-03-03 16:41:52 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 9300 observations
+2026-03-03 16:41:54 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 9600 observations
+2026-03-03 16:41:55 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 9900 observations
+2026-03-03 16:41:57 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 10200 observations
+2026-03-03 16:42:45 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 10500 observations
+2026-03-03 16:43:27 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 10800 observations
+2026-03-03 16:44:05 | DEBUG    | __main__:telecharger_observations_espece:96 -   ✓ Récupéré 11100 observations
