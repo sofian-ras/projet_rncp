@@ -16,7 +16,7 @@ scikit-learn==1.8.0
 xgboost==2.0.3
 imbalanced-learn==0.12.3
 
-# Deep Learning (optionnel, utilisé uniquement par livrables_rncp/BC04)
+# Deep Learning (utilisé par blocs/bc04_deep_learning)
 tensorflow==2.16.1
 
 # API et Dashboard

@@ -7,8 +7,8 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-from scripts.config import ESPECES, ZONE_GEOGRAPHIQUE, ParametresAcquisition
-from scripts.acquisition import AcquisiteurGBIF
+from commun.config import ESPECES, ZONE_GEOGRAPHIQUE, ParametresAcquisition
+from blocs.bc01_infrastructure_donnees.run import AcquisiteurGBIF
 
 
 class TestAcquisiteurGBIF:

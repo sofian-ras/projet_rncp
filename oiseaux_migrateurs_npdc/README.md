@@ -1,172 +1,132 @@
-# Prédiction des Oiseaux Migrateurs - Nord-Pas-de-Calais
+# Prédiction des Oiseaux Migrateurs — Nord-Pas-de-Calais
+
+Projet RNCP — Concepteur Développeur en Science des Données.
 
 ## Objectif
-Prédire la probabilité de présence d'oiseaux migrateurs dans la région Nord-Pas-de-Calais selon les conditions météorologiques et la saison.
 
-**Problématique scientifique :** Peut-on modéliser l'arrivée des migrations à partir de variables climatiques ?
+Prédire la probabilité de présence de 4 espèces d'oiseaux migrateurs dans le Nord-Pas-de-Calais à
+partir de la saison, de la météo et de la position géographique.
 
----
+**Problématique scientifique :** peut-on modéliser l'arrivée des migrations à partir de variables
+climatiques ?
 
-## Données utilisées
-
-### Observations d'oiseaux
-- **Source** : Global Biodiversity Information Facility (GBIF)
-- **Variables** : Date, latitude, longitude, espèce
-- **Période** : 2015-2024
-- **Région** : Nord-Pas-de-Calais (bounding box : 49.5°N-51.5°N, 1.5°E-4°E)
-
-### Données météorologiques
-- **Source** : Open-Meteo API
-- **Variables** : Température (min/max), précipitations, vent, humidité, pression
-- **Résolution** : Quotidienne
-
-### Espèces étudiées
-1. **Hirondelle rustique** (*Hirundo rustica*)
-2. **Cigogne blanche** (*Ciconia ciconia*)
-3. **Martinet noir** (*Apus apus*)
-4. **Bergeronnette printanière** (*Motacilla alba*)
+Pour une explication complète, pédagogique et déjà exécutée (données réelles, graphiques, résultats de
+modèles), voir le notebook :
+[`notebooks/Notebook_Soutenance_Oiseaux_Migrateurs.ipynb`](notebooks/Notebook_Soutenance_Oiseaux_Migrateurs.ipynb).
 
 ---
 
-## Structure du projet
+## Le projet est organisé en 6 blocs, chacun autonome
+
+Le référentiel RNCP est découpé en 6 blocs de compétences (BC01 à BC06). Chaque bloc vit dans son
+propre dossier, avec **un seul script exécutable seul** (`run.py`) et **un `README.md`** décrivant
+l'objectif, le code, la commande de démonstration et les livrables produits. Aucun bloc n'a besoin des
+autres pour être présenté — chacun lit les fichiers déjà produits par les blocs précédents (s'il en a
+besoin) directement sur disque, sans jamais ré-exécuter leur code.
+
+| Bloc | Dossier | Ce qu'il démontre |
+|---|---|---|
+| BC01 | [`blocs/bc01_infrastructure_donnees/`](blocs/bc01_infrastructure_donnees/README.md) | Acquisition (GBIF + Open-Meteo) et nettoyage (ETL) |
+| BC02 | [`blocs/bc02_analyse_exploratoire/`](blocs/bc02_analyse_exploratoire/README.md) | Visualisations et tests statistiques |
+| BC03 | [`blocs/bc03_machine_learning/`](blocs/bc03_machine_learning/README.md) | Prédiction sur données structurées (3 modèles ML comparés) |
+| BC04 | [`blocs/bc04_deep_learning/`](blocs/bc04_deep_learning/README.md) | Prédiction sur données non structurées (réseau de neurones sur texte) |
+| BC05 | [`blocs/bc05_industrialisation/`](blocs/bc05_industrialisation/README.md) | API FastAPI + Dashboard Streamlit + Docker |
+| BC06 | [`blocs/bc06_gestion_projet/`](blocs/bc06_gestion_projet/README.md) | Tests automatisés, planning, limites assumées |
 
 ```
 oiseaux_migrateurs_npdc/
+├── commun/                          # Configuration partagée par tous les blocs (une seule source de vérité)
+│   └── config.py
+├── blocs/
+│   ├── bc01_infrastructure_donnees/ # run.py autonome : acquisition + nettoyage
+│   ├── bc02_analyse_exploratoire/   # run.py autonome : EDA, cartes, tests statistiques
+│   ├── bc03_machine_learning/       # run.py autonome : entraînement + comparaison ML
+│   ├── bc04_deep_learning/          # run.py autonome : réseau Embedding+LSTM (texte)
+│   ├── bc05_industrialisation/      # api.py, dashboard.py, run.py (démo sans serveur)
+│   └── bc06_gestion_projet/         # run.py autonome : tests + état des lieux du projet
 ├── donnees/
-│   ├── brutes/              # Données téléchargées brutes (GBIF, Open-Meteo)
-│   ├── traitees/            # Données nettoyées (Parquet)
-│   └── caracteristiques/    # Features engineered (Parquet)
-├── scripts/
-│   ├── acquisition.py       # BC01 - Téléchargement GBIF + météo
-│   ├── nettoyage.py        # BC01 - ETL et validation
-│   ├── eda.py              # BC02 - Analyse exploratoire
-│   ├── entrainer_modele.py  # BC03 - Entraînement et comparaison ML
-│   └── modeles.py           # Utilitaires modèles et métriques
-├── notebooks/
-│   ├── 01_exploration.ipynb      # BC02 - Analyse & visualisations
-│   └── 02_machine_learning.ipynb  # BC03 - Modèles classiques
-├── modeles/
-│   ├── pipeline_ml.pkl     # Pipeline preprocessing + modèle principal
-│   ├── random_forest.pkl   # Modèle de comparaison
-│   ├── logistic_regression.pkl  # Baseline
-│   └── evaluations.csv     # Métriques de performance
-├── api/
-│   ├── main.py            # BC05 - API FastAPI
-│   └── (schémas intégrés dans main.py)
-├── tests/
-│   ├── test_acquisition.py
-│   ├── test_nettoyage.py
-│   └── test_modeles.py
-├── docs/
-│   ├── PLAN_OPERATIONNEL.md
-│   ├── ARCHITECTURE.md
-│   └── README_COMPLET.md  # Détails complets du projet
-└── requirements.txt        # Dépendances globales
+│   ├── brutes/                      # CSV bruts (GBIF, Open-Meteo)
+│   ├── traitees/                    # Parquets nettoyés (produits par BC01)
+│   └── caracteristiques/
+├── modeles/                         # Modèles sérialisés (.pkl, .keras) + métriques
+├── outputs/                         # Graphiques et cartes générés (eda/, dl/)
+├── notebooks/                       # Notebook de soutenance, narratif et déjà exécuté
+├── tests/                           # Tests automatisés (pytest)
+├── Dockerfile                       # Empaquette l'API (BC05)
+├── requirements.txt
+└── SUJETS_RNCP35288.md              # Sujets de soutenance (document de référence)
 ```
-
----
-
-## Blocs de compétences RNCP
-
-### BC01 - Infrastructure de données
-- Téléchargement GBIF API + Open-Meteo
-- Pipeline ETL (nettoyage, validation, agrégation)
-- Stockage Parquet (data lake)
-- Schema technique documenté
-
-### BC02 - Analyse exploratoire
-- Corrélations météo ↔ présence
-- Analyse saisonnière par espèce
-- Cartes densité observations
-- Tests statistiques (seuils de température)
-
-### BC03 - Machine Learning
-- Classification binaire (présence/absence)
-- Features engineered (température, pluie, jour année, région)
-- Modèles : Logistic Regression, Random Forest, XGBoost
-- Comparaison : Accuracy, F1-score, AUC-ROC
-
-### BC04 - Deep Learning
-- Optionnel (piste d'extension notebook)
-
-### BC05 - Industrialisation
-- API FastAPI (`/predict`, `/species`, `/health`)
-- Dashboard Streamlit interactif
-- Docker Dockerfile
-- Logging & monitoring
-
-### BC06 - Gestion de projet
-- Planning agile (4 semaines)
-- Documentation technique
-- Présentation soutenance
-- Analyse ROI écologique
 
 ---
 
 ## Démarrage rapide
 
-### Installation
-
 ```bash
-# Cloner le projet
 cd oiseaux_migrateurs_npdc
-
-# Créer environnement
-python -m venv venv
-source venv/bin/activate  # ou: venv\Scripts\activate (Windows)
-
-# Installer dépendances
+python -m venv .venv
+.venv\Scripts\activate      # Windows -- ou: source .venv/bin/activate sur Linux/Mac
 pip install -r requirements.txt
 ```
 
-### Étapes d'exécution
+### Exécuter un bloc, indépendamment des autres
 
 ```bash
-# 1. Acquisition données
-python scripts/acquisition.py
+python blocs/bc01_infrastructure_donnees/run.py   # BC01 - acquisition + nettoyage
+python blocs/bc02_analyse_exploratoire/run.py     # BC02 - analyse exploratoire
+python blocs/bc03_machine_learning/run.py         # BC03 - entraîne 3 modèles ML
+python blocs/bc04_deep_learning/run.py            # BC04 - entraîne un réseau de neurones (texte)
+python blocs/bc05_industrialisation/run.py        # BC05 - démonstration de prédiction sans serveur
+python blocs/bc06_gestion_projet/run.py           # BC06 - tests automatisés + état des lieux
+```
 
-# 2. Nettoyage ETL
-python scripts/nettoyage.py
+### Lancer les services de BC05 (API + Dashboard)
 
-# 3. Exploration
-python scripts/eda.py
+```bash
+# Terminal 1
+python -m uvicorn blocs.bc05_industrialisation.api:app --reload
+# -> documentation interactive : http://127.0.0.1:8000/docs
 
-# 4. Entraînement modèles
-python scripts/entrainer_modele.py
+# Terminal 2
+python -m streamlit run blocs/bc05_industrialisation/dashboard.py
+# -> http://localhost:8501
+```
 
-# 5. Lancer API
-uvicorn api.main:app --reload
+### Docker (API uniquement)
 
-# 6. Lancer Dashboard
-streamlit run dashboard.py
+```bash
+docker build -t oiseaux-migrateurs-api .
+docker run -p 8000:8000 oiseaux-migrateurs-api
+```
+
+### Tests
+
+```bash
+python -m pytest -v
 ```
 
 ---
 
-## Calendrier
+## Données utilisées
 
-| Phase | Durée | Livrables |
-|-------|-------|-----------|
-| **BC01** - Infrastructure | Semaine 1 | Scripts acquisition + nettoyage |
-| **BC02** - EDA | Semaine 1-2 | Notebook exploration + rapports |
-| **BC03** - ML | Semaine 2-3 | Modèles entraînés + comparaison |
-| **BC04** - DL | Semaine 3 | Optionnel (piste d'extension) |
-| **BC05** - Industrialisation | Semaine 4 | API + Dashboard + Docker |
-| **BC06** - Présentation | Semaine 4 | Docs + slides soutenance |
+- **Observations d'oiseaux** — source : GBIF (Global Biodiversity Information Facility), 40 000
+  observations, 4 espèces, période 2015-2024, région Nord-Pas-de-Calais (49.5°N-51.5°N, 1.5°E-4°E).
+- **Météo** — source : Open-Meteo, 10 ans de données journalières (température, précipitations, vent,
+  humidité, pression).
+- **Espèces étudiées :** Hirondelle rustique (*Hirundo rustica*), Cigogne blanche (*Ciconia ciconia*),
+  Martinet noir (*Apus apus*), Bergeronnette printanière (*Motacilla alba*).
 
----
+## Résultats clés
 
-## Indicateurs de succès
+- 3 modèles de Machine Learning comparés (BC03) : Régression logistique, Forêt aléatoire, XGBoost —
+  XGBoost retenu en production (AUC-ROC ≈ 0.94).
+- Un réseau Embedding + LSTM (BC04) sur données textuelles (analyse de sentiment), démontrant la
+  compétence Deep Learning sur données non structurées, distincte de BC03.
+- Une API et un tableau de bord interactif (BC05) exposant le modèle à un utilisateur non technique.
 
-- Données > 10,000 observations GBIF
-- Couverture météo > 95% (Open-Meteo)
-- Accuracy modèle > 75% (baseline XGBoost)
-- Comparaison de modèles classiques documentée
-- API en production (réponse < 500ms)
-- Dashboard interactif fonctionnel
+Pour l'analyse détaillée (déséquilibre des classes, limites, interprétation des résultats), voir le
+notebook et les `README.md` de chaque bloc.
 
 ---
 
-**Auteur :** Projet RNCP - Concepteur Développeur en Science des Données  
-**Région :** Nord-Pas-de-Calais  
-**Année :** 2026
+**Auteur :** Projet RNCP — Concepteur Développeur en Science des Données
+**Région :** Nord-Pas-de-Calais

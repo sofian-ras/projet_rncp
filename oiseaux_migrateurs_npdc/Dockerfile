@@ -11,9 +11,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project files
-COPY config.py .
-COPY scripts/ ./scripts/
-COPY api/ ./api/
+COPY commun/ ./commun/
+COPY blocs/bc05_industrialisation/api.py ./blocs/bc05_industrialisation/api.py
+COPY blocs/bc05_industrialisation/__init__.py ./blocs/bc05_industrialisation/__init__.py
+COPY blocs/__init__.py ./blocs/__init__.py
 COPY donnees/traitees/ ./donnees/traitees/
 COPY modeles/ ./modeles/
 
@@ -25,4 +26,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
 
 # Run API
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "blocs.bc05_industrialisation.api:app", "--host", "0.0.0.0", "--port", "8000"]

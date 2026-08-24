@@ -24,3 +24,6 @@ Thumbs.db
 
 # Claude Code local settings
 .claude/
+
+# Notes de preparation personnelles (jamais partagees / poussees)
+EXPLICATION_ORALE.md
