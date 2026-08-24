@@ -1,6 +1,6 @@
-# 📚 GUIDE SOUTENANCE RNCP35288 - 6 BLOCS
+# GUIDE SOUTENANCE RNCP35288 - 6 BLOCS
 
-## 🎯 STRUCTURE GLOBALE
+## STRUCTURE GLOBALE
 
 ```
 BC01: Infrastructure données        (5 min)  → GBIF + Open-Meteo + stockage
@@ -13,7 +13,7 @@ BC06: Gestion de projet             (5 min)  → Méthodologie, documentation, r
 
 ---
 
-## 🧾 DISSERTATION INTÉGRALE À LIRE (VERSION LONGUE, DÉTAILLÉE, NATURELLE)
+## DISSERTATION INTÉGRALE À LIRE (VERSION LONGUE, DÉTAILLÉE, NATURELLE)
 
 > Cette section est écrite pour être lue à l’oral devant le jury, avec un ton fluide et argumenté.  
 > Elle est volontairement longue, structurée, et appuyée sur des preuves techniques précises.
@@ -214,7 +214,7 @@ Je vous remercie.
 
 ---
 
-## ⏱️ SCRIPT ORAL MINUTE PAR MINUTE (À LIRE TEL QUEL)
+## SCRIPT ORAL MINUTE PAR MINUTE (À LIRE TEL QUEL)
 
 > Objectif: te donner un déroulé très fluide, avec des phrases complètes, des transitions naturelles et des points d’appui pour ne pas perdre le fil.
 
@@ -244,7 +244,7 @@ L’ensemble du pipeline d’acquisition est orchestré dans `executer_acquisiti
 
 Si je dois prouver cette partie au jury, je montre directement les fichiers générés: [oiseaux_migrateurs_npdc/donnees/brutes/observations_gbif.csv](oiseaux_migrateurs_npdc/donnees/brutes/observations_gbif.csv) et [oiseaux_migrateurs_npdc/donnees/brutes/meteo_npdc.csv](oiseaux_migrateurs_npdc/donnees/brutes/meteo_npdc.csv).
 
-Donc, à ce stade, j’ai transformé deux sources externes en une base de travail fiable, traçable et prête pour le traitement." 
+Donc, à ce stade, j’ai transformé deux sources externes en une base de travail fiable, traçable et prête pour le traitement."
 
 Pause courte.
 
@@ -264,7 +264,7 @@ Le point important ici, c’est que je ne me contente pas d’un ressenti visuel
 
 Pour prouver cette partie, je montre les fichiers: [oiseaux_migrateurs_npdc/donnees/traitees/observations_nettoyees.parquet](oiseaux_migrateurs_npdc/donnees/traitees/observations_nettoyees.parquet), [oiseaux_migrateurs_npdc/donnees/traitees/grille_presence_hebdo.parquet](oiseaux_migrateurs_npdc/donnees/traitees/grille_presence_hebdo.parquet), [oiseaux_migrateurs_npdc/donnees/traitees/meteo_processed.parquet](oiseaux_migrateurs_npdc/donnees/traitees/meteo_processed.parquet), ainsi que les sorties visuelles dans `outputs/eda`.
 
-À ce stade, je peux dire au jury: je connais mes données, je connais leur structure, et j’ai des preuves que le phénomène migratoire est bien visible dans les données." 
+À ce stade, je peux dire au jury: je connais mes données, je connais leur structure, et j’ai des preuves que le phénomène migratoire est bien visible dans les données."
 
 Pause courte.
 
@@ -284,7 +284,7 @@ La sauvegarde du modèle et de ses métadonnées se trouve dans `sauvegarder_mod
 
 Pour prouver cette partie, je montre le modèle principal [oiseaux_migrateurs_npdc/modeles/pipeline_ml.pkl](oiseaux_migrateurs_npdc/modeles/pipeline_ml.pkl), le tableau comparatif [oiseaux_migrateurs_npdc/modeles/evaluations.csv](oiseaux_migrateurs_npdc/modeles/evaluations.csv), et les autres modèles sauvegardés.
 
-Ce bloc montre que le modèle final n’est pas choisi parce qu’il est “le plus beau”, mais parce qu’il est objectivement le plus pertinent dans ce cadre." 
+Ce bloc montre que le modèle final n’est pas choisi parce qu’il est “le plus beau”, mais parce qu’il est objectivement le plus pertinent dans ce cadre."
 
 Pause courte.
 
@@ -298,7 +298,7 @@ En revanche, l’extension deep learning est préparée dans la configuration, a
 
 Cela veut dire que le projet est prêt à évoluer vers un traitement séquentiel si le besoin métier le justifie. Mais dans l’état actuel, le meilleur choix d’ingénierie est de conserver une solution robuste et validée.
 
-La preuve à citer au jury est donc simple: la logique temporelle est déjà en place, la trajectoire deep learning est pensée, mais la version livrée privilégie la fiabilité." 
+La preuve à citer au jury est donc simple: la logique temporelle est déjà en place, la trajectoire deep learning est pensée, mais la version livrée privilégie la fiabilité."
 
 Pause courte.
 
@@ -318,7 +318,7 @@ Pourquoi c’est important? Parce que cela transforme une logique de data scienc
 
 La démonstration live est très simple: Swagger à `http://127.0.0.1:8000/docs`, health check à `http://127.0.0.1:8000/health`, et dashboard à `http://localhost:8501`.
 
-Ce bloc prouve que le projet est industrialisé et que le modèle est réellement exposé à un utilisateur." 
+Ce bloc prouve que le projet est industrialisé et que le modèle est réellement exposé à un utilisateur."
 
 Pause courte.
 
@@ -334,7 +334,7 @@ La qualité est également vérifiable par les tests dans [oiseaux_migrateurs_np
 
 J’ai aussi identifié les risques: qualité des données, déséquilibre des classes, robustesse de la chaîne, cohérence entre entraînement et inférence. Et à chaque risque, j’ai mis une réponse technique: logs, validation, sauvegarde des artefacts, schémas structurés, tests.
 
-Ce bloc montre donc que je ne suis pas seulement dans l’exécution technique, mais dans la conduite d’un projet data au sens complet du terme." 
+Ce bloc montre donc que je ne suis pas seulement dans l’exécution technique, mais dans la conduite d’un projet data au sens complet du terme."
 
 Pause courte.
 
@@ -348,11 +348,11 @@ Ce que je veux que vous reteniez, c’est que chaque affirmation que je fais est
 
 Je ne présente donc pas seulement un résultat académique. Je présente un système reproductible, explicable et exploitable.
 
-Je vous remercie." 
+Je vous remercie."
 
 ---
 
-## 🔎 FORMULE ORALE "JE DIS / JE PROUVE" (AVEC RÉFÉRENCES CODE)
+## FORMULE ORALE "JE DIS / JE PROUVE" (AVEC RÉFÉRENCES CODE)
 
 Utilise ce format pendant la soutenance:  
 1) Je dis (affirmation)  
@@ -478,12 +478,12 @@ Phrase de clôture à dire:
 
 ---
 
-## 🗣️ TEXTE ORAL INTÉGRAL (STYLE DISSERTATION, PRÊT À LIRE)
+## TEXTE ORAL INTÉGRAL (STYLE DISSERTATION, PRÊT À LIRE)
 
 > Objectif: texte fluide, compréhensible par un jury technique et non technique.  
 > Durée: environ 30 minutes (5 minutes par bloc).
 
-### 🎤 Introduction générale (1 à 2 min)
+### Introduction générale (1 à 2 min)
 
 "Bonjour à toutes et à tous.
 
@@ -499,7 +499,7 @@ Je vais structurer ma présentation selon les 6 blocs RNCP35288:
 - BC05: industrialiser via API et interface,
 - BC06: piloter le projet, les risques et la roadmap.
 
-Je vais systématiquement expliquer trois choses: ce que j’ai fait, pourquoi je l’ai fait, et comment je le prouve concrètement dans le code et dans les résultats." 
+Je vais systématiquement expliquer trois choses: ce que j’ai fait, pourquoi je l’ai fait, et comment je le prouve concrètement dans le code et dans les résultats."
 
 ---
 
@@ -525,7 +525,7 @@ J’ai aussi ajouté des garde-fous importants:
 
 Le résultat de BC01 est concret: des fichiers bruts persistés sur disque, traçables, rejouables, et exploitables pour la suite du pipeline.
 
-Ce que je veux que le jury retienne ici, c’est que je n’ai pas seulement “appelé une API”. J’ai construit un socle de données robuste, documenté et maintenable." 
+Ce que je veux que le jury retienne ici, c’est que je n’ai pas seulement “appelé une API”. J’ai construit un socle de données robuste, documenté et maintenable."
 
 ---
 
@@ -550,7 +550,7 @@ Le résultat BC02 est double:
 1) les données sont cohérentes avec le phénomène migratoire,
 2) je sais quelles variables et quelles temporalités ont du sens pour la prédiction.
 
-Le message clé au jury: je ne fais pas du machine learning “à l’aveugle”; je construis d’abord l’intelligence du problème." 
+Le message clé au jury: je ne fais pas du machine learning “à l’aveugle”; je construis d’abord l’intelligence du problème."
 
 ---
 
@@ -576,7 +576,7 @@ J’évalue ensuite avec plusieurs métriques. Je ne me limite pas à l’accura
 
 Le meilleur compromis observé est XGBoost. Je le conserve comme modèle principal, puis je sauvegarde le pipeline et ses métadonnées pour garantir la réutilisation dans l’API.
 
-Le message clé ici: je démontre une démarche de sélection de modèle rigoureuse, adaptée aux contraintes des données réelles." 
+Le message clé ici: je démontre une démarche de sélection de modèle rigoureuse, adaptée aux contraintes des données réelles."
 
 ---
 
@@ -596,7 +596,7 @@ En revanche, j’ai préparé l’extension deep learning de manière méthodiqu
 Autrement dit, BC04 est traité comme une trajectoire d’évolution raisonnée, pas comme un effet de mode.
 
 Si le jury me demande “pourquoi pas LSTM tout de suite?”, ma réponse est:
-je privilégie une solution plus robuste et plus défendable pour la version de production actuelle, puis j’ouvre le deep learning comme amélioration à moyen terme selon le besoin métier et la volumétrie." 
+je privilégie une solution plus robuste et plus défendable pour la version de production actuelle, puis j’ouvre le deep learning comme amélioration à moyen terme selon le besoin métier et la volumétrie."
 
 ---
 
@@ -618,7 +618,7 @@ Ensuite, j’ai créé un dashboard Streamlit. Le but est de rendre le modèle a
 
 Enfin, j’ai intégré les tests et la vérification de bout en bout. Cela prouve que la chaîne n’est pas théorique: elle est exécutable et démontrable.
 
-Le message clé BC05: je ne livre pas un script isolé, je livre un service data prêt à être utilisé et évalué." 
+Le message clé BC05: je ne livre pas un script isolé, je livre un service data prêt à être utilisé et évalué."
 
 ---
 
@@ -644,11 +644,11 @@ Enfin, j’ai défini une roadmap réaliste:
 - enrichissement des features,
 - extension deep learning si la volumétrie et l’usage le justifient.
 
-Le message final BC06: je démontre une posture de concepteur-développeur data, c’est-à-dire la capacité à construire, expliquer, sécuriser et faire évoluer un système complet." 
+Le message final BC06: je démontre une posture de concepteur-développeur data, c’est-à-dire la capacité à construire, expliquer, sécuriser et faire évoluer un système complet."
 
 ---
 
-### 🎯 Conclusion finale (1 min)
+### Conclusion finale (1 min)
 
 "Pour conclure, ce projet démontre l’ensemble des compétences RNCP35288:
 
@@ -661,7 +661,7 @@ Le message final BC06: je démontre une posture de concepteur-développeur data,
 
 Ce que je présente aujourd’hui n’est pas seulement un modèle, mais une chaîne de valeur data complète, défendable techniquement et exploitable en contexte professionnel.
 
-Je vous remercie, et je suis prêt à répondre à vos questions." 
+Je vous remercie, et je suis prêt à répondre à vos questions."
 
 ---
 
@@ -698,7 +698,7 @@ cd oiseaux_migrateurs_npdc
 python scripts/acquisition.py
 ```
 Preuves attendues à l’écran:
-- logs `🐦 Téléchargement ...`
+- logs ` Téléchargement ...`
 - création `donnees/brutes/observations_gbif.csv`
 - création `donnees/brutes/meteo_npdc.csv`
 
@@ -890,7 +890,7 @@ Puis vérifier:
 
 ---
 
-## 🧪 CHECKLIST DE PREUVE RAPIDE (2 MIN AVANT PASSAGE)
+## CHECKLIST DE PREUVE RAPIDE (2 MIN AVANT PASSAGE)
 
 ```bash
 cd oiseaux_migrateurs_npdc
@@ -1020,7 +1020,7 @@ Donc je ne montre pas seulement du code : je montre une démarche professionnell
 
 ---
 
-### 🎤 Conclusion orale (1 min)
+### Conclusion orale (1 min)
 
 "Pour conclure, ce projet démontre les 6 blocs RNCP :
 - j’ai construit l’infrastructure de données,
@@ -1034,15 +1034,15 @@ Le résultat final est un système fonctionnel, reproductible, et présentable e
 
 ---
 
-# ⏱️ BC01: CONSTRUCTION ET ALIMENTATION D'UNE INFRASTRUCTURE DE GESTION DE DONNÉES
+# BC01: CONSTRUCTION ET ALIMENTATION D'UNE INFRASTRUCTURE DE GESTION DE DONNÉES
 **Durée: 5 minutes**
 
-### 📌 Objectif du bloc
+### Objectif du bloc
 > "Mettre en place une infrastructure pour récupérer, valider et stocker les données de manière robuste et reproducible"
 
-### 🎯 Vos réalisations (ce que vous montrez)
+### Vos réalisations (ce que vous montrez)
 
-#### 1️⃣ **Sources de données externes** (1 min)
+#### 1⃣ **Sources de données externes** (1 min)
 ```python
 # Deux APIs externes utilisées:
 
@@ -1091,7 +1091,7 @@ PARAMS_ACQUISITION = {
 }
 ```
 
-#### 2️⃣ **Pipeline d'acquisition robuste** (1.5 min)
+#### 2⃣ **Pipeline d'acquisition robuste** (1.5 min)
 ```python
 # Classe AcquisiteurGBIF: télécharge observations avec gestion d'erreurs
 ```
@@ -1102,11 +1102,11 @@ class AcquisiteurGBIF:
     def __init__(self):
         self.wkt_bbox = REGION["wkt"]
         self.session = requests.Session()
-    
+
     def telecharger_observations_espece(self, espece_key, espece_info):
         """
         Télécharge observations GBIF avec pagination + gestion d'erreurs
-        
+
         Robustesse:
         - Try/except sur chaque requête HTTP
         - Loging détaillé de chaque étape
@@ -1115,9 +1115,9 @@ class AcquisiteurGBIF:
         """
         observations = []
         offset = 0
-        
-        logger.info(f"🐦 Téléchargement {espece_key}...")
-        
+
+        logger.info(f" Téléchargement {espece_key}...")
+
         while offset < 10000:
             try:
                 url = "https://api.gbif.org/v1/occurrence/search"
@@ -1128,44 +1128,44 @@ class AcquisiteurGBIF:
                     "limit": 300,
                     "hasCoordinate": True                   # Doit avoir lat/lon
                 }
-                
+
                 response = self.session.get(url, params=params, timeout=10)
                 response.raise_for_status()  # Raise si erreur HTTP
-                
+
                 data = response.json()
-                
+
                 if not data["results"]:
-                    logger.info(f"  ✓ {offset} observations téléchargées")
+                    logger.info(f"   {offset} observations téléchargées")
                     break
-                
+
                 # Extrait colonnes utiles
                 df_chunk = pd.DataFrame(data["results"])
                 df_chunk = df_chunk[["decimalLatitude", "decimalLongitude", "eventDate"]]
                 df_chunk = df_chunk.dropna()  # Valide lat/lon
-                
+
                 observations.append(df_chunk)
-                logger.debug(f"  ✓ Récupéré {offset + 300} observations")
-                
+                logger.debug(f"   Récupéré {offset + 300} observations")
+
                 offset += 300
                 time.sleep(1)  # Rate limit
-                
+
             except requests.exceptions.RequestException as e:
-                logger.error(f"  ✗ Erreur API: {e}")
+                logger.error(f"   Erreur API: {e}")
                 break
-        
+
         # Robustesse: filtre DataFrames vides avant concat
         obs_valides = [df for df in observations if len(df) > 0]
-        
+
         if obs_valides:
             result = pd.concat(obs_valides, ignore_index=True)
-            logger.info(f"  ✓ {len(result)} observations pour {espece_key}")
+            logger.info(f"   {len(result)} observations pour {espece_key}")
             return result
         else:
-            logger.warning(f"  ⚠️ Zéro observations pour {espece_key}")
+            logger.warning(f"   Zéro observations pour {espece_key}")
             return pd.DataFrame()
 ```
 
-#### 3️⃣ **Stockage structuré et tracé** (1.5 min)
+#### 3⃣ **Stockage structuré et tracé** (1.5 min)
 ```python
 # Données sauvegardées en 3 formats/niveaux:
 ```
@@ -1199,56 +1199,56 @@ donnees/
 ```python
 def executer_acquisition():
     """Main: télécharge GBIF + météo, sauvegarde CSV"""
-    
+
     logger.info("="*60)
-    logger.info("🌍 DEBUT ACQUISITION DONNEES")
+    logger.info(" DEBUT ACQUISITION DONNEES")
     logger.info("="*60)
-    
+
     # 1. Télécharger observations GBIF
     acquisiteur_gbif = AcquisiteurGBIF()
     observations = []
-    
+
     for espece_key, espece_info in ESPECES.items():
         df = acquisiteur_gbif.telecharger_observations_espece(espece_key, espece_info)
         df["espece"] = espece_key
         observations.append(df)
-    
+
     # Robustesse: filtrer DataFrames vides
     obs_valides = [df for df in observations if len(df) > 0]
     df_gbif = pd.concat(obs_valides, ignore_index=True)
-    
+
     # 2. Télécharger météo (Open-Meteo)
     acquisiteur_meteo = AcquisiteurMeteo(REGION)
     df_meteo = acquisiteur_meteo.telecharger_meteo()
-    
+
     # 3. Sauvegarder (tracabilité brute)
     df_gbif.to_csv("donnees/brutes/observations_gbif.csv", index=False)
-    logger.info("✓ Observations sauvegardées: donnees/brutes/observations_gbif.csv")
-    
+    logger.info(" Observations sauvegardées: donnees/brutes/observations_gbif.csv")
+
     logger.info("="*60)
-    logger.info("✓ ACQUISITION TERMINEE")
+    logger.info(" ACQUISITION TERMINEE")
     logger.info("="*60)
 ```
 
-#### 4️⃣ **Configuration centralisée** (0.5 min)
+#### 4⃣ **Configuration centralisée** (0.5 min)
 **Pourquoi c'est important:**
-- ✅ Un seul fichier config → change paramètres sans modifier code
-- ✅ Réproductibilité: même config = même résultats
-- ✅ Utilisé par acquisition, nettoyage, ML, API
+- Un seul fichier config → change paramètres sans modifier code
+- Réproductibilité: même config = même résultats
+- Utilisé par acquisition, nettoyage, ML, API
 
 ---
 
-### ✅ Résumé BC01
+### Résumé BC01
 ```
-✓ 2 sources externes (GBIF + Open-Meteo)
-✓ Pipeline robuste avec gestion d'erreurs
-✓ 40,000 observations + 3,653 jours météo
-✓ Stockage 3 niveaux (brut/intermediaire/traité)
-✓ Configuration centralisée
-✓ Logging exhaustif (traçabilité complète)
+ 2 sources externes (GBIF + Open-Meteo)
+ Pipeline robuste avec gestion d'erreurs
+ 40,000 observations + 3,653 jours météo
+ Stockage 3 niveaux (brut/intermediaire/traité)
+ Configuration centralisée
+ Logging exhaustif (traçabilité complète)
 ```
 
-### 💡 Points clés (si jury demande)
+### Points clés (si jury demande)
 **Q: Pourquoi parquet au lieu de CSV?**
 - Parquet: compression (80% moins d'espace), schéma typé, plus rapide à charger
 
@@ -1257,15 +1257,15 @@ def executer_acquisition():
 
 ---
 
-# ⏱️ BC02: ANALYSE EXPLORATOIRE, DESCRIPTIVE ET INFERENTIELLE DE DONNEES
+# BC02: ANALYSE EXPLORATOIRE, DESCRIPTIVE ET INFERENTIELLE DE DONNEES
 **Durée: 5 minutes**
 
-### 📌 Objectif du bloc
+### Objectif du bloc
 > "Explorer et comprendre les données via visualisations, statistiques descriptives et tests d'hypothèse"
 
-### 🎯 Vos réalisations
+### Vos réalisations
 
-#### 1️⃣ **Statistiques descriptives** (1 min)
+#### 1⃣ **Statistiques descriptives** (1 min)
 ```python
 # Décrire le dataset complet
 ```
@@ -1275,19 +1275,19 @@ def executer_acquisition():
 def charger_et_nettoyer():
     """
     Charge CSV brut, valide, déduplique
-    
+
     Étapes:
     1. Charge CSV (40,000 observations)
     2. Supprime NULL (lat/lon)
     3. Filtre région NPDC
     4. Supprime doublons (même coords + même date + même espèce)
-    
+
     Résultat: Dataset nettoyé de 39,986 observations
     """
     df = pd.read_csv("donnees/brutes/observations_gbif.csv")
-    
+
     logger.info(f"Observations initiales: {len(df)}")
-    
+
     # Statistiques descriptives
     print(df.describe())
     #        decimalLatitude  decimalLongitude
@@ -1296,27 +1296,27 @@ def charger_et_nettoyer():
     # std           0.89           1.12
     # min          49.50           1.50
     # max          51.50           4.00
-    
+
     # Distribution par espèce
     print(df["espece"].value_counts())
     # hirondelle_rustique       10000
     # cigogne_blanche           10000
     # martinet_noir             10000
     # bergeronnette_printaniere 10000
-    
+
     # Supprime NULL
     df = df.dropna(subset=["decimalLatitude", "decimalLongitude"])
     logger.info(f"Après suppression nulls: {len(df)} (-{40000 - len(df)})")
-    
+
     # Filtre région NPDC
     df = df[(df["decimalLatitude"] >= 49.5) & (df["decimalLatitude"] <= 51.5) &
             (df["decimalLongitude"] >= 1.5) & (df["decimalLongitude"] <= 4.0)]
     logger.info(f"Après filtrage région: {len(df)}")
-    
+
     # Supprime doublons
     df_clean = df.drop_duplicates(subset=["decimalLatitude", "decimalLongitude", "eventDate", "espece"])
     logger.info(f"Après suppression doublons: {len(df_clean)} (-{len(df) - len(df_clean)})")
-    
+
     return df_clean
 ```
 
@@ -1334,7 +1334,7 @@ Distribution par espèce:
 └─ Bergeronnette:          9,992
 ```
 
-#### 2️⃣ **Analyse saisonnalités** (1.5 min)
+#### 2⃣ **Analyse saisonnalités** (1.5 min)
 **Graphique: observations/mois/espèce**
 
 **Code à montrer:** [scripts/eda.py ligne 57-94]
@@ -1342,23 +1342,23 @@ Distribution par espèce:
 def analyser_saisonnalite(df_obs):
     """
     Montre les pics d'observations par mois et espèce
-    
+
     Hypothèse: Oiseaux migrateurs arrivent à périodes régulières
-    
+
     Logique:
     1. Extrait mois de chaque observation
     2. Compte observations par (mois, espèce)
     3. Plot: 4 courbes (une par espèce), x=mois, y=count
     """
-    
+
     df_obs["mois"] = pd.to_datetime(df_obs["eventDate"]).dt.month
-    
+
     # Compte par mois × espèce
     saisonnalite = df_obs.groupby(["mois", "espèce"]).size().reset_index(name="count")
-    
+
     # Plot 4 subplots (une espèce chaque)
     fig, axes = plt.subplots(2, 2, figsize=(12, 8))
-    
+
     for idx, (espece, grupo) in enumerate(saisonnalite.groupby("espèce")):
         ax = axes[idx // 2, idx % 2]
         ax.plot(grupo["mois"], grupo["count"], marker="o", linewidth=2)
@@ -1366,19 +1366,19 @@ def analyser_saisonnalite(df_obs):
         ax.set_xlabel("Mois")
         ax.set_ylabel("Nombre observations")
         ax.grid()
-    
+
     plt.tight_layout()
     plt.savefig("outputs/eda/saisonnalite.png", dpi=300)
-    logger.info("✓ Graphique saisonnalité sauvegardé")
+    logger.info(" Graphique saisonnalité sauvegardé")
 ```
 
 **Output attendu:**
 ```
 Graphique: 4 courbes montrant pics en Mars-Mai
-  └─ Confirmation: Oiseaux arrivent printemps (migration) ✓
+  └─ Confirmation: Oiseaux arrivent printemps (migration)
 ```
 
-#### 3️⃣ **Densité spatiale** (1 min)
+#### 3⃣ **Densité spatiale** (1 min)
 **Carte Folium: où les oiseaux sont observés**
 
 **Code à montrer:** [scripts/eda.py ligne 100-129]
@@ -1386,23 +1386,23 @@ Graphique: 4 courbes montrant pics en Mars-Mai
 def creer_carte_densite(df_obs):
     """
     Crée carte Folium avec densité observations par zone
-    
+
     Logique:
     1. Discrétise tous points en grille
     2. Compte observations par cellule
     3. Plot: couleurs chaudes (rouge) = haute densité
     """
-    
+
     # Discrétise lat/lon en grille 0.1°
     df_obs["lat_grid"] = (df_obs["decimalLatitude"] // 0.1) * 0.1
     df_obs["lon_grid"] = (df_obs["decimalLongitude"] // 0.1) * 0.1
-    
+
     # Compte par cellule
     densite = df_obs.groupby(["lat_grid", "lon_grid"]).size().reset_index(name="count")
-    
+
     # Map Folium centré NPDC
     m = folium.Map(location=[50.5, 2.75], zoom_start=8)
-    
+
     # Ajoute circles pour chaque cellule
     for _, row in densite.iterrows():
         couleur = "red" if row["count"] > 100 else "orange" if row["count"] > 50 else "yellow"
@@ -1413,9 +1413,9 @@ def creer_carte_densite(df_obs):
             fill=True,
             popup=f"{row['count']} obs"
         ).add_to(m)
-    
+
     m.save("outputs/eda/carte_densite.html")
-    logger.info("✓ Carte densité sauvegardée")
+    logger.info(" Carte densité sauvegardée")
 ```
 
 **Output attendu:**
@@ -1424,11 +1424,11 @@ Carte NPDC avec zones colorées:
   - Rouge: hotspots (100+ obs)
   - Orange: moyenne densité (50-100)
   - Jaune: faible densité (<50)
-  
+
 => Identifie zones intéressantes pour prediction
 ```
 
-#### 4️⃣ **Tests statistiques** (1 min)
+#### 4⃣ **Tests statistiques** (1 min)
 **Chi-square: saisonnalité est-elle significative?**
 
 **Code à montrer:** [scripts/eda.py ligne 207-230]
@@ -1436,29 +1436,29 @@ Carte NPDC avec zones colorées:
 def test_independance_chi2(df_obs):
     """
     Test χ²: présence d'oiseaux ⊥ saisonnalité?
-    
+
     Hypothèse nulle (H0): Présence indépendante de mois
     Alternative (H1): Présence dépend du mois
-    
+
     Si p-value < 0.05 → Rejet H0 → Saisonnalité SIGNIFICATIVE
     """
-    
+
     df_obs["mois"] = pd.to_datetime(df_obs["eventDate"]).dt.month
     df_obs["presence"] = 1  # Chaque obs = présence
-    
+
     # Tableau croisé: espèce × mois
     crosstab = pd.crosstab(df_obs["espece"], df_obs["mois"])
-    
+
     # Test χ²
     chi2, p_value, dof, expected = chi2_contingency(crosstab)
-    
+
     logger.info(f"χ² = {chi2:.2f}, p-value = {p_value:.2e}, ddl = {dof}")
-    
+
     if p_value < 0.05:
-        logger.info(f"✓ Saisonnalité SIGNIFICATIVE (p < 0.05)")
+        logger.info(f" Saisonnalité SIGNIFICATIVE (p < 0.05)")
         logger.info(f"=> Oiseaux arrivent à périodes précises!")
     else:
-        logger.info(f"✗ Saisonnalité NON significative (p >= 0.05)")
+        logger.info(f" Saisonnalité NON significative (p >= 0.05)")
 ```
 
 **Output attendu:**
@@ -1467,37 +1467,37 @@ def test_independance_chi2(df_obs):
 p-value = 0.0
 ddl = 33
 
-=> REJET H0: Saisonnalité est TRÈS SIGNIFICATIVE ✓
+=> REJET H0: Saisonnalité est TRÈS SIGNIFICATIVE
    Implications: Modèle ML doit utiliser "mois" comme feature
 ```
 
-#### 5️⃣ **Corrélations météo-présence** (0.5 min)
+#### 5⃣ **Corrélations météo-présence** (0.5 min)
 ```python
 # Heatmap: comment météo corrèle avec présence d'oiseaux
 ```
 
 ---
 
-### ✅ Résumé BC02
+### Résumé BC02
 ```
-✓ Statistiques descriptives (40,000 → 39,986 clean)
-✓ Saisonnalité visualisée (pics Mars-Mai)
-✓ Carte densité spatiale (Folium)
-✓ Test χ² (p-value < 0.05 → Significatif)
-✓ Corrélations météo exploredées
+ Statistiques descriptives (40,000 → 39,986 clean)
+ Saisonnalité visualisée (pics Mars-Mai)
+ Carte densité spatiale (Folium)
+ Test χ² (p-value < 0.05 → Significatif)
+ Corrélations météo exploredées
 ```
 
 ---
 
-# ⏱️ BC03: ANALYSE PREDICTIVE DE DONNEES STRUCTUREES PAR IA (MACHINE LEARNING)
+# BC03: ANALYSE PREDICTIVE DE DONNEES STRUCTUREES PAR IA (MACHINE LEARNING)
 **Durée: 5 minutes**
 
-### 📌 Objectif du bloc
+### Objectif du bloc
 > "Entraîner et évaluer modèles de classification pour prédire présence d'oiseaux"
 
-### 🎯 Vos réalisations
+### Vos réalisations
 
-#### 1️⃣ **Préparation des données pour ML** (1 min)
+#### 1⃣ **Préparation des données pour ML** (1 min)
 ```python
 # Grille spatiotemporelle + features météo
 ```
@@ -1507,19 +1507,19 @@ ddl = 33
 def preparer_features(df_grille, df_meteo=None):
     """
     Prépare X (features) et y (target) pour ML
-    
+
     Features:
     1. SPATIAL: lat_discrete, lon_discrete (grille 0.1°)
     2. TEMPORAL: année (2019-2024), semaine (1-52)
     3. METEO (optionnel): temp_max, temp_min, precip, vent, humid, pression
-    
+
     Target: présence (0 ou 1)
     """
-    
+
     # Features de base
     feature_cols = ["année", "semaine", "lat_discrete", "lon_discrete"]
     X = df_grille[feature_cols].copy()
-    
+
     # Ajouter météo si disponible
     if df_meteo is not None:
         # Moyenne hebdomadaire
@@ -1531,21 +1531,21 @@ def preparer_features(df_grille, df_meteo=None):
             "humidite_moyenne": "mean",
             "pression_moyenne": "mean"
         }).reset_index()
-        
+
         # Fusion par semaine
         X = X.merge(meteo_hebdo, on=["année", "semaine"], how="left")
         feature_cols.extend(["temperature_max", "temperature_min", "precipitation_sum", "vent_max", "humidite_moyenne", "pression_moyenne"])
-        
+
         # Impute NaN avec médiane
         X[["temperature_max", "precipitation_sum"]] = X[["temperature_max", "precipitation_sum"]].fillna(X[["temperature_max", "precipitation_sum"]].median())
-    
+
     y = df_grille["presence"]
-    
+
     logger.info(f"Features: {feature_cols}")
     logger.info(f"X shape: {X.shape}")
     logger.info(f"y distribution: {y.value_counts().to_dict()}")
     #   y distribution: {0: 1119760, 1: 15920}  # 98.6% absence
-    
+
     return X[feature_cols], y
 ```
 
@@ -1556,7 +1556,7 @@ X shape: (1135680, 11)
 y distribution: {0: 1119760, 1: 15920}  # 98.6% absence, 1.4% présence
 ```
 
-#### 2️⃣ **Split données + déséquilibre classe** (1 min)
+#### 2⃣ **Split données + déséquilibre classe** (1 min)
 ```python
 # 80/20 train/test
 ```
@@ -1589,7 +1589,7 @@ PROBLÈME: Déséquilibre de classe (98.5% absence)
   => Utilise F1-Score + AUC-ROC (metrics robustes)
 ```
 
-#### 3️⃣ **Entraînement 3 modèles comparatifs** (2 min)
+#### 3⃣ **Entraînement 3 modèles comparatifs** (2 min)
 ```python
 # XGBoost vs Random Forest vs Logistic Regression
 ```
@@ -1600,11 +1600,11 @@ def entrainer_modeles(X_train, y_train, X_test, y_test):
     """
     Entraîne 3 modèles et les compare
     """
-    
+
     resultats = []
-    
+
     # 1. XGBoost (Gradient Boosting - état-de-l'art)
-    logger.info("📦 Entraînement XGBoost...")
+    logger.info(" Entraînement XGBoost...")
     xgb_model = XGBClassifier(
         n_estimators=100,
         max_depth=6,
@@ -1613,16 +1613,16 @@ def entrainer_modeles(X_train, y_train, X_test, y_test):
     )
     xgb_model.fit(X_train, y_train)
     y_pred_xgb = xgb_model.predict(X_test)
-    
+
     accuracy_xgb = accuracy_score(y_test, y_pred_xgb)     # 98.64%
     f1_xgb = f1_score(y_test, y_pred_xgb)                # 0.097
     auc_xgb = roc_auc_score(y_test, xgb_model.predict_proba(X_test)[:, 1])  # 0.943
-    
+
     resultats.append(("XGBoost", accuracy_xgb, f1_xgb, auc_xgb))
     logger.info(f"  Accuracy: {accuracy_xgb:.4f} | F1: {f1_xgb:.4f} | AUC: {auc_xgb:.4f}")
-    
+
     # 2. Random Forest (Ensemble d'arbres)
-    logger.info("🌲 Entraînement Random Forest...")
+    logger.info(" Entraînement Random Forest...")
     rf_model = RandomForestClassifier(
         n_estimators=100,
         max_depth=15,
@@ -1630,27 +1630,27 @@ def entrainer_modeles(X_train, y_train, X_test, y_test):
     )
     rf_model.fit(X_train, y_train)
     y_pred_rf = rf_model.predict(X_test)
-    
+
     accuracy_rf = accuracy_score(y_test, y_pred_rf)       # 98.60%
     f1_rf = f1_score(y_test, y_pred_rf)                  # 0.000
     auc_rf = roc_auc_score(y_test, rf_model.predict_proba(X_test)[:, 1])  # 0.935
-    
+
     resultats.append(("Random Forest", accuracy_rf, f1_rf, auc_rf))
     logger.info(f"  Accuracy: {accuracy_rf:.4f} | F1: {f1_rf:.4f} | AUC: {auc_rf:.4f}")
-    
+
     # 3. Logistic Regression (Baseline linéaire)
-    logger.info("📈 Entraînement Logistic Regression...")
+    logger.info(" Entraînement Logistic Regression...")
     lr_model = LogisticRegression(max_iter=1000, random_state=42)
     lr_model.fit(X_train, y_train)
     y_pred_lr = lr_model.predict(X_test)
-    
+
     accuracy_lr = accuracy_score(y_test, y_pred_lr)       # 98.60%
     f1_lr = f1_score(y_test, y_pred_lr)                  # 0.000
     auc_lr = roc_auc_score(y_test, lr_model.predict_proba(X_test)[:, 1])  # 0.854
-    
+
     resultats.append(("Logistic Regression", accuracy_lr, f1_lr, auc_lr))
     logger.info(f"  Accuracy: {accuracy_lr:.4f} | F1: {f1_lr:.4f} | AUC: {auc_lr:.4f}")
-    
+
     return resultats
 ```
 
@@ -1659,7 +1659,7 @@ def entrainer_modeles(X_train, y_train, X_test, y_test):
 ┌───────────────────┬──────────┬─────────┬────────┐
 │ Modèle            │ Accuracy │ F1-Score │ AUC    │
 ├───────────────────┼──────────┼─────────┼────────┤
-│ XGBoost ⭐       │ 98.64%   │ 0.0973  │ 0.943  │ ← MEILLEUR
+│ XGBoost        │ 98.64%   │ 0.0973  │ 0.943  │ ← MEILLEUR
 │ Random Forest     │ 98.60%   │ 0.0000  │ 0.935  │
 │ Log. Regression   │ 98.60%   │ 0.0000  │ 0.854  │
 └───────────────────┴──────────┴─────────┴────────┘
@@ -1668,7 +1668,7 @@ CHOIX: XGBoost meilleur pour AUC-ROC (0.943)
   => Gradient boosting + regularization
 ```
 
-#### 4️⃣ **Sauvegarde et métadonnées** (1 min)
+#### 4⃣ **Sauvegarde et métadonnées** (1 min)
 ```python
 # Sauvegarde modèle + features utilisées
 ```
@@ -1679,11 +1679,11 @@ def sauvegarder_modele(model, nom_modele):
     """
     Sauvegarde modèle + metadata (features, date, perf)
     """
-    
+
     # Sauvegarde fichier pkl
     joblib.dump(model, f"modeles/{nom_modele}.pkl")
-    logger.info(f"✓ Modèle sauvegardé: modeles/{nom_modele}.pkl")
-    
+    logger.info(f" Modèle sauvegardé: modeles/{nom_modele}.pkl")
+
     # Sauvegarde metadata
     metadata = {
         "nom_modele": nom_modele,
@@ -1697,11 +1697,11 @@ def sauvegarder_modele(model, nom_modele):
         "train_size": 908544,
         "test_size": 227136
     }
-    
+
     with open(f"modeles/{nom_modele}_metadata.json", "w") as f:
         json.dump(metadata, f, indent=2)
-    
-    logger.info(f"✓ Metadata sauvegardée: modeles/{nom_modele}_metadata.json")
+
+    logger.info(f" Metadata sauvegardée: modeles/{nom_modele}_metadata.json")
 ```
 
 **Fichiers générés:**
@@ -1715,27 +1715,27 @@ modeles/
 
 ---
 
-### ✅ Résumé BC03
+### Résumé BC03
 ```
-✓ Grille spatiotemporelle (1.1M rows)
-✓ Features: spatial + temporal + météo (11 variables)
-✓ Split 80/20 (908k train, 227k test)
-✓ 3 modèles entraînés (XGBoost meilleur)
-✓ AUC-ROC 0.943 (très bon pour prédiction)
-✓ Modèles sauvegardés + métadonnées
+ Grille spatiotemporelle (1.1M rows)
+ Features: spatial + temporal + météo (11 variables)
+ Split 80/20 (908k train, 227k test)
+ 3 modèles entraînés (XGBoost meilleur)
+ AUC-ROC 0.943 (très bon pour prédiction)
+ Modèles sauvegardés + métadonnées
 ```
 
 ---
 
-# ⏱️ BC04: ANALYSE PREDICTIVE DE DONNEES NON-STRUCTUREES PAR IA (DEEP LEARNING)
+# BC04: ANALYSE PREDICTIVE DE DONNEES NON-STRUCTUREES PAR IA (DEEP LEARNING)
 **Durée: 5 minutes**
 
-### 📌 Objectif du bloc
+### Objectif du bloc
 > "Démontrer connaissances en Deep Learning (optionnel pour ce projet, extension future)"
 
-### 🎯 Réalisations + perspective future
+### Réalisations + perspective future
 
-#### 1️⃣ **Pourquoi Deep Learning pour ce projet** (1.5 min)
+#### 1⃣ **Pourquoi Deep Learning pour ce projet** (1.5 min)
 ```python
 # LSTM pour séries temporelles: modéliser migrations dans le temps
 ```
@@ -1745,24 +1745,24 @@ modeles/
 Données disponibles: Séries temporelles
   └─ Chaque espèce a "courbes" saisonnières (observations/semaine)
      Hirondelle rustique:   +---- pics Avril-Mai ----+
-     
+
 Approche classique (BC03):
-  ✗ Utilise features indépendantes (lat, lon, année, semaine)
-  ✗ Pas de dépendance temporelle
-  ✓ Bon pour prédictions ponctuelles
-  
+   Utilise features indépendantes (lat, lon, année, semaine)
+   Pas de dépendance temporelle
+   Bon pour prédictions ponctuelles
+
 Approche Deep Learning (LSTM):
-  ✓ Capture séquences temporelles
-  ✓ Modèle: observations_semaine[t-3:t] → présence[t+1]
-  ✓ Peut anticiper migration avant elle arrive
-  
+   Capture séquences temporelles
+   Modèle: observations_semaine[t-3:t] → présence[t+1]
+   Peut anticiper migration avant elle arrive
+
 LSTM = Long Short-Term Memory
   └─ Réseau neuronal avec "mémoire"
      Chaque cellule se souvient observations passées
      Combine: information court-terme + long-terme
 ```
 
-#### 2️⃣ **Architecture LSTM proposée** (1.5 min)
+#### 2⃣ **Architecture LSTM proposée** (1.5 min)
 ```python
 # Structure du modèle (non implémenté ici, mais design ready)
 ```
@@ -1776,31 +1776,31 @@ from tensorflow.keras.models import Sequential
 def construire_lstm(sequence_length=4):
     """
     LSTM pour prédire présence oiseaux
-    
+
     Input: Historique 4 semaines observations
     Output: Probabilité présence semaine prochaine
     """
-    
+
     model = Sequential([
         # Couche LSTM 1: capture patterns long-terme
         LSTM(64, activation='relu', return_sequences=True, input_shape=(sequence_length, 11)),
         Dropout(0.2),  # Regularization
-        
+
         # Couche LSTM 2: capture patterns complexes
         LSTM(32, activation='relu', return_sequences=False),
         Dropout(0.2),
-        
+
         # Couches fully-connected
         Dense(16, activation='relu'),
         Dense(1, activation='sigmoid')  # Sortie: proba [0, 1]
     ])
-    
+
     model.compile(
         optimizer='adam',
         loss='binary_crossentropy',
         metrics=['accuracy', tf.keras.metrics.AUC()]
     )
-    
+
     return model
 ```
 
@@ -1823,7 +1823,7 @@ Dense 1 + Sigmoid
 OUTPUT (probabilité présence semaine t+1)
 ```
 
-#### 3️⃣ **Données pour LSTM** (1 min)
+#### 3⃣ **Données pour LSTM** (1 min)
 ```python
 # Transformer grille en séquences temporelles
 ```
@@ -1833,7 +1833,7 @@ OUTPUT (probabilité présence semaine t+1)
 def creer_sequences_lstm(df_grille, sequence_length=4):
     """
     Transforme grille plate → dataset séquences
-    
+
     Exemple:
     INPUT grille:
     | an | sem | esp | lat | lon | présence |
@@ -1843,7 +1843,7 @@ def creer_sequences_lstm(df_grille, sequence_length=4):
     | 19 | 3  | H   | 50  | 2.5 |    0     |
     | 19 | 4  | H   | 50  | 2.5 |    1     |
     | 19 | 5  | H   | 50  | 2.5 |    1     |
-    
+
     OUTPUT séquences:
     X = [
         [[0, 19, 1, 50, 2.5, ...], [1, 19, 2, 50, 2.5, ...], [0, 19, 3, 50, 2.5, ...], [1, 19, 4, 50, 2.5, ...]],
@@ -1852,10 +1852,10 @@ def creer_sequences_lstm(df_grille, sequence_length=4):
     ]
     y = [1, 1, ...]  # Prédire semaine suivante
     """
-    
+
     sequences = []
     targets = []
-    
+
     for espece in df_grille["espèce"].unique():
         for lat in df_grille["lat_discrete"].unique():
             for lon in df_grille["lon_discrete"].unique():
@@ -1865,37 +1865,37 @@ def creer_sequences_lstm(df_grille, sequence_length=4):
                     (df_grille["lat_discrete"] == lat) &
                     (df_grille["lon_discrete"] == lon)
                 ].sort_values(["année", "semaine"])
-                
+
                 # Crée séquences glissantes
                 values = subset[["présence", "température_max", ...]].values
-                
+
                 for i in range(len(values) - sequence_length):
                     sequences.append(values[i:i+sequence_length])
                     targets.append(values[i+sequence_length][0])  # Prédire présence
-    
+
     return np.array(sequences), np.array(targets)
 ```
 
-#### 4️⃣ **Avantages et limitations** (1 min)
+#### 4⃣ **Avantages et limitations** (1 min)
 ```python
 AVANTAGES LSTM:
-  ✓ Capture dépendances temporelles
-  ✓ Peut anticiper pics migration
-  ✓ Meilleur pour séries longues
-  ✓ Flexible (peut ajouter features externes)
+   Capture dépendances temporelles
+   Peut anticiper pics migration
+   Meilleur pour séries longues
+   Flexible (peut ajouter features externes)
 
 LIMITATIONS LSTM (ce projet):
-  ✗ Nécessite plus données (actuellement 40k obs)
-  ✗ Entraînement plus lent
-  ✗ Overfitting risk (complexité modèle)
-  ✗ Moins interprétable (black-box)
-  ✗ Pas besoin pour prédictions ponctuelles (XGBoost suffit)
+   Nécessite plus données (actuellement 40k obs)
+   Entraînement plus lent
+   Overfitting risk (complexité modèle)
+   Moins interprétable (black-box)
+   Pas besoin pour prédictions ponctuelles (XGBoost suffit)
 
 DECISION: Focus BC03 (ML) plutôt que BC04 (DL)
   └─ XGBoost: plus rapide, plus interprétable, assez performant
 ```
 
-#### 5️⃣ **Ressources et extensions futures** (0.5 min)
+#### 5⃣ **Ressources et extensions futures** (0.5 min)
 ```python
 # où implémenter LSTM si voulu
 ```
@@ -1910,17 +1910,17 @@ notebooks/
 
 ---
 
-### ✅ Résumé BC04
+### Résumé BC04
 ```
-✓ Contexte: Séries temporelles migration oiseaux
-✓ Architecture LSTM: 2 couches LSTM + dense
-✓ Données: Séquences 4 semaines → prédire présence
-✓ Avantages: Capture dynamique temporelle
-✓ Limitations: Complexité pour ce dataset
-✓ Décision: BC03 (ML) meilleur for now, LSTM future extension
+ Contexte: Séries temporelles migration oiseaux
+ Architecture LSTM: 2 couches LSTM + dense
+ Données: Séquences 4 semaines → prédire présence
+ Avantages: Capture dynamique temporelle
+ Limitations: Complexité pour ce dataset
+ Décision: BC03 (ML) meilleur for now, LSTM future extension
 ```
 
-### 💡 Si jury demande
+### Si jury demande
 **Q: Pourquoi pas LSTM maintenant?**
 - LSTM meilleur pour prédictions futures (séries longues), XGBoost meilleur pour prédictions ponctuelles
 - Données actuelles (40k obs) suffisent pour XGBoost, LSTM besoin + données
@@ -1930,15 +1930,15 @@ notebooks/
 
 ---
 
-# ⏱️ BC05: INDUSTRIALISATION D'UN ALGORITHME ET AUTOMATISATION DES PROCESSUS DE DECISION
+# BC05: INDUSTRIALISATION D'UN ALGORITHME ET AUTOMATISATION DES PROCESSUS DE DECISION
 **Durée: 5 minutes**
 
-### 📌 Objectif du bloc
+### Objectif du bloc
 > "Mettre en production un modèle ML: API, tests, déploiement, monitoring"
 
-### 🎯 Vos réalisations
+### Vos réalisations
 
-#### 1️⃣ **API REST - Interface de prédictions** (1.5 min)
+#### 1⃣ **API REST - Interface de prédictions** (1.5 min)
 ```python
 # FastAPI avec 3 endpoints
 ```
@@ -1994,7 +1994,7 @@ class PredictionRequest(BaseModel):
 def predict(request: PredictionRequest):
     """
     Prédis présence oiseau pour lat/lon/météo donnée
-    
+
     Logique:
     1. Valide inputs (espèce existe? lat/lon in bounds?)
     2. Discrétise coordonnées (grille 0.1°)
@@ -2003,23 +2003,23 @@ def predict(request: PredictionRequest):
     5. Fait prédiction
     6. Retourne probabilité + confiance
     """
-    
+
     # Validation
     if request.espece not in ["hirondelle_rustique", "cigogne_blanche", ...]:
         raise HTTPException(status_code=400, detail="Espèce inconnue")
-    
+
     if not (49.5 <= request.latitude <= 51.5):
         raise HTTPException(status_code=400, detail="Latitude hors zone NPDC")
-    
+
     # Discrétise
     lat_discrete = (request.latitude // 0.1) * 0.1
     lon_discrete = (request.longitude // 0.1) * 0.1
-    
+
     # Features
     from datetime import datetime
     annee = datetime.now().year
     semaine = datetime.now().isocalendar()[1]
-    
+
     features = np.array([[
         annee,
         semaine,
@@ -2031,11 +2031,11 @@ def predict(request: PredictionRequest):
         request.meteo.vent_max,
         request.meteo.humidite
     ]])
-    
+
     # Prédiction
     model = joblib.load("modeles/pipeline_ml.pkl")
     proba = model.predict_proba(features)[0][1]
-    
+
     return {
         "espece": request.espece,
         "probabilite_presence": float(proba),
@@ -2063,7 +2063,7 @@ curl -X POST http://localhost:8000/predict \
 # => {"probabilite_presence": 0.87, "confiance": 0.9427, ...}
 ```
 
-#### 2️⃣ **Tests unitaires** (1 min)
+#### 2⃣ **Tests unitaires** (1 min)
 ```python
 # Chaque fonction a test associé → 6/6 passants
 ```
@@ -2080,7 +2080,7 @@ def test_acquisition_gbif():
         "hirondelle_rustique",
         {"code_gbif": 9515886}
     )
-    
+
     # Assertions
     assert len(df) > 0, "Aucune observation téléchargée"
     assert "decimalLatitude" in df.columns
@@ -2107,10 +2107,10 @@ tests/test_models.py::test_xgboost_perf PASSED
 tests/test_api.py::test_health PASSED
 tests/test_dashboard.py::test_streamlit_launch PASSED
 
-============ 6 passed in 0.42s ✓
+============ 6 passed in 0.42s
 ```
 
-#### 3️⃣ **Dashboard Streamlit - Interface utilisateur** (1 min)
+#### 3⃣ **Dashboard Streamlit - Interface utilisateur** (1 min)
 ```python
 # Interface web interactive
 ```
@@ -2121,7 +2121,7 @@ import streamlit as st
 import requests
 
 st.set_page_config(page_title="Oiseaux Migrateurs", layout="wide")
-st.title("🐦 Prédiction Oiseaux Migrateurs NPDC")
+st.title(" Prédiction Oiseaux Migrateurs NPDC")
 
 # Tabs
 tab1, tab2, tab3 = st.tabs(["Prédiction", "Statistiques", "Données"])
@@ -2129,7 +2129,7 @@ tab1, tab2, tab3 = st.tabs(["Prédiction", "Statistiques", "Données"])
 with tab1:
     # FORM: Input utilisateur
     col1, col2 = st.columns(2)
-    
+
     with col1:
         espece = st.selectbox("Espèce", [
             "hirondelle_rustique",
@@ -2137,16 +2137,16 @@ with tab1:
             "martinet_noir",
             "bergeronnette_printaniere"
         ])
-    
+
     with col2:
         lat = st.number_input("Latitude", value=50.5, min_value=49.5, max_value=51.5)
         lon = st.number_input("Longitude", value=3.0, min_value=1.5, max_value=4.0)
-    
+
     # Météo sliders
     temp_max = st.slider("Température max (°C)", -10.0, 40.0, 20.5)
     temp_min = st.slider("Température min (°C)", -15.0, 30.0, 15.0)
     precip = st.slider("Précipitation (mm)", 0.0, 100.0, 2.5)
-    
+
     # SUBMIT
     if st.button("PRÉDIRE", key="predict"):
         response = requests.post(
@@ -2164,16 +2164,16 @@ with tab1:
                 }
             }
         )
-        
+
         result = response.json()
-        
+
         # AFFICHE RÉSULTAT
         col1, col2 = st.columns(2)
         with col1:
             st.metric("Probabilité", f"{result['probabilite_presence']:.1%}")
         with col2:
             st.metric("Confiance", f"{result['confiance']:.1%}")
-        
+
         st.success(f"Modèle: {result['modele_utilise']} - Prédiction validée")
 ```
 
@@ -2190,8 +2190,8 @@ ONGLET PRÉDICTION:
 │                             │
 │ [PRÉDIRE]                   │
 │                             │
-│ ✓ Probabilité: 87%          │
-│ ✓ Confiance: 94.3%          │
+│  Probabilité: 87%          │
+│  Confiance: 94.3%          │
 └─────────────────────────────┘
 
 ONGLET STATISTIQUES:
@@ -2201,7 +2201,7 @@ ONGLET DONNÉES:
   [Table observations nettoyées]
 ```
 
-#### 4️⃣ **Automatisation pipeline** (1 min)
+#### 4⃣ **Automatisation pipeline** (1 min)
 ```python
 # À lancer 1 seule fois pour tout générer
 ```
@@ -2215,16 +2215,16 @@ python scripts/eda.py              # Génère graphiques
 python scripts/entrainer_modele.py # Entraîne modèles
 
 # Résultat:
-donnees/traitees/*.parquet         ✓ Données nettoyées
-modeles/*.pkl                      ✓ Modèles entraînés
-outputs/eda/*.png, *.html          ✓ Visualisations
+donnees/traitees/*.parquet          Données nettoyées
+modeles/*.pkl                       Modèles entraînés
+outputs/eda/*.png, *.html           Visualisations
 
 # Puis lancer services:
 python -m uvicorn oiseaux_migrateurs_npdc.api.main:app --port 8000  (Terminal 1)
 streamlit run dashboard.py --port 8501                               (Terminal 2)
 ```
 
-#### 5️⃣ **Déploiement en production** (0.5 min)
+#### 5⃣ **Déploiement en production** (0.5 min)
 ```python
 # Options déploiement cloud
 ```
@@ -2238,16 +2238,16 @@ Options pour déployer en production:
    - Railway
    - Render
    - Heroku
-   
+
 2. Dashboard Streamlit:
    - Streamlit Community Cloud (gratuit)
    - Cloud Run + Docker
    - Railway
-   
+
 3. Base de données (optionnel):
    - PostgreSQL pour historique prédictions
    - Cloud SQL / Supabase
-   
+
 4. Monitoring:
    - Logs → Cloud Logging
    - Metrics → Prometheus
@@ -2256,27 +2256,27 @@ Options pour déployer en production:
 
 ---
 
-### ✅ Résumé BC05
+### Résumé BC05
 ```
-✓ API FastAPI: 3 endpoints (/health, /species, /predict)
-✓ Input validation: espèce, lat/lon, météo
-✓ Pipeline automatisé: 4 scripts exécutables
-✓ Tests: 6/6 unitaires passants
-✓ Interface user: Dashboard Streamlit
-✓ Prêt production: code clean, logs, tests
+ API FastAPI: 3 endpoints (/health, /species, /predict)
+ Input validation: espèce, lat/lon, météo
+ Pipeline automatisé: 4 scripts exécutables
+ Tests: 6/6 unitaires passants
+ Interface user: Dashboard Streamlit
+ Prêt production: code clean, logs, tests
 ```
 
 ---
 
-# ⏱️ BC06: DIRECTION DE PROJETS DE GESTION DE DONNEES
+# BC06: DIRECTION DE PROJETS DE GESTION DE DONNEES
 **Durée: 5 minutes**
 
-### 📌 Objectif du bloc
+### Objectif du bloc
 > "Montrer capacité à gérer projet scientifique: méthodologie, documentation, risques, évolution"
 
-### 🎯 Vos réalisations
+### Vos réalisations
 
-#### 1️⃣ **Méthodologie et planification** (1 min)
+#### 1⃣ **Méthodologie et planification** (1 min)
 ```python
 # Approche structurée du projet
 ```
@@ -2321,7 +2321,7 @@ PHASES DU PROJET:
 └── SUJETS_RNCP35288.md       ← Alignement RNCP
 ```
 
-#### 2️⃣ **Gestion de risques** (1 min)
+#### 2⃣ **Gestion de risques** (1 min)
 ```python
 # Identifie et gère risques
 ```
@@ -2334,34 +2334,34 @@ RISQUES IDENTIFIÉS:
    Risque: GBIF retourne peu observations
    Impact: Modèle biaisé, prédictions mauvaises
    Mitigation: Filtrage robuste, validation, logging
-   Réalité: ✓ 40k obs OK
+   Réalité:  40k obs OK
 
 2. DÉSÉQUILIBRE CLASSE
    Risque: 98.5% absence → accuracy peu fiable
    Impact: Modèle toujours prédis "absence"
    Mitigation: Utilise F1-score + AUC-ROC, éval sur test set
-   Réalité: ✓ XGBoost F1=0.097, AUC=0.943
+   Réalité:  XGBoost F1=0.097, AUC=0.943
 
 3. REPRODUCTIBILITÉ
    Risque: Code ne relance pas chez jury/prod
    Impact: Démo échoue
    Mitigation: Tests unitaires, config centralisée, venv, requirements.txt
-   Réalité: ✓ 6/6 tests passants, reproducible
+   Réalité:  6/6 tests passants, reproducible
 
 4. ERREURS API/RÉSEAU
    Risque: GBIF/Open-Meteo retourne 404/timeout
    Impact: Pipeline crash
    Mitigation: Try/except, retry logic, logging détaillé
-   Réalité: ✓ Code robuste, gère erreurs
+   Réalité:  Code robuste, gère erreurs
 
 5. OVERFITTING MODÈLE
    Risque: XGBoost overfits sur train, mauvais sur test
    Impact: Prédictions non fiables
    Mitigation: Cross-validation, early stopping, test set vérifie
-   Réalité: ✓ Train accuracy ~99%, test accuracy ~98.6% (bon)
+   Réalité:  Train accuracy ~99%, test accuracy ~98.6% (bon)
 ```
 
-#### 3️⃣ **Qualité du code et maintenance** (1 min)
+#### 3⃣ **Qualité du code et maintenance** (1 min)
 ```python
 # Standards d'ingénierie logicielle
 ```
@@ -2371,51 +2371,51 @@ RISQUES IDENTIFIÉS:
 PRATIQUES IMPLÉMENTÉES:
 
 1. STRUCTURE MODULAIRE
-   ✓ Séparation concerns: acquisition, nettoyage, ML, API
-   ✓ Chaque script = fonction unique (single responsibility)
-   ✓ Facile à tester, maintenir, étendre
+    Séparation concerns: acquisition, nettoyage, ML, API
+    Chaque script = fonction unique (single responsibility)
+    Facile à tester, maintenir, étendre
 
 2. LOGGING EXHAUSTIF
-   ✓ Chaque étape loguée (traçabilité complète)
-   ✓ Niveaux: INFO (étapes), DEBUG (détails), ERROR (exceptions)
-   ✓ Logs → fichier + console
+    Chaque étape loguée (traçabilité complète)
+    Niveaux: INFO (étapes), DEBUG (détails), ERROR (exceptions)
+    Logs → fichier + console
 
 3. CONFIGURATION CENTRALISÉE
-   ✓ scripts/config.py = une source de vérité
-   ✓ Changement = 1 place → affecte tout
-   ✓ Vraiment RNCP06: gestion paramètres
+    scripts/config.py = une source de vérité
+    Changement = 1 place → affecte tout
+    Vraiment RNCP06: gestion paramètres
 
 4. VERSIONNING & GIT
-   ✓ Code versionnalisé (git history)
-   ✓ Permet revenir en arrière si bug
-   ✓ Collab future
+    Code versionnalisé (git history)
+    Permet revenir en arrière si bug
+    Collab future
 
 5. TESTS UNITAIRES
-   ✓ Chaque fonction testée
-   ✓ 6/6 tests passants
-   ✓ CI/CD ready (GitHub Actions possible)
-   ✓ Confiance que refactoring ne casse rien
+    Chaque fonction testée
+    6/6 tests passants
+    CI/CD ready (GitHub Actions possible)
+    Confiance que refactoring ne casse rien
 
 6. TYPE HINTS & DOCSTRINGS
-   ✓ Code lisible (type hints + docstrings)
-   ✓ IDE peut proposer auto-complete
-   ✓ Maintenance future facilitée
+    Code lisible (type hints + docstrings)
+    IDE peut proposer auto-complete
+    Maintenance future facilitée
 
 7. REQUÊTE PYTHON STANDARDS
-   ✗ PEP8 formatting (isort, black)
-   ✓ No hardcoded paths (relatif, config)
-   ✓ Secrets pas en dur (env vars)
+    PEP8 formatting (isort, black)
+    No hardcoded paths (relatif, config)
+    Secrets pas en dur (env vars)
 ```
 
 **Exemple code quality:**
 ```python
-# ✗ Mauvais (code spaghetti):
+#  Mauvais (code spaghetti):
 df = pd.read_csv("C:\\Users\\Admin\\donnees\\gbif.csv")
 X = df[["lat", "lon", "année", "semaine", "temp", "rain"]]
 model = joblib.load("modeles/xgb.pkl")
 print(model.predict(X))
 
-# ✓ BON (code clean):
+#  BON (code clean):
 from scripts.config import REGION, PARAMS_ML
 from scripts.models import ChargerModele
 from loguru import logger
@@ -2423,13 +2423,13 @@ from loguru import logger
 def faire_prediction(df_test):
     """
     Fait prédiction avec validation robuste
-    
+
     Args:
         df_test: DataFrame avec colonnes requises
-        
+
     Returns:
         np.array: Probabilités prédites
-        
+
     Raises:
         ValueError: Si colonnes manquantes
     """
@@ -2437,18 +2437,18 @@ def faire_prediction(df_test):
     colonnes_requises = ["latitude", "longitude", "année", "semaine", ...]
     if not all(col in df_test.columns for col in colonnes_requises):
         raise ValueError(f"Colonnes manquantes. Requiert: {colonnes_requises}")
-    
+
     logger.info(f"Chargement modèle...")
     model = ChargerModele(PARAMS_ML.MODELE_PATH)
-    
+
     logger.info(f"Prédiction sur {len(df_test)} samples...")
     predictions = model.predict(df_test[colonnes_requises])
-    
-    logger.info(f"✓ Prédictions complétées")
+
+    logger.info(f" Prédictions complétées")
     return predictions
 ```
 
-#### 4️⃣ **Métriques et suivi** (1 min)
+#### 4⃣ **Métriques et suivi** (1 min)
 ```python
 # KPIs du projet
 ```
@@ -2458,37 +2458,37 @@ def faire_prediction(df_test):
 KPIs SUIVI:
 
 1. DONNÉES
-   ✓ Observations collectées: 40,000 (target: 10k+)
-   ✓ Couverture temporelle: 6 ans (2019-2024)
-   ✓ Couverture spatiale: NPDC complète
-   ✓ Taux de nettoyage: 99.96% retenu (39,986/40,000)
+    Observations collectées: 40,000 (target: 10k+)
+    Couverture temporelle: 6 ans (2019-2024)
+    Couverture spatiale: NPDC complète
+    Taux de nettoyage: 99.96% retenu (39,986/40,000)
 
 2. MODÈLE
-   ✓ Accuracy: 98.64% (target: >90%)
-   ✓ AUC-ROC: 0.943 (target: >0.8)
-   ✓ F1-Score: 0.097 (acceptable pour déséquilibre)
-   ✓ Temps entrainement: <1 min (target: <10 min)
+    Accuracy: 98.64% (target: >90%)
+    AUC-ROC: 0.943 (target: >0.8)
+    F1-Score: 0.097 (acceptable pour déséquilibre)
+    Temps entrainement: <1 min (target: <10 min)
 
 3. PIPELINE
-   ✓ Temps acquisition: ~5 min (target: <30 min)
-   ✓ Temps nettoyage: <1 sec (target: <1 min)
-   ✓ Temps EDA: <1 sec (target: <1 min)
-   ✓ Temps ML: <1 min (target: <5 min)
-   ✓ TOTAL: ~6 min (target: <30 min)
+    Temps acquisition: ~5 min (target: <30 min)
+    Temps nettoyage: <1 sec (target: <1 min)
+    Temps EDA: <1 sec (target: <1 min)
+    Temps ML: <1 min (target: <5 min)
+    TOTAL: ~6 min (target: <30 min)
 
 4. CODE
-   ✓ Tests: 6/6 passants (100%)
-   ✓ Coverage: ~90% (cible: >80%)
-   ✓ Erreurs syntaxe: 0
-   ✓ Documentation: 100% functions
+    Tests: 6/6 passants (100%)
+    Coverage: ~90% (cible: >80%)
+    Erreurs syntaxe: 0
+    Documentation: 100% functions
 
 5. DÉPLOIEMENT
-   ✓ API uptime: 100%
-   ✓ Latence /predict: ~50ms (target: <500ms)
-   ✓ Erreurs API: 0 (dans DEMO conditions)
+    API uptime: 100%
+    Latence /predict: ~50ms (target: <500ms)
+    Erreurs API: 0 (dans DEMO conditions)
 ```
 
-#### 5️⃣ **Évolution et roadmap** (1 min)
+#### 5⃣ **Évolution et roadmap** (1 min)
 ```python
 # Futures améliorations
 ```
@@ -2527,10 +2527,10 @@ Long-terme (6+ mois):
 **Faisabilité:**
 ```
 TECHNIQUEMENT FAISABLE:
-  ✓ Code architecture scalable
-  ✓ API prêt pour multi-species
-  ✓ Database structure ready (just add PostgreSQL)
-  ✓ Tests framework permettent refactoring sûr
+   Code architecture scalable
+   API prêt pour multi-species
+   Database structure ready (just add PostgreSQL)
+   Tests framework permettent refactoring sûr
 
 TEMPS REQUIS:
   ├─ SMOTE: 1-2 jours
@@ -2546,43 +2546,43 @@ RESSOURCES REQUISES:
 
 ---
 
-### ✅ Résumé BC06
+### Résumé BC06
 ```
-✓ Méthodologie structurée (5 phases)
-✓ Gestion risques identifiés & mitigés
-✓ Code quality standards RNCP06
-✓ Logging & monitoring exhaustif
-✓ KPIs définis & mesurés
-✓ Roadmap future définie (temps/ressources)
-✓ Évolution scalable et documented
+ Méthodologie structurée (5 phases)
+ Gestion risques identifiés & mitigés
+ Code quality standards RNCP06
+ Logging & monitoring exhaustif
+ KPIs définis & mesurés
+ Roadmap future définie (temps/ressources)
+ Évolution scalable et documented
 ```
 
 ---
 
-# 📋 RÉSUMÉ FINAL - 6 BLOCS (5 MIN × 6 = 30 MIN)
+# RÉSUMÉ FINAL - 6 BLOCS (5 MIN × 6 = 30 MIN)
 
 ```
 ┌────┬──────────────────────────────────────────┬──────┐
 │ BC │ Bloc                                     │ Démo │
 ├────┼──────────────────────────────────────────┼──────┤
-│ 01 │ Infrastructure: GBIF + meteorology      │ 🟢   │
-│ 02 │ EDA: Saisonnalité, densité, stats       │ 🟢   │
-│ 03 │ ML: XGBoost (AUC 0.943)                 │ 🟢   │
-│ 04 │ DL: LSTM architecture (future)          │ 🔵   │
-│ 05 │ API + Tests + Dashboard                 │ 🟢   │
-│ 06 │ Méthodologie + Risques + Roadmap        │ 🟢   │
+│ 01 │ Infrastructure: GBIF + meteorology      │    │
+│ 02 │ EDA: Saisonnalité, densité, stats       │    │
+│ 03 │ ML: XGBoost (AUC 0.943)                 │    │
+│ 04 │ DL: LSTM architecture (future)          │    │
+│ 05 │ API + Tests + Dashboard                 │    │
+│ 06 │ Méthodologie + Risques + Roadmap        │    │
 ├────┼──────────────────────────────────────────┼──────┤
 │    │ TOTAL DURÉE                             │ 30min│
 └────┴──────────────────────────────────────────┴──────┘
 
 LÉGENDE:
-🟢 = Complètement implémenté + demo live
-🔵 = Architecte designed, non implémenté (BC04 optionnel)
+ = Complètement implémenté + demo live
+ = Architecte designed, non implémenté (BC04 optionnel)
 ```
 
 ---
 
-## 🎤 FLOW DE PRÉSENTATION (30 min très serrés)
+## FLOW DE PRÉSENTATION (30 min très serrés)
 
 **Timing:**
 ```
@@ -2625,4 +2625,4 @@ BC06 (5 min):   Direction projet
 
 ---
 
-**BON COURAGE!** 🎯 Vous avez tout ce qu'il faut pour une excellente soutenance! 🚀
+**BON COURAGE!** Vous avez tout ce qu'il faut pour une excellente soutenance!

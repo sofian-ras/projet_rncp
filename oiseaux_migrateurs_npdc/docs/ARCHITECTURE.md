@@ -1,6 +1,6 @@
 # Architecture Technique - Prédiction Oiseaux Migrateurs NPDC
 
-## 🏗️ Architecture globale
+## Architecture globale
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -38,9 +38,9 @@
 
 ---
 
-## 🔄 Flux données
+## Flux données
 
-### 1️⃣ **Acquisition** (BC01)
+### 1⃣ **Acquisition** (BC01)
 ```
 GBIF API                 Open-Meteo API
    │                           │
@@ -55,7 +55,7 @@ GBIF API                 Open-Meteo API
     └─────────────┬─────────────┘
 ```
 
-### 2️⃣ **Nettoyage** (BC01)
+### 2⃣ **Nettoyage** (BC01)
 ```
 donnees/brutes/
       │
@@ -69,7 +69,7 @@ nettoyees.            hebdo.parquet
 parquet
 ```
 
-### 3️⃣ **Features Engineering** (BC03)
+### 3⃣ **Features Engineering** (BC03)
 ```
 Grille hebdomadaire + Météo traitée
            │
@@ -86,7 +86,7 @@ Grille hebdomadaire + Météo traitée
 Données en mémoire pour entraînement
 ```
 
-### 4️⃣ **Apprentissage** (BC03)
+### 4⃣ **Apprentissage** (BC03)
 ```
 Features
    │
@@ -101,7 +101,7 @@ Features
    └─ evaluations.csv
 ```
 
-### 5️⃣ **Prédiction en production** (BC05)
+### 5⃣ **Prédiction en production** (BC05)
 ```
 Frontend (Streamlit / API)
            │
@@ -122,7 +122,7 @@ Frontend (Streamlit / API)
 
 ---
 
-## 📊 Schéma base données
+## Schéma base données
 
 ### Observations nettoyées
 ```sql
@@ -150,7 +150,7 @@ CREATE TABLE presence_hebdo (
     LON_DISCRETE FLOAT,
     NOMBRE_OBSERVATIONS INT,
     PRESENCE BOOLEAN,  -- 1 si observée, 0 sinon
-    
+
     PRIMARY KEY (ANNEE, SEMAINE, ESPECE, LAT_DISCRETE, LON_DISCRETE)
 );
 ```
@@ -167,7 +167,7 @@ CREATE TABLE meteo (
     VENT_MAX FLOAT,
     HUMIDITE_MOYENNE FLOAT,
     PRESSION_MOYENNE FLOAT,
-    
+
     PRIMARY KEY (DATE, LATITUDE, LONGITUDE)
 );
 ```
@@ -181,21 +181,21 @@ CREATE TABLE features_ml (
     SEMAINE INT,
     LAT_GROUPED FLOAT,
     LON_GROUPED FLOAT,
-    
+
     -- Features météo (7j avant)
     TEMP_MAX_MEAN FLOAT,
     TEMP_MIN_MEAN FLOAT,
     PRECIP_SUM FLOAT,
     VENT_MAX MEAN FLOAT,
-    
+
     -- Features temporelles
     DAY_OF_YEAR INT,
     WEEK_OF_YEAR INT,
     MONTH INT,
-    
+
     -- Target
     PRESENCE BOOLEAN,
-    
+
     -- Split
     SPLIT VARCHAR(10)  -- "train" / "test"
 );
@@ -203,7 +203,7 @@ CREATE TABLE features_ml (
 
 ---
 
-## 🔐 Organisation fichiers
+## Organisation fichiers
 
 ```
 oiseaux_migrateurs_npdc/
@@ -269,7 +269,7 @@ oiseaux_migrateurs_npdc/
 
 ---
 
-## 🛠️ Stack technologique
+## Stack technologique
 
 | Composant | Technologie | Version |
 |-----------|-------------|---------|
@@ -288,7 +288,7 @@ oiseaux_migrateurs_npdc/
 
 ---
 
-## 🚀 Déploiement
+## Déploiement
 
 ### Local
 ```bash
@@ -325,7 +325,7 @@ gcloud run deploy oiseaux \
 
 ---
 
-## 📈 Monitoring
+## Monitoring
 
 ### Logs
 - **Répertoire** : `logs/` (créé au runtime)
@@ -343,7 +343,7 @@ gcloud run deploy oiseaux \
 
 ---
 
-## 🔄 CI/CD (optionnel pour soutenance)
+## CI/CD (optionnel pour soutenance)
 
 ```yaml
 # .gitlab-ci.yml (exemple)

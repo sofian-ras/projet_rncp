@@ -1,9 +1,9 @@
-# 📚 GUIDE COMPLET DE SOUTENANCE - Oiseaux Migrateurs NPDC
+# GUIDE COMPLET DE SOUTENANCE - Oiseaux Migrateurs NPDC
 **Pour expliquer TOUT au jury - clair, structuré, détaillé**
 
 ---
 
-## 🎯 PARTIE 1: PRÉSENTATION GÉNÉRALE (2-3 min)
+## PARTIE 1: PRÉSENTATION GÉNÉRALE (2-3 min)
 
 ### Contexte du projet
 **À dire:**
@@ -16,14 +16,14 @@
 - **Période:** 2019-2024 (6 ans d'observations)
 
 ### Résultat final
-- ✅ Pipeline automatisé (100% reproducible)
-- ✅ 3 modèles ML entraînés (XGBoost meilleur: 98.64% accuracy)
-- ✅ API REST pour prédictions
-- ✅ Dashboard web interactif
+- Pipeline automatisé (100% reproducible)
+- 3 modèles ML entraînés (XGBoost meilleur: 98.64% accuracy)
+- API REST pour prédictions
+- Dashboard web interactif
 
 ---
 
-## 🏗️ PARTIE 2: ARCHITECTURE DU SYSTÈME (3-4 min)
+## PARTIE 2: ARCHITECTURE DU SYSTÈME (3-4 min)
 
 ### Schéma global
 ```
@@ -31,13 +31,13 @@
 │                     PIPELINE OISEAUX MIGRATEURS                 │
 └─────────────────────────────────────────────────────────────────┘
 
-1️⃣  ACQUISITION
+1⃣  ACQUISITION
     ├─ scripts/acquisition.py
     │  ├─ Télécharge observations GBIF (par espèce)
     │  └─ Télécharge météo (Open-Meteo, 10 ans rétro)
     └─ Sauvegarde: donnees/brutes/observations_gbif.csv
 
-2️⃣  NETTOYAGE & ETL
+2⃣  NETTOYAGE & ETL
     ├─ scripts/nettoyage.py
     │  ├─ Valide coordonnées géographiques
     │  ├─ Filtre région NPDC
@@ -46,7 +46,7 @@
     │  └─ Traite météo (daily → weekly)
     └─ Sauvegarde: donnees/traitees/*.parquet
 
-3️⃣  EXPLORATION (EDA)
+3⃣  EXPLORATION (EDA)
     ├─ scripts/eda.py
     │  ├─ Saisonnalité (peak mois?)
     │  ├─ Densité spatiale (carte Folium)
@@ -54,7 +54,7 @@
     │  └─ Tests statistiques (χ²)
     └─ Sauvegarde: outputs/eda/*.png, *.html
 
-4️⃣  ENTRAÎNEMENT ML
+4⃣  ENTRAÎNEMENT ML
     ├─ scripts/entrainer_modele.py
     │  ├─ Prépare features (spatial + météo)
     │  ├─ Entraîne XGBoost
@@ -62,7 +62,7 @@
     │  └─ Entraîne Logistic Regression
     └─ Sauvegarde: modeles/*.pkl + metadata.json
 
-5️⃣  INTERFACE
+5⃣  INTERFACE
     ├─ api/main.py (FastAPI sur port 8000)
     │  ├─ GET  /health         → vérifie que modèle est chargé
     │  ├─ GET  /species        → liste des espèces
@@ -122,7 +122,7 @@ oiseaux_migrateurs_npdc/
 
 ---
 
-## 🚀 PARTIE 3: LANCER LE PROJET (2 min - DEMO)
+## PARTIE 3: LANCER LE PROJET (2 min - DEMO)
 
 ### Étape 0: Environnement
 ```powershell
@@ -140,10 +140,10 @@ python scripts/acquisition.py
 
 **À expliquer:**
 ```
-✓ Hirondelle rustique:    10,000 obs      └─ API GBIF + paginate
-✓ Cigogne blanche:        ~2,500 obs
-✓ Martinet noir:          ~2,500 obs
-✓ Bergeronnette:          ~2,500 obs
+ Hirondelle rustique:    10,000 obs      └─ API GBIF + paginate
+ Cigogne blanche:        ~2,500 obs
+ Martinet noir:          ~2,500 obs
+ Bergeronnette:          ~2,500 obs
 = TOTAL: 40,000 obs + 3,653 jours météo
 
 Fichier généré: donnees/brutes/observations_gbif.csv
@@ -154,11 +154,11 @@ Fichier généré: donnees/brutes/observations_gbif.csv
 def telecharger_observations_espece(self, espece_key, espece_info):
     """
     Télécharge les observations d'une espèce via GBIF API
-    
+
     Paramètres:
     - espece_key: "hirondelle_rustique" (clé dict)
     - espece_info: {"nom_scientifique": "Hirundo rustica", "code_gbif": 9515886}
-    
+
     Processus:
     1. Crée requête GBIF avec le code GBIF de l'espèce
     2. Ajoute filtre géographique (NPDC)
@@ -179,14 +179,14 @@ def telecharger_observations_espece(self, espece_key, espece_info):
         }
         response = requests.get(url, params=params)
         data = response.json()
-        
+
         if data["results"]:
             df_chunk = pd.DataFrame(data["results"])
             observations.append(df_chunk[["decimalLatitude", "decimalLongitude", "eventDate"]])
             offset += 300
         else:
             break
-    
+
     return pd.concat(observations, ignore_index=True)
 ```
 
@@ -199,24 +199,24 @@ python scripts/nettoyage.py
 
 **À expliquer:**
 ```
-📊 INPUT: 40,000 observations brutes
+ INPUT: 40,000 observations brutes
    ↓
-🔍 VALIDATION:
+ VALIDATION:
    - Supprime les NULL coordinates: 40,000 → 40,000 (ok)
    - Valide que lat/lon ∈ NPDC: 40,000 → 40,000 (ok)
    - Filtre région stricte: 40,000 → 40,000 (ok)
-   - Supprime doublons: 40,000 → 39,986 ✓
+   - Supprime doublons: 40,000 → 39,986
    ↓
-🗓️  CREATE GRILLE HEBDOMADAIRE:
+  CREATE GRILLE HEBDOMADAIRE:
    - Pour chaque (année, semaine, espèce, lat_discrete, lon_discrete)
    - Ajoute flag "présence" (1 ou 0)
    - Résultat: 1,135,680 rows (98.5% absence = déséquilibre classe)
    ↓
-🌡️  TRAITE MÉTÉO:
+  TRAITE MÉTÉO:
    - Daily → Weekly mean (temp_max, temp_min, precip, wind, humidity)
    - Fichier: 3,653 days avec 7 colonnes météo
    ↓
-📁 OUTPUT: 3 fichiers parquet nettoyés
+ OUTPUT: 3 fichiers parquet nettoyés
 ```
 
 **Code clé à montrer:** [scripts/nettoyage.py ligne 129-186]
@@ -224,7 +224,7 @@ python scripts/nettoyage.py
 def creer_grille_hebdomadaire(df_obs, params):
     """
     Crée une grille spatiotemporelle avec présence/absence
-    
+
     Logique:
     1. Extrait année + semaine ISO de chaque observation
     2. Discrétise latitude/longitude en grille (0.1° = ~11.1 km)
@@ -232,7 +232,7 @@ def creer_grille_hebdomadaire(df_obs, params):
        - Si observation existante → présence = 1
        - Sinon → présence = 0
     4. Result: grille complète toutes les combinaisons
-    
+
     Exemple:
     | année | semaine | espèce              | lat_discrete | lon_discrete | presence |
     |-------|---------|---------------------|--------------|--------------|----------|
@@ -243,17 +243,17 @@ def creer_grille_hebdomadaire(df_obs, params):
     # Extraire année/semaine
     df_obs["année"] = df_obs["eventDate"].dt.isocalendar().year
     df_obs["semaine"] = df_obs["eventDate"].dt.isocalendar().week
-    
+
     # Discrétiser grille (0.1° = ~11km)
     df_obs["lat_discrete"] = (df_obs["decimalLatitude"] // 0.1) * 0.1
     df_obs["lon_discrete"] = (df_obs["decimalLongitude"] // 0.1) * 0.1
-    
+
     # Mark présence = 1 pour chaque obs
     df_presence = df_obs.groupby(
         ["année", "semaine", "espèce", "lat_discrete", "lon_discrete"]
     ).size().reset_index(name="presence")
     df_presence["presence"] = 1
-    
+
     # Créer combinaisons complètes (toutes années × semaines × espèces × coords)
     grid = pd.MultiIndex.from_product([
         df_obs["année"].unique(),
@@ -262,11 +262,11 @@ def creer_grille_hebdomadaire(df_obs, params):
         df_obs["lat_discrete"].unique(),
         df_obs["lon_discrete"].unique()
     ], names=["année", "semaine", "espèce", "lat_discrete", "lon_discrete"]).to_frame(index=False)
-    
+
     # Merge avec observations (left join = absence = 0)
     grid = grid.merge(df_presence, on=["année", "semaine", "espèce", "lat_discrete", "lon_discrete"], how="left")
     grid["presence"] = grid["presence"].fillna(0).astype(int)
-    
+
     return grid  # 1,135,680 rows
 ```
 
@@ -284,7 +284,7 @@ python scripts/eda.py
 
 **À expliquer - Ce qu'on découvre:**
 
-1️⃣ **Saisonnalité** (`saisonnalite.png`)
+1⃣ **Saisonnalité** (`saisonnalite.png`)
 ```
 Peak observations par mois:
   Hirondelle rustique:     Mars-Avril (migration printanière)
@@ -292,37 +292,37 @@ Peak observations par mois:
   Martinet noir:           Avril-Mai
   Bergeronnette:           Mars-Avril
 
-=> Confirmation: MIGRATEURS = pic au printemps ✓
+=> Confirmation: MIGRATEURS = pic au printemps
 ```
 
-2️⃣ **Densité spatiale** (`carte_densite.html`)
+2⃣ **Densité spatiale** (`carte_densite.html`)
 ```
 Colors sur carte NPDC:
   Rouge:   haute densité observations
   Orange:  densité moyenne
   Jaune:   faible densité
-  
+
 => Permet identifier les "hotspots" d'observation
 ```
 
-3️⃣ **Corrélations météo** (`correlations_meteo.png`)
+3⃣ **Corrélations météo** (`correlations_meteo.png`)
 ```
 Heatmap: Comment météo corrèle avec présence d'oiseaux
   - Température: corrélation faible-modérée
   - Précipitations: corrélation faible
   - Vent: corrélation modérée
-  
+
 => Météo seule n'explique pas tout, mais utile + spatial temporal
 ```
 
-4️⃣ **Test χ² (Chi-square)**
+4⃣ **Test χ² (Chi-square)**
 ```
 H0: présence d'oiseaux ⊥ saisonnalité (indépendant)
 H1: présence d'oiseaux ≠ saisonnalité
 
 Résultat:
   χ² = 11,477, p-value = 0.0
-  
+
 => REJET H0: saisonnalité est SIGNIFICATIVE! (p < 0.05)
    Confirmation: oiseaux viennent à périodes spécifiques
 ```
@@ -335,13 +335,13 @@ def analyser_saisonnalite(df_obs):
     """
     # Extrait mois
     df_obs["mois"] = df_obs["eventDate"].dt.month
-    
+
     # Compte observations par mois × espèce
     saisonnalite = df_obs.groupby(["mois", "espèce"]).size().reset_index(name="count")
-    
+
     # Plot: 4 lignes (espèces), x=mois, y=count
     # => Montre pics Avril-Mai pour chaque espèce
-    
+
     plt.savefig("outputs/eda/saisonnalite.png")
 ```
 
@@ -354,7 +354,7 @@ python scripts/entrainer_modele.py
 
 **À expliquer:**
 
-#### 🔧 Préparation des features
+#### Préparation des features
 ```python
 """
 Features utilisées pour prédire présence d'oiseaux:
@@ -362,11 +362,11 @@ Features utilisées pour prédire présence d'oiseaux:
 SPATIALES:
   - lat_discrete: latitude (0.1° resolution)
   - lon_discrete: longitude (0.1° resolution)
-  
+
 TEMPORELLES:
   - année: 2019-2024
   - semaine: 1-52
-  
+
 METEOROLOGIQUES:
   - temperature_max: max temp hebdo
   - temperature_min: min temp hebdo
@@ -384,7 +384,7 @@ TARGET:
 # Problem: 98.5% classe 0 (absence), 1.5% classe 1 (présence)
 ```
 
-#### 📊 Split données
+#### Split données
 ```
 Total: 1,135,680 rows
 
@@ -402,18 +402,18 @@ Test (20%):    227,136 rows
 def preparer_features(df_grille, df_meteo=None):
     """
     Sélectionne et prépare les features pour le modèle
-    
+
     Logique:
     1. Features de base (spatial + temporal)
     2. Optionnel: ajoute météo (fusionnée par semaine)
     3. Gère les valeurs manquantes (fill NaN avec médiane)
     4. Retourne X (features), y (target)
     """
-    
+
     # Features de base
     feature_cols = ["année", "semaine", "lat_discrete", "lon_discrete"]
     X = df_grille[feature_cols].copy()
-    
+
     # Ajouter météo si dispo
     if df_meteo is not None:
         # Moyenne hebdomadaire de la météo
@@ -425,40 +425,40 @@ def preparer_features(df_grille, df_meteo=None):
             "humidite_moyenne": "mean",
             "pression_moyenne": "mean"
         }).reset_index()
-        
+
         # Fusionner avec grille
         X = X.merge(meteo_hebdo, on=["année", "semaine"], how="left")
         feature_cols.extend(["temperature_max", "temperature_min", "precipitation_sum", "vent_max", "humidite_moyenne", "pression_moyenne"])
-        
+
         # Imputer NaN avec médiane
         X[["temperature_max", "precipitation_sum"]] = X[["temperature_max", "precipitation_sum"]].fillna(X[["temperature_max", "precipitation_sum"]].median())
-    
+
     y = df_grille["présence"]
-    
+
     return X[feature_cols], y
 ```
 
-#### 🤖 Entraînement 3 modèles
+#### Entraînement 3 modèles
 ```powershell
 # XGBoost
-📦 Entraînement XGBoost...
-   ✓ Accuracy: 98.64%
-   ✓ F1-Score: 0.097
-   ✓ AUC-ROC:  0.943
-   
-# Random Forest
-🌲 Entraînement Random Forest...
-   ✓ Accuracy: 98.60%
-   ✓ F1-Score: 0.000
-   ✓ AUC-ROC:  0.935
-   
-# Logistic Regression
-📈 Entraînement Logistic Regression...
-   ✓ Accuracy: 98.60%
-   ✓ F1-Score: 0.000
-   ✓ AUC-ROC:  0.854
+ Entraînement XGBoost...
+    Accuracy: 98.64%
+    F1-Score: 0.097
+    AUC-ROC:  0.943
 
-MEILLEUR: XGBoost (AUC-ROC 0.943) ✓
+# Random Forest
+ Entraînement Random Forest...
+    Accuracy: 98.60%
+    F1-Score: 0.000
+    AUC-ROC:  0.935
+
+# Logistic Regression
+ Entraînement Logistic Regression...
+    Accuracy: 98.60%
+    F1-Score: 0.000
+    AUC-ROC:  0.854
+
+MEILLEUR: XGBoost (AUC-ROC 0.943)
 ```
 
 **Code clé à montrer:** [scripts/entrainer_modele.py ligne 90-114]
@@ -467,7 +467,7 @@ def entrainer_modeles(X_train, y_train, X_test, y_test):
     """
     Entraîne 3 modèles et les compare
     """
-    
+
     # 1. XGBoost (Gradient Boosting - meilleur pour tabular data)
     xgb_model = XGBClassifier(
         n_estimators=100,
@@ -478,7 +478,7 @@ def entrainer_modeles(X_train, y_train, X_test, y_test):
         eval_metric='logloss'
     )
     xgb_model.fit(X_train, y_train)
-    
+
     # 2. Random Forest (Ensemble de arbres décision)
     rf_model = RandomForestClassifier(
         n_estimators=100,
@@ -487,23 +487,23 @@ def entrainer_modeles(X_train, y_train, X_test, y_test):
         n_jobs=-1
     )
     rf_model.fit(X_train, y_train)
-    
+
     # 3. Logistic Regression (Baseline linéaire)
     lr_model = LogisticRegression(
         max_iter=1000,
         random_state=42
     )
     lr_model.fit(X_train, y_train)
-    
+
     # Évaluer tous les trois
     for model, name in [(xgb_model, "XGBoost"), (rf_model, "Random Forest"), (lr_model, "Logistic Regression")]:
         y_pred = model.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred)
         auc = roc_auc_score(y_test, model.predict_proba(X_test)[:, 1])
-        
+
         print(f"{name}: Accuracy={accuracy}, F1={f1}, AUC={auc}")
-        
+
         # Sauvegarder
         joblib.dump(model, f"modeles/{name.lower().replace(' ', '_')}.pkl")
 ```
@@ -528,7 +528,7 @@ python -m uvicorn oiseaux_migrateurs_npdc.api.main:app --host 127.0.0.1 --port 8
 
 **À expliquer - 3 endpoints:**
 
-1️⃣ **GET /health** (Vérifie que tout est prêt)
+1⃣ **GET /health** (Vérifie que tout est prêt)
 ```bash
 curl http://127.0.0.1:8000/health
 
@@ -540,7 +540,7 @@ curl http://127.0.0.1:8000/health
 }
 ```
 
-2️⃣ **GET /species** (Liste les espèces)
+2⃣ **GET /species** (Liste les espèces)
 ```bash
 curl http://127.0.0.1:8000/species
 
@@ -556,7 +556,7 @@ curl http://127.0.0.1:8000/species
 }
 ```
 
-3️⃣ **POST /predict** (Prédiction!)
+3⃣ **POST /predict** (Prédiction!)
 ```bash
 curl -X POST http://127.0.0.1:8000/predict \
   -H "Content-Type: application/json" \
@@ -589,23 +589,23 @@ curl -X POST http://127.0.0.1:8000/predict \
 def predict(request: PredictionRequest):
     """
     Prédis si un oiseau sera présent à une location + météo donnée
-    
+
     Logique:
     1. Récupère modèle XGBoost chargé
     2. Crée vecteur features: [lat_discrete, lon_discrete, année, semaine, temp_max, temp_min, precip, vent, humid, pression]
     3. Appelle model.predict() → probabilité de présence
     4. Retourne résultat + confiance
     """
-    
+
     # Charger modèle
     model = joblib.load("modeles/pipeline_ml.pkl")
-    
+
     # Créer features
     lat_discrete = (request.latitude // 0.1) * 0.1
     lon_discrete = (request.longitude // 0.1) * 0.1
     annee = datetime.now().year
     semaine = datetime.now().isocalendar()[1]
-    
+
     features = np.array([[
         lat_discrete,
         lon_discrete,
@@ -617,10 +617,10 @@ def predict(request: PredictionRequest):
         request.meteo.vent_max,
         request.meteo.humidite
     ]])
-    
+
     # Prédire
     proba = model.predict_proba(features)[0][1]  # Probabilité classe 1 (présence)
-    
+
     return {
         "espece": request.espece,
         "probabilite_presence": proba,
@@ -654,7 +654,7 @@ ONGLET 1: PRÉDICTION
 │                                  │
 │ [PRÉDIRE]                        │ ← Button
 │                                  │
-│ Résultat: Probabilité 87%   ✓   │
+│ Résultat: Probabilité 87%      │
 │ Confiance: 0.94 (AUC-ROC)       │
 └──────────────────────────────────┘
 
@@ -679,7 +679,7 @@ import requests
 
 # Configuration
 st.set_page_config(page_title="Oiseaux Migrateurs NPDC", layout="wide")
-st.title("🐦 Prédiction Oiseaux Migrateurs NPDC")
+st.title(" Prédiction Oiseaux Migrateurs NPDC")
 
 # Tabs
 tab1, tab2, tab3, tab4 = st.tabs(["Prédiction", "Statistiques", "Données", "Documentation"])
@@ -688,21 +688,21 @@ with tab1:
     # INPUT: Espèce
     especes = ["hirondelle_rustique", "cigogne_blanche", "martinet_noir", "bergeronnette_printaniere"]
     espece_select = st.selectbox("Espèce", especes, label_visibility="visible")
-    
+
     # INPUT: Localisation
     col1, col2 = st.columns(2)
     with col1:
         lat = st.number_input("Latitude", value=50.5, min_value=49.5, max_value=51.5)
     with col2:
         lon = st.number_input("Longitude", value=3.0, min_value=1.5, max_value=4.0)
-    
+
     # INPUT: Météo
     temp_max = st.slider("Température max (°C)", min_value=-10.0, max_value=40.0, value=20.5)
     temp_min = st.slider("Température min (°C)", min_value=-15.0, max_value=30.0, value=15.0)
     precip = st.slider("Précipitation (mm)", min_value=0.0, max_value=100.0, value=2.5)
     vent = st.slider("Vent max (km/h)", min_value=0.0, max_value=50.0, value=15.0)
     humid = st.slider("Humidité (%)", min_value=0.0, max_value=100.0, value=65.0)
-    
+
     # BUTTON: Prédire
     if st.button("PRÉDIRE", key="predict_button"):
         # Appelle API
@@ -721,9 +721,9 @@ with tab1:
                 }
             }
         )
-        
+
         result = response.json()
-        
+
         # AFFICHE RÉSULTAT
         st.success(f"Probabilité présence: {result['probabilite_presence']:.1%}")
         st.info(f"Confiance du modèle: {result['confiance']:.1%} (AUC-ROC)")
@@ -731,7 +731,7 @@ with tab1:
 
 ---
 
-## ⚙️ PARTIE 4: DÉTAILS TECHNIQUES (À approfondir si jury demande)
+## PARTIE 4: DÉTAILS TECHNIQUES (À approfondir si jury demande)
 
 ### Config générale - [scripts/config.py](scripts/config.py)
 ```python
@@ -779,14 +779,14 @@ PARAMS_ML = {
 
 **Exemple robustesse:** [scripts/acquisition.py]
 ```python
-# ✓ Robuste: filtre DataFrames vides avant concat
+#  Robuste: filtre DataFrames vides avant concat
 dfs_valides = [df for df in observations if len(df) > 0]
 if dfs_valides:
     df_final = pd.concat(dfs_valides, ignore_index=True)
 else:
     df_final = pd.DataFrame()  # Pas planter si rien
 
-# ✓ Logging: tracer chaque étape
+#  Logging: tracer chaque étape
 logger.info(f"Hirondelle rustique: {len(df_final)} observations")
 ```
 
@@ -795,24 +795,24 @@ logger.info(f"Hirondelle rustique: {len(df_final)} observations")
 pytest -v
 
 # 6 tests passants:
-✓ test_acquisition.py    - Vérifie téléchargement GBIF
-✓ test_nettoyage.py      - Valide ETL
-✓ test_eda.py            - Vérifie graphiques
-✓ test_models.py         - Validation modèles
-✓ test_api.py            - API endpoints
-✓ test_dashboard.py      - Interface
+ test_acquisition.py    - Vérifie téléchargement GBIF
+ test_nettoyage.py      - Valide ETL
+ test_eda.py            - Vérifie graphiques
+ test_models.py         - Validation modèles
+ test_api.py            - API endpoints
+ test_dashboard.py      - Interface
 ```
 
 ---
 
-## 📈 PARTIE 5: RÉSULTATS ET VALIDATION (1-2 min)
+## PARTIE 5: RÉSULTATS ET VALIDATION (1-2 min)
 
 ### Performance des modèles
 ```
 ┌────────────────┬──────────┬──────────┬────────┐
 │ Modèle         │ Accuracy │ F1-Score │ AUC    │
 ├────────────────┼──────────┼──────────┼────────┤
-│ XGBoost ⭐     │ 98.64%   │ 0.097    │ 0.943  │
+│ XGBoost      │ 98.64%   │ 0.097    │ 0.943  │
 │ Random Forest  │ 98.60%   │ 0.000    │ 0.935  │
 │ Log Regression │ 98.60%   │ 0.000    │ 0.854  │
 └────────────────┴──────────┴──────────┴────────┘
@@ -833,16 +833,16 @@ Note: High accuracy dû à déséquilibre (98.5% classe 0)
 
 ### Fichiers générés
 ```
-✓ donnees/brutes/observations_gbif.csv
-✓ donnees/traitees/*.parquet (3 fichiers)
-✓ modeles/*.pkl (3 modèles + metadata)
-✓ outputs/eda/*.png, *.html (3 visualisations)
-✓ modeles/evaluations.csv (comparaison)
+ donnees/brutes/observations_gbif.csv
+ donnees/traitees/*.parquet (3 fichiers)
+ modeles/*.pkl (3 modèles + metadata)
+ outputs/eda/*.png, *.html (3 visualisations)
+ modeles/evaluations.csv (comparaison)
 ```
 
 ---
 
-## ✅ PARTIE 6: POINTS CLÉS À RETENIR (Résumé 1 min)
+## PARTIE 6: POINTS CLÉS À RETENIR (Résumé 1 min)
 
 **Si jury demande "En 1 minute, résume ton projet":**
 
@@ -858,7 +858,7 @@ Note: High accuracy dû à déséquilibre (98.5% classe 0)
 >
 > *Faisabilité:*
 > - Code 100% reproducible et automatisé
-> - Gestion d'erreurs robuste (tests 6/6 ✓)
+> - Gestion d'erreurs robuste (tests 6/6 )
 > - Dual-mode execution (script et package)
 > - Documentation exhaustive
 >
@@ -869,7 +869,7 @@ Note: High accuracy dû à déséquilibre (98.5% classe 0)
 
 ---
 
-## 🎤 PARTIE 7: RÉPONDRE AUX QUESTIONS DU JURY
+## PARTIE 7: RÉPONDRE AUX QUESTIONS DU JURY
 
 ### Q1: "Pourquoi XGBoost plutôt que Random Forest?"
 **Réponse:**
@@ -925,11 +925,11 @@ XGBoost a AUC-ROC 0.943 vs Random Forest 0.935
 ### Q6: "Limitations du projet?"
 **Réponse:**
 ```
-✗ Déséquilibre classe (98.5% absence)
-✗ Features météo seules insufisantes (corrélation faible)
-✗ Pas de données externes (cycles solaires, populations d'insectes)
-✗ Pas de prédictions futures (besoin forecast météo)
-✗ Zone petite (NPDC seulement)
+ Déséquilibre classe (98.5% absence)
+ Features météo seules insufisantes (corrélation faible)
+ Pas de données externes (cycles solaires, populations d'insectes)
+ Pas de prédictions futures (besoin forecast météo)
+ Zone petite (NPDC seulement)
 
 Futures améliorations:
 + Données plus riches (comportement, alimentation)
@@ -940,7 +940,7 @@ Futures améliorations:
 
 ---
 
-## 🎯 PARTIE 8: FLOW DE SOUTENANCE (4-5 min TOTAL)
+## PARTIE 8: FLOW DE SOUTENANCE (4-5 min TOTAL)
 
 **Timings recommandés:**
 
@@ -973,7 +973,7 @@ streamlit run dashboard.py
 
 ---
 
-## 📚 ANNEXE: COMMANDES UTILES
+## ANNEXE: COMMANDES UTILES
 
 ```powershell
 # Activation environnement
@@ -1001,4 +1001,4 @@ python -m pytest -q
 
 ---
 
-**BON COURAGE POUR LA SOUTENANCE!** 🍀
+**BON COURAGE POUR LA SOUTENANCE!**

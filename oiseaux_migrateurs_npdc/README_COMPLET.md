@@ -1,4 +1,4 @@
-# 🐦 Prédiction Oiseaux Migrateurs - Nord-Pas-de-Calais
+# Prédiction Oiseaux Migrateurs - Nord-Pas-de-Calais
 
 **Projet RNCP : Concepteur Développeur en Science des Données**
 
@@ -6,7 +6,7 @@ Un système complet de prédiction de l'arrivée des oiseaux migrateurs basé su
 
 ---
 
-## 📑 Table des matières
+## Table des matières
 
 1. [Objectif global](#objectif-global)
 2. [Architecture du système](#architecture-du-système)
@@ -104,7 +104,7 @@ L’idée est que l’interface web puisse montrer :
 
 ---
 
-## 🎤 Version soutenance orale de 10 minutes
+## Version soutenance orale de 10 minutes
 
 Voici une version claire, naturelle et vulgarisée que tu peux dire à l’oral pour présenter tout le projet du début à la fin.
 
@@ -149,7 +149,7 @@ Voici une version claire, naturelle et vulgarisée que tu peux dire à l’oral 
 
 ---
 
-## 🎯 Objectif global
+## Objectif global
 
 ### Le problème en détail
 
@@ -160,10 +160,10 @@ Les oiseaux migrateurs (cigognes, hirondelles, martinets) arrivent au printemps 
 - La nourriture disponible (insectes dépendent de la météo)
 
 **Pourquoi c'est important ?**
-- 🌍 Changement climatique : les dates de migration changent
-- 🔬 Recherche scientifique : comprendre les patterns
-- 🏞️ Conservation : protéger les sites d'arrivée au bon moment
-- 📊 Planification : savoir quand installer des nichoirs, organiser des observations
+- Changement climatique : les dates de migration changent
+- Recherche scientifique : comprendre les patterns
+- Conservation : protéger les sites d'arrivée au bon moment
+- Planification : savoir quand installer des nichoirs, organiser des observations
 
 **Le défi technique** :
 Comment **prédire avec précision** : "Si on est le 15 avril, qu'il fait 18°C à Lille, quelle est la probabilité de voir une cigogne ?"
@@ -172,19 +172,19 @@ Comment **prédire avec précision** : "Si on est le 15 avril, qu'il fait 18°C 
 
 **Approche Machine Learning supervisé** :
 
-1️⃣ **Collecter des données historiques** (10 ans, 2015-2024)
+1⃣ **Collecter des données historiques** (10 ans, 2015-2024)
    - Où les oiseaux ont été vus (latitude/longitude)
    - Quand (date exacte)
    - Conditions météo du jour
 
-2️⃣ **Transformer en problème de classification binaire**
+2⃣ **Transformer en problème de classification binaire**
    - Question : "À cette semaine + localité, l'oiseau est-il présent ?"
    - Réponse : OUI (1) ou NON (0)
 
-3️⃣ **Entraîner un modèle** qui apprend les patterns
+3⃣ **Entraîner un modèle** qui apprend les patterns
    - Le modèle découvre : "Semaine 15-20 + Température >15°C + Nord-Pas-de-Calais = Forte probabilité"
 
-4️⃣ **Déployer en production** via API REST
+4⃣ **Déployer en production** via API REST
    - N'importe qui peut interroger le modèle
    - Réponse en millisecondes
 
@@ -192,24 +192,24 @@ Comment **prédire avec précision** : "Si on est le 15 avril, qu'il fait 18°C 
 
 ### Les résultats obtenus
 
-✅ **Modèle XGBoost avec 98.5% d'accuracy**  
+**Modèle XGBoost avec 98.5% d'accuracy**  
    → Sur 56 784 prédictions de test, 55 962 sont correctes
-   
-✅ **AUC-ROC de 0.97** (excellente discrimination)  
+
+**AUC-ROC de 0.97** (excellente discrimination)  
    → Le modèle distingue très bien présence vs absence
-   
-✅ **API REST FastAPI** pour prédictions en temps réel  
+
+**API REST FastAPI** pour prédictions en temps réel  
    → Répond en ~50ms, peut gérer 1000+ requêtes/seconde
-   
-✅ **Dashboard interactif Streamlit**  
+
+**Dashboard interactif Streamlit**  
    → Interface utilisateur sans code, graphiques, sliders
 
-✅ **Pipeline reproductible**  
+**Pipeline reproductible**  
    → Tout le code est versionné, documenté, reproductible
 
 ---
 
-## 🏗️ Architecture du système
+## Architecture du système
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -217,13 +217,13 @@ Comment **prédire avec précision** : "Si on est le 15 avril, qu'il fait 18°C 
 └────────────┬────────────────────────────────────┬───────────┘
              │                                    │
              ▼                                    ▼
-      🌐 Dashboard                          📡 API REST
+       Dashboard                           API REST
       Streamlit                             FastAPI
       Port 8501                             Port 8000
              │                                    │
              └────────────┬─────────────────────┘
                           │
-                    🤖 MODÈLES ML
+                     MODÈLES ML
             (Pipeline XGBoost EnMemoire)
                           │
          ┌────────────────┼────────────────┐
@@ -253,7 +253,7 @@ Comment **prédire avec précision** : "Si on est le 15 avril, qu'il fait 18°C 
 
 ---
 
-## 🚀 Installation et démarrage
+## Installation et démarrage
 
 ### Prérequis
 - Python 3.11+
@@ -303,7 +303,7 @@ python -m venv .venv
   Modifie la variable PATH dans ton terminal :
     PATH = .venv/Scripts;C:\Python311;...
            ↑ En premier !
-  
+
   Maintenant quand tu tapes "python", le système utilise
   .venv/Scripts/python.exe au lieu de C:\Python311\python.exe
 ```
@@ -375,9 +375,9 @@ streamlit run dashboard.py --server.port 8501
 
 ---
 
-## 📊 Détail de chaque composant
+## Détail de chaque composant
 
-### 1️⃣ Configuration centrale : `scripts/config.py`
+### 1⃣ Configuration centrale : `scripts/config.py`
 
 **Rôle** : Point d'entrée unique pour toutes les constantes du projet.
 
@@ -409,7 +409,7 @@ class ParametresAcquisition:
     ANNEE_FIN = 2024
     LIMITE_RESULTATS_PAR_ESPECE = 10000  # Max 10k par espèce
     DELAI_ENTRE_REQUETES = 1  # 1 seconde entre requêtes (respecter GBIF)
-    
+
     # API Open-Meteo (gratuite)
     API_METEO_URL = "https://archive-api.open-meteo.com/v1/archive"
     VARIABLES_METEO = [
@@ -425,7 +425,7 @@ class ParametresML:
     TEST_SIZE = 0.2  # 80% train, 20% test
     VALIDATION_SIZE = 0.1
     RANDOM_STATE = 42  # Seed pour reproductibilité
-    
+
     XGBOOST_PARAMS = {
         "max_depth": 6,           # Profondeur arbre
         "learning_rate": 0.05,    # Vitesse d'apprentissage
@@ -439,7 +439,7 @@ class ParametresML:
 
 ---
 
-### 2️⃣ Acquisition de données : `scripts/acquisition.py`
+### 2⃣ Acquisition de données : `scripts/acquisition.py`
 
 **Rôle** : Télécharger les observations d'oiseaux et les données météo.
 
@@ -473,27 +473,27 @@ GBIF = **Global Biodiversity Information Facility** (Infrastructure Mondiale d'I
 ```python
 class AcquisiteurGBIF:
     """Télécharge observations depuis GBIF"""
-    
+
     def telecharger_observations_espece(self, nom_espece, infos_espece):
         """
         Télécharge toutes les observations d'une espèce
         dans la bbox Nord-Pas-de-Calais (2015-2024)
-        
+
         PARAMÈTRES :
         - nom_espece : "cigogne_blanche" (clé interne)
         - infos_espece : dict avec code_gbif, nom_scientifique, etc.
-        
+
         RETOUR :
         - DataFrame pandas avec [espece, date, lat, lon, id_gbif]
         """
-        
+
         # URL de l'API REST de GBIF
         url = "https://api.gbif.org/v1/occurrence/search"
-        
+
         observations = []  # Liste pour stocker résultats
         offset = 0         # Position de départ (pagination)
         limit = 10000      # Maximum à télécharger par espèce
-        
+
         # BOUCLE DE PAGINATION
         # GBIF retourne max 300 résultats par requête
         # On fait plusieurs requêtes jusqu'à avoir 10 000 observations
@@ -501,40 +501,40 @@ class AcquisiteurGBIF:
             # PARAMÈTRES DE LA REQUÊTE HTTP GET
             params = {
                 # 1. ESPÈCE
-                "taxonKey": infos_espece["code_gbif"],  
+                "taxonKey": infos_espece["code_gbif"],
                 # Exemple : 2481819 pour Ciconia ciconia
                 # Plus fiable que "scientificName" car unique
-                
+
                 # 2. ZONE GÉOGRAPHIQUE (bbox = bounding box)
                 "geometry": "POLYGON((1.5 49.5, 4.0 49.5, 4.0 51.5, 1.5 51.5, 1.5 49.5))",
                 # Format WKT (Well-Known Text)
                 # Points : (lon lat) !
                 # Polygone qui couvre le Nord-Pas-de-Calais
                 # Ordre : Sud-Ouest, Sud-Est, Nord-Est, Nord-Ouest, retour Sud-Ouest
-                
+
                 # 3. PÉRIODE TEMPORELLE
                 "year": "2015,2024",
                 # Toutes les années entre 2015 et 2024 inclus
-                
+
                 # 4. FILTRES DE QUALITÉ
-                "hasCoordinate": "true",  
+                "hasCoordinate": "true",
                 # Exclut observations sans GPS (inutilisables)
-                
-                "hasGeospatialIssue": "false",  
+
+                "hasGeospatialIssue": "false",
                 # Exclut observations avec erreur GPS détectée par GBIF
-                
-                "occurrenceStatus": "PRESENT",  
+
+                "occurrenceStatus": "PRESENT",
                 # Observation confirmée (pas "ABSENT")
-                
+
                 # 5. PAGINATION
                 "limit": 300,      # 300 résultats par page (max GBIF)
                 "offset": offset,  # À partir de quelle position
             }
-            
+
             # FAIRE LA REQUÊTE HTTP
             response = requests.get(url, params=params, timeout=30)
             # Timeout = 30s (si GBIF ne répond pas, abandon)
-            
+
             # PARSER LA RÉPONSE JSON
             data = response.json()
             # Structure :
@@ -545,11 +545,11 @@ class AcquisiteurGBIF:
             #   "count": 10547,  ← Nombre TOTAL de résultats
             #   "results": [...]  ← Les 300 résultats de cette page
             # }
-            
+
             resultats = data.get("results", [])
             if not resultats:
                 break  # Plus de résultats = fin de pagination
-            
+
             # EXTRAIRE LES CHAMPS PERTINENTS
             # On ne garde que ce dont on a besoin (pas les 50+ champs GBIF)
             for obs in resultats:
@@ -560,30 +560,30 @@ class AcquisiteurGBIF:
                     "longitude": obs.get("decimalLongitude"),  # 2.8234
                     "id_gbif": obs.get("gbifID"),             # 123456789
                 })
-            
+
             # AVANCER LA PAGINATION
             offset += len(resultats)  # offset = 0 → 300 → 600 → 900...
-            
+
             # RESPECTER LES RATE LIMITS
             time.sleep(1)  # Attendre 1 seconde entre requêtes
             # GBIF demande max 1 requête/seconde pour être "gentil"
             # Sans ça, risque de ban temporaire (HTTP 429 Too Many Requests)
-        
+
         # Convertir en DataFrame pandas
         return pd.DataFrame(observations)
 
 
 class AcquisiteurMeteo:
     """Télécharge données météo depuis Open-Meteo"""
-    
+
     def telecharger_meteo(self, latitude, longitude, date_debut, date_fin):
         """
         Télécharge météo historique pour une localité
         Format dates : "2024-01-15"
         """
-        
+
         url = "https://archive-api.open-meteo.com/v1/archive"
-        
+
         params = {
             "latitude": latitude,
             "longitude": longitude,
@@ -592,10 +592,10 @@ class AcquisiteurMeteo:
             "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max,relative_humidity_2m_mean",
             "timezone": "Europe/Paris",
         }
-        
+
         response = requests.get(url, params=params, timeout=30)
         data = response.json()
-        
+
         # Structurer en DataFrame
         df = pd.DataFrame({
             "date": pd.to_datetime(data["daily"]["time"]),
@@ -605,7 +605,7 @@ class AcquisiteurMeteo:
             "vent_max": data["daily"]["windspeed_10m_max"],
             "humidite_moyenne": data["daily"]["relative_humidity_2m_mean"],
         })
-        
+
         return df
 
 
@@ -626,14 +626,14 @@ donnees_gbif.to_csv("donnees/brutes/observations_gbif.csv", index=False)
 
 ---
 
-### 3️⃣ Nettoyage ETL : `scripts/nettoyage.py`
+### 3⃣ Nettoyage ETL : `scripts/nettoyage.py`
 
 **Rôle** : Nettoyer et transformer les données brutes.
 
 ```python
 class NettoyeurObservations:
     """Valide et nettoie observations GBIF"""
-    
+
     def charger_et_nettoyer(self, chemin_fichier):
         """
         Pipeline de nettoyage complet :
@@ -644,87 +644,87 @@ class NettoyeurObservations:
         5. Parser dates
         6. Supprimer doublons
         """
-        
+
         # ÉTAPE 1 : Charger
         df = pd.read_csv(chemin_fichier)
         print(f"Initial : {len(df)} lignes")
-        
+
         # ÉTAPE 2 : Supprimer valeurs nulles critiques
         df = df.dropna(subset=["latitude", "longitude", "date_observation"])
         print(f"Après nulls : {len(df)} lignes")
-        
+
         # ÉTAPE 3 : Valider coordonnées (dans la bbox étendue)
         df = df[(df["latitude"] >= 49.0) & (df["latitude"] <= 52.0) &
                 (df["longitude"] >= 1.0) & (df["longitude"] <= 4.5)]
         print(f"Après validation coords : {len(df)} lignes")
-        
+
         # ÉTAPE 4 : PARSER LES DATES (complexe !)
         # PROBLÈME : GBIF retourne des dates dans plusieurs formats
         # Format 1 : "2024-04-15" (simple date)
         # Format 2 : "2024-04-15T09:23:00" (date + heure)
         # Format 3 : "2024-04-15T09:23:00.123Z" (date + heure + ms + timezone)
-        
+
         df["date_observation"] = pd.to_datetime(
             df["date_observation"],
-            
-            errors="coerce",   
+
+            errors="coerce",
             # "coerce" = Si parsing échoue, mettre NaT (Not a Time)
             # Alternative : "raise" (crash) ou "ignore" (garde string)
             # On choisit "coerce" pour être tolérant
-            
-            format="mixed",    
+
+            format="mixed",
             # Pandas essaie automatiquement plusieurs formats ISO8601
             # Plus lent mais plus robuste
-            
+
             utc=True
             # Interpréter toutes les dates comme UTC (temps universel)
             # Évite les problèmes de timezone (heure d'été/hiver)
-            
-        ).dt.tz_localize(None)  
+
+        ).dt.tz_localize(None)
         # Retirer l'information timezone (on garde juste la date)
         # Résultat final : datetime64[ns] sans timezone
-        
+
         # SUPPRIMER LES DATES INVALIDES
         df = df.dropna(subset=["date_observation"])
         print(f"Après parsing dates : {len(df)} lignes")
-        
+
         # EXEMPLE DE TRANSFORMATION :
         # Input : "2024-04-15T09:23:00+02:00"
         # pd.to_datetime(..., utc=True) → 2024-04-15 07:23:00 (converti en UTC)
         # .dt.tz_localize(None) → 2024-04-15 07:23:00 (sans timezone)
         # Pour nous, peu importe l'heure, on ne garde que la date
-        
+
         # ÉTAPE 5 : SUPPRIMER LES DOUBLONS
         # PROBLÈME : Plusieurs sources peuvent remonter la même observation
         # Exemple : un ornithologue publie sur 2 plateformes différentes
-        
+
         # STRATÉGIE À DEUX NIVEAUX :
-        
+
         # Niveau 1 : Si GBIF ID existe, l'utiliser (idéal)
         if "id_gbif" in df.columns and df["id_gbif"].notna().any():
             # L'ID GBIF est UNIQUE au monde
             # Si 2 lignes ont le même gbifID → c'est le même oiseau
             df = df.drop_duplicates(subset=["id_gbif"], keep="first")
             # keep="first" = Garder la première occurrence, supprimer les autres
-            
+
         # Niveau 2 : Sinon, clé composite (plus fragile)
         else:
             # Si pas d'ID GBIF, on considère que c'est un doublon si :
             # - Même espèce
             # - Même date
             # - Même position (lat/lon)
-            # 
+            #
             # LIMITATION : Si 2 cigognes différentes au même endroit le même jour,
             # on ne garde qu'une observation. C'est un compromis acceptable.
             df = df.drop_duplicates(
                 subset=["espece", "date_observation", "latitude", "longitude"],
                 keep="first"
             )
-        
+
         print(f"Après doublons : {len(df)} lignes")
-        
+
         return df
-    
+
     # RÉSULTAT FINAL : DataFrame propre et validé
     # Exemple :
     #   espece            date_observation  latitude  longitude  id_gbif
@@ -735,50 +735,50 @@ class NettoyeurObservations:
 
 class AggregeurTemporel:
     """Crée grille hebdomadaire d'observations"""
-    
+
     @staticmethod
     def creer_grille_hebdomadaire(df_observations):
         """
         Transforme observations ponctuelles
         en grille de présence/absence par semaine
-        
+
         Structure finale :
         annee | semaine | espece | lat_discrete | lon_discrete | presence
         2020  |    20   | cigogne|    50.1      |     2.5      |    1
         2020  |    21   | cigogne|    50.1      |     2.5      |    0
         """
-        
+
         # Extraire année et semaine ISO
         df_observations["annee"] = df_observations["date_observation"].dt.year
         df_observations["semaine"] = df_observations["date_observation"].dt.isocalendar().week
-        
+
         # DISCRÉTISER LES COORDONNÉES EN GRILLE
         # PROBLÈME : Chaque observation a des coordonnées GPS ultra-précises
         # Exemple : 50.354712, 2.823456
         # Si on garde cette précision, chaque point est unique → impossible à modéliser
-        
+
         # SOLUTION : Arrondir à 0.1° (environ 11 km)
         df_observations["lat_discrete"] = df_observations["latitude"].round(1)
         df_observations["lon_discrete"] = df_observations["longitude"].round(1)
-        
+
         # EXEMPLE DE TRANSFORMATION :
         # latitude: 50.354712 → lat_discrete: 50.4
         # latitude: 50.387234 → lat_discrete: 50.4
         # latitude: 50.412983 → lat_discrete: 50.4
         # → Ces 3 observations sont maintenant à la "même" localité
-        
+
         # RÉSULTAT : Nord-Pas-de-Calais devient une grille de ~10x10 cellules
         # Au lieu de milliers de points uniques
-        
+
         # ANALOGIE : C'est comme diviser une carte en quartiers
         # "50.4, 2.8" = quartier "Centre-ville Lille"
         # Au lieu de "Rue de la Liberté n°42"
-        
+
         # CRÉER UNE GRILLE COMPLÈTE (PRODUIT CARTÉSIEN)
         # CONCEPT CLÉ : On veut TOUTES les combinaisons possibles
         # Même celles où l'oiseau n'a PAS été vu
         # Pourquoi ? Pour apprendre "présence" ET "absence"
-        
+
         # 10 ans x 52 semaines x 1 espèce x ~10 lats x ~10 lons = 283,920 lignes
         grille = pd.DataFrame(
             itertools.product(
@@ -790,36 +790,36 @@ class AggregeurTemporel:
             ),
             columns=["annee", "semaine", "espece", "lat_discrete", "lon_discrete"]
         )
-        
+
         # EXEMPLE DE PRODUIT CARTÉSIEN :
         # itertools.product([1,2], ['A','B']) donne :
         # (1,'A'), (1,'B'), (2,'A'), (2,'B')
-        
+
         # Ici :
         # (2015, 1, 'cigogne', 50.0, 2.5)
         # (2015, 1, 'cigogne', 50.0, 2.6)
         # (2015, 1, 'cigogne', 50.0, 2.7)
         # ...
         # (2024, 52, 'cigogne', 51.5, 4.0)
-        
+
         # RÉSULTAT : Matrice COMPLÈTE de toutes les possibilités
         # La plupart auront presence=0 (l'oiseau n'était pas là)
         # Quelques-unes auront presence=1 (l'oiseau était là)
-        
+
         # Marquer présence/absence
         observations_marquees = df_observations.groupby(
             ["annee", "semaine", "espece", "lat_discrete", "lon_discrete"]
         ).size().reset_index(name="nb_obs")
-        
+
         grille = grille.merge(
             observations_marquees,
             on=["annee", "semaine", "espece", "lat_discrete", "lon_discrete"],
             how="left"
         )
-        
+
         grille["nb_obs"] = grille["nb_obs"].fillna(0)
         grille["presence"] = (grille["nb_obs"] > 0).astype(int)  # 1 si obs, 0 sinon
-        
+
         return grille
 
 # Résultats finaux :
@@ -841,7 +841,7 @@ grille.to_parquet("donnees/traitees/grille_presence_hebdo.parquet")
 
 ---
 
-### 4️⃣ Entraînement modèles : `scripts/entrainer_modele.py`
+### 4⃣ Entraînement modèles : `scripts/entrainer_modele.py`
 
 **Rôle** : Créer les modèles ML et les sauvegarder.
 
@@ -850,12 +850,12 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
     """
     Entraîne 3 modèles différents et compare leurs performances
     """
-    
+
     # =========== MODÈLE 1 : XGBOOST ===========
     # QU'EST-CE QUE XGBOOST ?
     # XGBoost = eXtreme Gradient Boosting
     # C'est un algorithme de "boosting gradient" optimisé
-    
+
     # ANALOGIE : Imagine une équipe de 100 experts qui vote
     # - Expert 1 fait une première prédiction (souvent incorrecte)
     # - Expert 2 se concentre sur corriger les erreurs d'Expert 1
@@ -863,7 +863,7 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
     # - ...
     # - Expert 100 affine encore
     # Vote final = moyenne pondérée des 100 experts
-    
+
     # CHAQUE "EXPERT" = UN ARBRE DE DÉCISION
     # Exemple d'arbre simple :
     #                  [semaine < 17 ?]
@@ -875,10 +875,10 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
     #    OUI       NON               OUI            NON
     #     |         |                 |              |
     #  proba=0.8  proba=0.2        proba=0.3     proba=0.1
-    
+
     pipeline_xgb = Pipeline([
         # ÉTAPE 1 : NORMALISATION
-        ("scaler", StandardScaler()),  
+        ("scaler", StandardScaler()),
         # StandardScaler transforme chaque feature pour avoir :
         # - Moyenne = 0
         # - Écart-type = 1
@@ -892,55 +892,55 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
         #
         # POURQUOI ? Pour que toutes les features aient la même "importance" numérique
         # Sinon, "annee" (valeurs ~2020) domine "semaine" (valeurs ~26)
-        
+
         # ÉTAPE 2 : MODÈLE XGBOOST
         ("xgb", XGBClassifier(
-            max_depth=6,           
+            max_depth=6,
             # PROFONDEUR MAX DE CHAQUE ARBRE
             # 6 niveaux = 2^6 = 64 feuilles max par arbre
             # Plus profond = plus complexe = risque de surapprentissage
             # Moins profond = plus simple = risque de sous-apprentissage
             # 6 est un bon compromis
-            
-            learning_rate=0.05,    
+
+            learning_rate=0.05,
             # TAUX D'APPRENTISSAGE (aussi appelé "eta")
             # Contrôle combien chaque nouvel arbre contribue
             # 0.05 = 5% de contribution par arbre
-            # 
+            #
             # ANALOGIE : C'est comme la taille des pas dans une descente de montagne
             # Petit pas (0.05) = lent mais sûr, ne rate pas le minimum
             # Grand pas (0.3) = rapide mais peut rater le minimum
             #
             # Formule : nouvelle_prediction = ancienne + learning_rate * correction
             #           nouvelle_prediction = ancienne + 0.05 * correction
-            
-            n_estimators=100,      
+
+            n_estimators=100,
             # NOMBRE D'ARBRES
             # 100 arbres = 100 experts qui votent
             # Plus d'arbres = modèle plus précis (mais plus lent)
             # On s'arrête à 100 car au-delà, le gain est marginal
-            
-            subsample=0.8,         
+
+            subsample=0.8,
             # ÉCHANTILLONNAGE DES DONNÉES
             # 0.8 = chaque arbre est entraîné sur 80% des données aléatoires
             # Les 20% restants changent à chaque arbre
-            # 
+            #
             # POURQUOI ? Pour décorréler les arbres
             # Si tous les arbres voient EXACTEMENT les mêmes données,
             # ils feront tous des erreurs similaires
             # Avec subsample, chaque arbre apprend différemment
-            
-            colsample_bytree=0.8,  
+
+            colsample_bytree=0.8,
             # ÉCHANTILLONNAGE DES FEATURES
             # 0.8 = chaque arbre utilise 80% des features aléatoires
             # Ici, 4 features * 0.8 = 3.2 → environ 3 features par arbre
-            # 
+            #
             # EXEMPLE :
             # Arbre 1 : utilise [annee, semaine, lat_discrete]
             # Arbre 2 : utilise [semaine, lat_discrete, lon_discrete]
             # Arbre 3 : utilise [annee, lat_discrete, lon_discrete]
             # → Diversité = meilleure généralisation
-            
+
             eval_metric="logloss",
             # MÉTRIQUE D'ÉVALUATION PENDANT L'ENTRAÎNEMENT
             # logloss = logarithmic loss (perte logarithmique)
@@ -949,18 +949,18 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
             #
             # Formule : -1/N * sum( y*log(p) + (1-y)*log(1-p) )
             # où y = vraie valeur (0 ou 1), p = probabilité prédite
-            
+
             random_state=42
             # SEED ALÉATOIRE pour reproductibilité
             # Même seed = mêmes résultats à chaque exécution
             # 42 est une convention (référence à "Guide du voyageur galactique")
         ))
     ])
-    
+
     # ENTRAÎNEMENT DU MODÈLE
     # Ce qui se passe en interne :
     pipeline_xgb.fit(X_train, y_train)
-    # 
+    #
     # 1. StandardScaler analyse X_train et calcule moyenne/écart-type par feature
     # 2. StandardScaler transforme X_train avec ces paramètres
     # 3. XGBoost reçoit les données normalisées
@@ -972,49 +972,49 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
     # 5. XGBoost calcule les erreurs (différence prédiction vs réalité)
     # 6. XGBoost construit arbre 2 pour corriger ces erreurs
     # 7. Répète jusqu'à avoir 100 arbres
-    # 
+    #
     # TEMPS D'ENTRAÎNEMENT : ~2-5 minutes sur 227 136 exemples
-    
+
     # ÉVALUATION SUR ENSEMBLE DE TEST
     y_pred = pipeline_xgb.predict(X_test)
     # predict() retourne la classe prédite : 0 ou 1
     # Interne : utilise predict_proba() et seuil à 0.5
     #   si proba > 0.5 → prédit 1 (présent)
     #   si proba <= 0.5 → prédit 0 (absent)
-    
+
     y_pred_proba = pipeline_xgb.predict_proba(X_test)[:, 1]
     # predict_proba() retourne [[P(classe=0), P(classe=1)]] pour chaque ligne
     # [:, 1] extrait la colonne 1 = P(classe=1) = probabilité de présence
     # EXEMPLE : [[0.95, 0.05], [0.12, 0.88], [0.67, 0.33]]
     # [:, 1] → [0.05, 0.88, 0.33]
-    
+
     # CALCUL DES MÉTRIQUES
     metriques = {
-        "accuracy": accuracy_score(y_test, y_pred),  
+        "accuracy": accuracy_score(y_test, y_pred),
         # ACCURACY = (TP + TN) / Total
         # % de prédictions correctes (toutes classes confondues)
         # EXEMPLE : 55962 / 56784 = 0.9853 = 98.53%
-        
-        "f1_score": f1_score(y_test, y_pred),        
+
+        "f1_score": f1_score(y_test, y_pred),
         # F1-SCORE = 2 * (Précision * Rappel) / (Précision + Rappel)
         # Moyenne harmonique de précision et rappel
         # Important pour classes déséquilibrées
         # EXEMPLE : 0.1106 (faible car classe positive rare)
-        
-        "auc_roc": roc_auc_score(y_test, y_pred_proba),  
+
+        "auc_roc": roc_auc_score(y_test, y_pred_proba),
         # AUC-ROC = Aire sous la courbe ROC
         # Courbe ROC = Taux vrais positifs vs Taux faux positifs
         # 0.5 = modèle aléatoire, 1.0 = modèle parfait
         # EXEMPLE : 0.9694 = excellent
     }
-    
+
     # SAUVEGARDE
     joblib.dump(pipeline_xgb, "modeles/pipeline_ml.pkl")
-    
-    
+
+
     # =========== MODÈLE 2 : RANDOM FOREST ===========
     # Random Forest = Ensemble d'arbres décorrelés
-    
+
     pipeline_rf = Pipeline([
         ("scaler", StandardScaler()),
         ("rf", RandomForestClassifier(
@@ -1024,14 +1024,14 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
             random_state=42
         ))
     ])
-    
+
     pipeline_rf.fit(X_train, y_train)
     # ... évaluation similaire ...
-    
-    
+
+
     # =========== MODÈLE 3 : LOGISTIC REGRESSION ===========
     # Baseline simple et interprétable
-    
+
     pipeline_lr = Pipeline([
         ("scaler", StandardScaler()),
         ("lr", LogisticRegression(
@@ -1039,11 +1039,11 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
             random_state=42
         ))
     ])
-    
+
     pipeline_lr.fit(X_train, y_train)
     # ... évaluation similaire ...
-    
-    
+
+
     # =========== COMPARAISON ===========
     return {
         "XGBoost": metriques_xgb,
@@ -1081,7 +1081,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 ---
 
-### 5️⃣ API REST : `api/main.py`
+### 5⃣ API REST : `api/main.py`
 
 **Rôle** : Servir les prédictions via HTTP.
 
@@ -1160,9 +1160,9 @@ def lister_especes():
 def predire_presence(demande: DemandePredicton) -> ReponsePredicton:
     """
     Prédiction : "Quelle est la probabilité de voir cette espèce ?"
-    
+
     FLUX COMPLET D'UNE REQUÊTE :
-    
+
     1. CLIENT envoie requête HTTP POST
     2. FastAPI reçoit le JSON
     3. Pydantic valide automatiquement (types, ranges, required fields)
@@ -1173,39 +1173,39 @@ def predire_presence(demande: DemandePredicton) -> ReponsePredicton:
     8. On interprète la probabilité
     9. FastAPI sérialise la réponse en JSON
     10. CLIENT reçoit la réponse
-    
+
     ÉTAPES TECHNIQUES :
     """
-    
+
     # ÉTAPE 1 : VALIDER L'ESPÈCE
     from config import ESPECES
     if demande.espece not in ESPECES:
         # HTTPException = Erreur HTTP personnalisée
         # 400 = Bad Request (erreur côté client)
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail=f"Espèce inconnue: {demande.espece}. Espèces disponibles: {list(ESPECES.keys())}"
         )
         # FastAPI retourne automatiquement :
         # {
         #   "detail": "Espèce inconnue: cigogne_noire. Espèces disponibles: [...]"
         # }
-    
+
     # ÉTAPE 2 : VÉRIFIER QUE LE MODÈLE EST CHARGÉ
     if MODEL is None:
         # 503 = Service Unavailable (serveur pas prêt)
         raise HTTPException(
-            status_code=503, 
+            status_code=503,
             detail="Modèle non disponible. Vérifiez que pipeline_ml.pkl existe."
         )
-    
+
     # ÉTAPE 3 : PRÉPARER LES FEATURES
     # Le modèle attend : [annee, semaine, lat_discrete, lon_discrete]
     # On a : jour_annee, latitude, longitude
     # Il faut transformer !
-    
+
     from datetime import datetime as dt
-    
+
     # 3A. CONVERTIR JOUR_ANNÉE → SEMAINE
     # Jour 1-7 = semaine 1
     # Jour 8-14 = semaine 2
@@ -1213,23 +1213,23 @@ def predire_presence(demande: DemandePredicton) -> ReponsePredicton:
     # Jour 359-365 = semaine 52
     semaine = (demande.meteo.jour_annee - 1) // 7 + 1
     # Exemples :
-    # jour_annee=1 → (1-1)//7+1 = 0//7+1 = 0+1 = 1 ✅
-    # jour_annee=8 → (8-1)//7+1 = 7//7+1 = 1+1 = 2 ✅
-    # jour_annee=120 → (120-1)//7+1 = 119//7+1 = 17+1 = 18 ✅
-    
+    # jour_annee=1 → (1-1)//7+1 = 0//7+1 = 0+1 = 1
+    # jour_annee=8 → (8-1)//7+1 = 7//7+1 = 1+1 = 2
+    # jour_annee=120 → (120-1)//7+1 = 119//7+1 = 17+1 = 18
+
     # 3B. ANNÉE ACTUELLE
     annee = dt.now().year  # 2026
     # Note : On pourrait aussi extraire l'année de la date de la requête
     # Mais pour la prédiction, l'année exacte importe peu
     # (le modèle utilise l'année surtout pour la tendance long terme)
-    
+
     # 3C. DISCRÉTISER LES COORDONNÉES
     # MÉTHODE : arrondir à 1 décimale (0.1°)
     # 50.354 → 50.4
     # 2.823 → 2.8
     lat_discrete = round(demande.latitude, 1)
     lon_discrete = round(demande.longitude, 1)
-    
+
     # 3D. CRÉER UN DATAFRAME PANDAS
     # IMPORTANT : Le modèle attend un DataFrame avec les NOMS de colonnes exacts
     features = pd.DataFrame([{  # Liste avec 1 dict = DataFrame à 1 ligne
@@ -1241,14 +1241,14 @@ def predire_presence(demande: DemandePredicton) -> ReponsePredicton:
     # Résultat :
     #    annee  semaine  lat_discrete  lon_discrete
     # 0   2026       18          50.5           2.8
-    
+
     # ÉTAPE 4 : FAIRE LA PRÉDICTION
     try:
         # MODEL est un Pipeline : [StandardScaler, XGBClassifier]
         # Appeler predict_proba() fait automatiquement :
         # 1. StandardScaler.transform(features) → normalisation
         # 2. XGBClassifier.predict_proba(features_normalisées) → probabilités
-        
+
         proba_array = MODEL.predict_proba(features)
         # Retourne : [[P(classe=0), P(classe=1)]]
         # Exemple : [[0.9955, 0.0045]]
@@ -1257,41 +1257,41 @@ def predire_presence(demande: DemandePredicton) -> ReponsePredicton:
         #   - Ligne 0 = notre unique exemple
         #   - Colonne 0 = P(absence)
         #   - Colonne 1 = P(présence)
-        
+
         proba_presence = proba_array[0][1]
         # [0] = première ligne (notre exemple)
         # [1] = deuxième colonne (probabilité de présence)
         # Résultat : 0.0045 (0.45%)
-        
+
     except Exception as e:
         # Si quoi que ce soit plante (feature manquante, erreur mémoire, etc.)
         # 500 = Internal Server Error (erreur serveur imprévue)
         raise HTTPException(
-            status_code=500, 
+            status_code=500,
             detail=f"Erreur lors de la prédiction: {str(e)}"
         )
-    
+
     # ÉTAPE 5 : INTERPRÉTER LE SCORE
     # On classifie la confiance en 3 niveaux
     # Ces seuils sont arbitraires mais logiques :
-    
+
     if proba_presence > 0.75:
         confiance = "HAUTE"
         # > 75% = Très probable, forte confiance
-        
+
     elif proba_presence > 0.60:
         confiance = "MOYENNE"
         # 60-75% = Probable, confiance modérée
-        
+
     else:
         confiance = "BASSE"
         # < 60% = Peu probable ou incertain
-    
+
     # Exemples :
     # proba=0.85 → HAUTE   ("Très probable de voir l'oiseau")
     # proba=0.68 → MOYENNE ("Peut-être")
     # proba=0.12 → BASSE   ("Peu probable")
-    
+
     # ÉTAPE 6 : RETOURNER LA RÉPONSE
     return ReponsePredicton(
         espece=demande.espece,
@@ -1329,7 +1329,7 @@ class ObservationMeteo(BaseModel):
     # ge = greater or equal (≥)
     # le = less or equal (≤)
     # Donc : -50 ≤ temperature_max ≤ 50
-    
+
     temperature_min: float = Field(..., ge=-50, le=50)
     precipitation_sum: float = Field(..., ge=0, le=500)  # 0-500mm
     vent_max: float = Field(..., ge=0, le=50)            # 0-50 km/h
@@ -1338,29 +1338,29 @@ class ObservationMeteo(BaseModel):
 
 # REQUÊTES EXEMPLES :
 
-# ✅ REQUÊTE VALIDE
+#  REQUÊTE VALIDE
 request_body = {
   "espece": "cigogne_blanche",
   "latitude": 50.5,
   "longitude": 2.75,
   "meteo": {
-    "temperature_max": 18.5,    # ✅ Dans [-50, 50]
-    "temperature_min": 12.3,    # ✅ Dans [-50, 50]
-    "precipitation_sum": 2.1,   # ✅ Dans [0, 500]
-    "vent_max": 15.0,           # ✅ Dans [0, 50]
-    "humidite_moyenne": 65.0,   # ✅ Dans [0, 100]
-    "jour_annee": 120           # ✅ Dans [1, 365]
+    "temperature_max": 18.5,    #  Dans [-50, 50]
+    "temperature_min": 12.3,    #  Dans [-50, 50]
+    "precipitation_sum": 2.1,   #  Dans [0, 500]
+    "vent_max": 15.0,           #  Dans [0, 50]
+    "humidite_moyenne": 65.0,   #  Dans [0, 100]
+    "jour_annee": 120           #  Dans [1, 365]
   }
 }
 # → FastAPI accepte et appelle predire_presence()
 
-# ❌ REQUÊTE INVALIDE 1 : Temperature trop élevée
+#  REQUÊTE INVALIDE 1 : Temperature trop élevée
 request_body = {
   "espece": "cigogne_blanche",
   "latitude": 50.5,
   "longitude": 2.75,
   "meteo": {
-    "temperature_max": 100,  # ❌ > 50
+    "temperature_max": 100,  #  > 50
     ...
   }
 }
@@ -1375,7 +1375,7 @@ request_body = {
 #   ]
 # }
 
-# ❌ REQUÊTE INVALIDE 2 : Champ manquant
+#  REQUÊTE INVALIDE 2 : Champ manquant
 request_body = {
   "espece": "cigogne_blanche",
   "latitude": 50.5,
@@ -1393,10 +1393,10 @@ request_body = {
 #   ]
 # }
 
-# ❌ REQUÊTE INVALIDE 3 : Mauvais type
+#  REQUÊTE INVALIDE 3 : Mauvais type
 request_body = {
   "espece": "cigogne_blanche",
-  "latitude": "cinquante",  # ❌ String au lieu de float
+  "latitude": "cinquante",  #  String au lieu de float
   ...
 }
 # → FastAPI retourne 422 :
@@ -1412,15 +1412,15 @@ request_body = {
 ```
 
 **AVANTAGES DE PYDANTIC** :
-✅ **Validation automatique** : Pas besoin de coder `if latitude is None: ...`  
-✅ **Messages d'erreur clairs** : Le client sait exactement ce qui ne va pas  
-✅ **Documentation auto** : FastAPI génère automatiquement le Swagger (OpenAPI)  
-✅ **Type hints** : IDE peut auto-compléter `demande.latitude`  
-✅ **Sécurité** : Évite les valeurs absurdes (lat=999, temp=1000)
+**Validation automatique** : Pas besoin de coder `if latitude is None: ...`  
+**Messages d'erreur clairs** : Le client sait exactement ce qui ne va pas  
+**Documentation auto** : FastAPI génère automatiquement le Swagger (OpenAPI)  
+**Type hints** : IDE peut auto-compléter `demande.latitude`  
+**Sécurité** : Évite les valeurs absurdes (lat=999, temp=1000)
 
 ---
 
-### 6️⃣ Dashboard interactif : `dashboard.py`
+### 6⃣ Dashboard interactif : `dashboard.py`
 
 **Rôle** : Interface utilisateur conviviale pour tester la prédiction.
 
@@ -1429,11 +1429,11 @@ import streamlit as st
 
 # Configuration page
 st.set_page_config(
-    page_title="🐦 Oiseaux Migrateurs",
+    page_title=" Oiseaux Migrateurs",
     layout="wide"
 )
 
-st.header("🔮 Faire une prédiction")
+st.header(" Faire une prédiction")
 
 # Formulaire utilisateur
 col1, col2 = st.columns(2)
@@ -1443,7 +1443,7 @@ with col1:
         "Espèce",
         ["cigogne_blanche", "hirondelle_rustique", "martinet_noir", "bergeronnette_printaniere"]
     )
-    
+
     jour_annee = st.slider(
         "Jour de l'année",
         min_value=1,
@@ -1456,7 +1456,7 @@ with col2:
     precipitation_sum = st.slider("Précipitations (mm)", 0.0, 100.0, 2.1)
 
 # Bouton prédiction
-if st.button("🚀 Prédire"):
+if st.button(" Prédire"):
     # Appeler API
     response = requests.post(
         "http://localhost:8000/predict",
@@ -1474,9 +1474,9 @@ if st.button("🚀 Prédire"):
             }
         }
     )
-    
+
     result = response.json()
-    
+
     # Afficher résultats
     st.metric(
         "Probabilité",
@@ -1486,7 +1486,7 @@ if st.button("🚀 Prédire"):
         "Confiance",
         result['confiance']
     )
-    
+
     # Jauge visuelle
     fig = px.bar(
         x=[result['probabilite_presence']],
@@ -1498,7 +1498,7 @@ if st.button("🚀 Prédire"):
 
 ---
 
-## 🔄 Pipeline de données
+## Pipeline de données
 
 ### Vue d'ensemble
 
@@ -1507,27 +1507,27 @@ if st.button("🚀 Prédire"):
    ↓
    [10 000 observations GBIF brutes]
    donnees/brutes/observations_gbif.csv
-   
+
 2. NETTOYAGE ETL
    ↓
    [9 997 observations nettoyées]
    donnees/traitees/observations_nettoyees.parquet
-   
+
 3. AGRÉGATION TEMPORELLE
    ↓
    [283 920 lignes : grille semaine × localité × présence/absence]
    donnees/traitees/grille_presence_hebdo.parquet
-   
+
 4. SPLIT TRAIN/TEST
    ↓
    X_train (227 136), y_train (227 136)
    X_test (56 784), y_test (56 784)
-   
+
 5. ENTRAÎNEMENT
    ↓
    [Modèle XGBoost avec 100 arbres]
    modeles/pipeline_ml.pkl
-   
+
 6. PRÉDICTIONS
    ↓
    API FastAPI reçoit requête JSON
@@ -1616,7 +1616,7 @@ model.predict_proba(features) = [[0.9955, 0.0045]]
 
 ---
 
-## 🤖 Entraînement des modèles
+## Entraînement des modèles
 
 ### Processus d'apprentissage
 
@@ -1626,7 +1626,7 @@ model.predict_proba(features) = [[0.9955, 0.0045]]
 Itération 1 : Arbre 1
   Données → ... → Prédictions
   Erreur = Vraies valeurs - Prédictions
-  
+
               ┌─ presence=1?
          ├─ semaine < 17?
          │  │
@@ -1639,7 +1639,7 @@ Itération 1 : Arbre 1
 
 Itération 2 : Arbre 2
   Erreurs itération 1 →  ... → Corrections
-  
+
   (Arbre2 se concentre sur les exemples mal prédits par Arbre1)
 
 Itération 3, 4, ..., 100 : Répéter
@@ -1660,10 +1660,10 @@ ACCURACY = (TP + TN) / Total
          → Correct dans 98.5% des cas
 
 # OÙ :
-# TP (True Positive) = 52  : Prédit présent, réellement présent ✅
-# TN (True Negative) = 55910 : Prédit absent, réellement absent ✅
-# FP (False Positive) = 14 : Prédit présent, réellement absent ❌
-# FN (False Negative) = 822 : Prédit absent, réellement présent ❌
+# TP (True Positive) = 52  : Prédit présent, réellement présent
+# TN (True Negative) = 55910 : Prédit absent, réellement absent
+# FP (False Positive) = 14 : Prédit présent, réellement absent
+# FN (False Negative) = 822 : Prédit absent, réellement présent
 ```
 
 **INTERPRÉTATION** :
@@ -1679,11 +1679,11 @@ ACCURACY = (TP + TN) / Total
 ```python
 # CALCULER PRÉCISION ET RAPPEL
 
-Précision = TP / (TP + FP) 
-          = 52 / (52 + 14) 
+Précision = TP / (TP + FP)
+          = 52 / (52 + 14)
           = 52 / 66
           = 0.79 (79%)
-          
+
 Rappel = TP / (TP + FN)
        = 52 / (52 + 822)
        = 52 / 874
@@ -1699,11 +1699,11 @@ F1 = 2 * (Précision * Rappel) / (Précision + Rappel)
 
 - **Précision (79%)** : "Quand le modèle dit 'présent', il a raison 79% du temps"
   - Sur 66 fois où il prédit "présent", 52 sont corrects
-  
+
 - **Rappel (6%)** : "Le modèle détecte seulement 6% des vraies présences"
   - Sur 874 cas réels de présence, il n'en trouve que 52
   - Il **rate 822 oiseaux** (faux négatifs)
-  
+
 - **F1-Score (11%)** : Médiocre car le modèle est **très conservateur**
   - Il préfère dire "absent" pour ne pas se tromper
   - Bonne précision mais mauvais rappel
@@ -1736,7 +1736,7 @@ Seuil = 0.1 :
   - Si proba > 0.1 → prédit "présent"
   - Beaucoup de vraies présences détectées (haut rappel)
   - Mais aussi beaucoup de fausses alarmes (basse précision)
-  
+
 Seuil = 0.9 :
   - Si proba > 0.9 → prédit "présent"
   - Peu de fausses alarmes (haute précision)
@@ -1775,21 +1775,21 @@ Réalité  Absent  55910      14        (True Neg, False Pos)
          Présent   822      52        (False Neg, True Pos)
 
 # LECTURE :
-# Coin haut-gauche (55910) : Vraiment absent, prédit absent ✅ PARFAIT
-# Coin haut-droite (14) : Vraiment absent, prédit présent ❌ FAUSSE ALARME
-# Coin bas-gauche (822) : Vraiment présent, prédit absent ❌ RATÉ
-# Coin bas-droite (52) : Vraiment présent, prédit présent ✅ TROUVÉ
+# Coin haut-gauche (55910) : Vraiment absent, prédit absent  PARFAIT
+# Coin haut-droite (14) : Vraiment absent, prédit présent  FAUSSE ALARME
+# Coin bas-gauche (822) : Vraiment présent, prédit absent  RATÉ
+# Coin bas-droite (52) : Vraiment présent, prédit présent  TROUVÉ
 ```
 
 **INTERPRÉTATION GLOBALE** :
 
-🟢 **Points forts** :
+**Points forts** :
 - Accuracy élevée (98.5%) : Rarement se trompe globalement
 - AUC-ROC excellent (0.97) : Sait distinguer présence/absence
 - Précision correcte (79%) : Quand il prédit "présent", souvent juste
 - Peu de faux positifs (14) : Ne crie pas au loup
 
-🟡 **Points faibles** :
+**Points faibles** :
 - F1-Score faible (11%) : Déséquilibre entre précision et rappel
 - Rappel très bas (6%) : Rate beaucoup de vraies présences
 - 822 faux négatifs : Dit "absent" alors que l'oiseau est là
@@ -1806,7 +1806,7 @@ Réalité  Absent  55910      14        (True Neg, False Pos)
 
 ---
 
-## 🌐 API REST et prédictions
+## API REST et prédictions
 
 ### Architecture requête/réponse
 
@@ -1855,40 +1855,40 @@ def predict(demande: DemandePredicton):
     if demande.espece not in ESPECES:
         raise HTTPException(status_code=400, detail="Espèce inconnue")
     # 400 Bad Request si espèce invalide
-    
+
     if modele is None:
         raise HTTPException(status_code=503, detail="Service indisponible")
     # 503 Service Unavailable si modèle pas chargé
-    
+
     try:
         result = modele.predict_proba(features)
     except:
         raise HTTPException(status_code=500, detail="Erreur serveur")
     # 500 Internal Server Error si erreur imprévisible
-    
+
     # 200 OK si succès
     return result
 ```
 
 ---
 
-## 📊 Dashboard interactif
+## Dashboard interactif
 
 ### Onglets disponibles
 
-**Onglet 1 : 🔮 Prédiction**
+**Onglet 1 : Prédiction**
 - Sélectionner espèce
 - Sélectionner jour de l'année (slider)
 - Entrer conditions météo
 - Cliquer "Prédire"
 - Résultat : probabilité + jauge
 
-**Onglet 2 : 📈 Statistiques**
+**Onglet 2 : Statistiques**
 - Afficher volume données (9 997 observations)
 - Tableau comparaison modèles
 - Graphique saisonnalité (PNG)
 
-**Onglet 3 : ℹ️ Documentation**
+**Onglet 3 : ℹ Documentation**
 - Explication projet
 - Sources données
 - Architecture
@@ -1896,7 +1896,7 @@ def predict(demande: DemandePredicton):
 
 ---
 
-## 🎤 Guide de soutenance
+## Guide de soutenance
 
 ### Points clés à expliquer
 
@@ -2010,11 +2010,11 @@ Invoke-WebRequest -Uri "http://localhost:8000/predict" `
 # EXPLIQUER AU JURY :
 # "Le modèle prédit 0.45% de probabilité de présence.
 #  Confiance BASSE car < 60%.
-#  
+#
 #  INTERPRÉTATION : Fin avril à Lille, les cigognes SONT arrivées
 #  (période de migration = mars-avril), MAIS cette localité précise
 #  n'est pas une zone d'observation fréquente d'après les données GBIF.
-#  
+#
 #  Le modèle répond : 'Oui, c'est la bonne saison, mais peu probable
 #  à cet endroit exact.'"
 ```
@@ -2119,10 +2119,10 @@ Start-Process "http://localhost:8000/docs"
 
 ---
 
-**📊 Diapo 1 : Page de titre**
+** Diapo 1 : Page de titre**
 
 ```
-🐦 PRÉDICTION OISEAUX MIGRATEURS
+ PRÉDICTION OISEAUX MIGRATEURS
 Nord-Pas-de-Calais
 
 Machine Learning & API REST
@@ -2136,47 +2136,47 @@ Mars 2026
 
 ---
 
-**🎯 Diapo 2 : Problématique**
+** Diapo 2 : Problématique**
 
 ```
 PROBLÈME
 
-🕹️ Les oiseaux migrateurs arrivent à des dates variables
+ Les oiseaux migrateurs arrivent à des dates variables
    - Variation de 2-4 semaines selon les années
    - Dépend de la météo et du changement climatique
 
-🤔 QUESTION CLÉ :
+ QUESTION CLÉ :
    "Le 15 avril avec 18°C à Lille,
     quelle probabilité de voir une cigogne ?"
 
 ENJEUX
-🌍 Conservation : Protéger zones au bon moment
-🔬 Recherche : Comprendre impact climat
-📊 Planification : Installer nichoirs, comptages
+ Conservation : Protéger zones au bon moment
+ Recherche : Comprendre impact climat
+ Planification : Installer nichoirs, comptages
 ```
 
 **Conseil** : Graphique montrant dates d'arrivée 2015-2024 (variation)
 
 ---
 
-**🐣 Diapo 3 : Solution proposée**
+** Diapo 3 : Solution proposée**
 
 ```
 APPROCHE MACHINE LEARNING
 
-1️⃣ Collecter 10 ans de données (2015-2024)
+1⃣ Collecter 10 ans de données (2015-2024)
    • 10 000 observations GBIF
    • Données météo Open-Meteo
 
-2️⃣ Créer pipeline ETL
+2⃣ Créer pipeline ETL
    • Nettoyage et validation
    • Transformation en grille temporelle
 
-3️⃣ Entraîner modèle XGBoost
+3⃣ Entraîner modèle XGBoost
    • 4 features simples
    • 98.5% accuracy, AUC-ROC 0.97
 
-4️⃣ Déployer en production
+4⃣ Déployer en production
    • API REST (FastAPI)
    • Dashboard interactif (Streamlit)
 ```
@@ -2185,7 +2185,7 @@ APPROCHE MACHINE LEARNING
 
 ---
 
-**🏛️ Diapo 4 : Architecture technique**
+** Diapo 4 : Architecture technique**
 
 ```
   ┌───────────────────┐
@@ -2237,17 +2237,17 @@ APPROCHE MACHINE LEARNING
 
 ---
 
-**📊 Diapo 5 : Données et pipeline**
+** Diapo 5 : Données et pipeline**
 
 ```
 DONNÉES COLLECTÉES
 
-🌐 GBIF : 10 000 observations
+ GBIF : 10 000 observations
    • Période : 2015-2024 (10 ans)
    • Zone : Nord-Pas-de-Calais
    • 4 espèces : Cigogne, Hirondelle, Martinet, Bergeronnette
 
-☁️ Open-Meteo : Données météo quotidiennes
+ Open-Meteo : Données météo quotidiennes
    • Température min/max
    • Précipitations, Vent, Humidité
 
@@ -2261,23 +2261,23 @@ PIPELINE ETL
 
 ---
 
-**🤖 Diapo 6 : Modèle et résultats**
+** Diapo 6 : Modèle et résultats**
 
 ```
 MODÈLE : XGBoost
 
-🎯 FEATURES (4)
+ FEATURES (4)
    • année (2015-2024)
    • semaine (1-52)
    • lat_discrete (49.0-52.0)
    • lon_discrete (1.0-4.5)
 
-⚙️ HYPERPARAMÈTRES
+ HYPERPARAMÈTRES
    • 100 arbres, profondeur 6
    • learning_rate = 0.05
    • subsample = 0.8
 
-🏆 PERFORMANCES
+ PERFORMANCES
    • Accuracy : 98.5%
    • AUC-ROC : 0.97
    • F1-Score : 0.11 (classe déséquilibrée)
@@ -2288,7 +2288,7 @@ MODÈLE : XGBoost
 
 ---
 
-**🖥️ Diapo 7 : Démo live**
+** Diapo 7 : Démo live**
 
 ```
 DÉMONSTRATION
@@ -2312,54 +2312,54 @@ Interface interactive avec jauge visuelle
 
 ---
 
-**✅ Diapo 8 : Conclusion**
+** Diapo 8 : Conclusion**
 
 ```
 RÉALISATIONS
 
-✅ Pipeline data science complet
-✅ 10 ans de données historiques
-✅ Modèle ML performant (98.5%)
-✅ API REST production-ready
-✅ Dashboard utilisateur
-✅ Documentation exhaustive
+ Pipeline data science complet
+ 10 ans de données historiques
+ Modèle ML performant (98.5%)
+ API REST production-ready
+ Dashboard utilisateur
+ Documentation exhaustive
 
 PERSPECTIVES
 
-🔮 Plus d'espèces (50+)
-🧠 Deep learning (LSTM)
-☁️ Météo temps réel
-📧 Alertes automatiques
-📦 Déploiement cloud (Docker/K8s)
+ Plus d'espèces (50+)
+ Deep learning (LSTM)
+ Météo temps réel
+ Alertes automatiques
+ Déploiement cloud (Docker/K8s)
 
-🐦 IMPACT : Système opérationnel pour ornithologues
+ IMPACT : Système opérationnel pour ornithologues
 ```
 
 **Conseil** : Photo terrain (observateur d'oiseaux)
 
 ---
 
-**💬 Diapo 9 : Questions ?**
+** Diapo 9 : Questions ?**
 
 ```
 MERCI DE VOTRE ATTENTION
 
-💬 Questions ?
+ Questions ?
 
-📍 Ressources :
+ Ressources :
    • GitHub : [lien repo]
    • Documentation : README_COMPLET.md
    • API Live : http://localhost:8000/docs
    • Dashboard : http://localhost:8501
 
-📧 Contact : [votre email]
+ Contact : [votre email]
 ```
 
 **Conseil** : QR code vers repo GitHub
 
 ---
 
-## 📦 Déploiement en production
+## Déploiement en production
 
 ### Avec Docker
 
@@ -2391,25 +2391,25 @@ docker run -p 8000:8000 oiseaux-api
 
 ---
 
-## 🎓 Conclusion
+## Conclusion
 
 Ce projet démontre la **chaîne complète** data science :
 
-✅ **Acquisition** : Télécharger données publiques (GBIF, Open-Meteo)  
-✅ **Nettoyage** : ETL robuste avec validation  
-✅ **Exploration** : EDA et tests statistiques  
-✅ **ML** : 3 modèles comparés, meilleur retenu  
-✅ **Production** : API FastAPI haute performance  
-✅ **UX** : Dashboard interactif Streamlit  
-✅ **Docs** : Code commenté, architecture clair  
+**Acquisition** : Télécharger données publiques (GBIF, Open-Meteo)  
+**Nettoyage** : ETL robuste avec validation  
+**Exploration** : EDA et tests statistiques  
+**ML** : 3 modèles comparés, meilleur retenu  
+**Production** : API FastAPI haute performance  
+**UX** : Dashboard interactif Streamlit  
+**Docs** : Code commenté, architecture clair  
 
-**Résultat final** : Un système opérationnel qu'un ornithologiste peut utiliser demain pour prédire les migrations. 🐦
-
----
+**Résultat final** : Un système opérationnel qu'un ornithologiste peut utiliser demain pour prédire les migrations.
 
 ---
 
-## 📚 Annexes : Concepts approfondis
+---
+
+## Annexes : Concepts approfondis
 
 ### A. Qu'est-ce qu'un modèle de Machine Learning ?
 
@@ -2422,7 +2422,7 @@ Imagine que tu apprends à un enfant à reconnaître des chiens.
 if animal.a_4_pattes and animal.aboie and animal.queue:
     return "chien"
 ```
-❌ Problème : Trop de cas particuliers ! Et les chiens à 3 pattes ? Les chiens qui n'aboient pas ?
+Problème : Trop de cas particuliers ! Et les chiens à 3 pattes ? Les chiens qui n'aboient pas ?
 
 **Approche Machine Learning** :
 ```python
@@ -2430,7 +2430,7 @@ if animal.a_4_pattes and animal.aboie and animal.queue:
 # 2. L'algorithme APPREND les patterns (forme oreilles, museau, etc.)
 # 3. Sur une nouvelle photo, il prédit : "Chien avec 95% de confiance"
 ```
-✅ Avantage : Le modèle généralise et s'adapte automatiquement
+Avantage : Le modèle généralise et s'adapte automatiquement
 
 **DANS NOTRE PROJET** :
 - Photos de chiens = 10 000 observations d'oiseaux
@@ -2467,10 +2467,10 @@ Imaginons qu'on a ces observations :
 
 | semaine | lat_discrete | lon_discrete | présence |
 |---------|--------------|--------------|----------|
-| 10      | 50.5         | 2.8          | 0        |
-| 18      | 50.5         | 2.8          | 1        |
-| 18      | 51.2         | 3.5          | 0        |
-| 25      | 50.5         | 2.8          | 1        |
+| 10 | 50.5 | 2.8 | 0 |
+| 18 | 50.5 | 2.8 | 1 |
+| 18 | 51.2 | 3.5 | 0 |
+| 25 | 50.5 | 2.8 | 1 |
 
 XGBoost construit un arbre comme ça :
 
@@ -2535,13 +2535,13 @@ Examen passé réponse 2 : "Rome"
 
 **Stratégie 1 (mauvaise)** : Mémoriser
 - L'étudiant retient : "Question 1 → Paris, Question 2 → Rome"
-- Sur les examens PASSÉS : 100% ✅
-- Sur un NOUVEL examen : "Quelle est la capitale d'Espagne ?" → ❌ Il ne sait pas
+- Sur les examens PASSÉS : 100%
+- Sur un NOUVEL examen : "Quelle est la capitale d'Espagne ?" → Il ne sait pas
 
 **Stratégie 2 (bonne)** : Comprendre
 - L'étudiant apprend : "Les capitales sont les villes principales des pays"
-- Sur les examens PASSÉS : 95% ✅
-- Sur un NOUVEL examen : "Quelle est la capitale d'Espagne ?" → "Madrid" ✅ Il extrapole !
+- Sur les examens PASSÉS : 95%
+- Sur un NOUVEL examen : "Quelle est la capitale d'Espagne ?" → "Madrid" Il extrapole !
 
 **DANS LE MACHINE LEARNING** :
 
@@ -2549,7 +2549,7 @@ Examen passé réponse 2 : "Rome"
 # STRATÉGIE 1 : Tout utiliser pour entraîner (MAUVAIS)
 model.fit(toutes_les_donnees)
 model.predict(toutes_les_donnees)  # 100% accuracy !
-# ❌ Mais sur nouvelles données ? Performance s'effondre !
+#  Mais sur nouvelles données ? Performance s'effondre !
 
 # STRATÉGIE 2 : Split train/test (BON)
 train_data = 80% des données
@@ -2557,7 +2557,7 @@ test_data = 20% des données (JAMAIS VUS pendant entraînement)
 
 model.fit(train_data)              # Apprendre sur 80%
 model.predict(test_data)           # Tester sur 20% nouveaux
-# ✅ Si bon score sur test = le modèle GÉNÉRALISE bien
+#  Si bon score sur test = le modèle GÉNÉRALISE bien
 ```
 
 **POURQUOI 80/20 PRÉCISÉMENT ?**
@@ -2584,7 +2584,7 @@ Tu vas au restaurant
 → Faire la cuisine toi-même
 → Nettoyer la vaisselle
 ```
-❌ Compliqué, risqué, non scalable
+Compliqué, risqué, non scalable
 
 **Avec API REST** (séparation front/back) :
 ```
@@ -2595,7 +2595,7 @@ Tu dis : "Je veux un steak" (requête HTTP)
 → Le serveur te rapporte le plat (réponse JSON)
 Tu manges (dashboard affiche résultat)
 ```
-✅ Simple, séparé, modulaire
+Simple, séparé, modulaire
 
 **DANS NOTRE PROJET** :
 
@@ -2627,11 +2627,11 @@ CLIENT (affiche jauge ou texte)
 ```
 
 **AVANTAGES** :
-✅ **Séparation** : Dashboard peut être en React, Python, mobile, etc.
-✅ **Réutilisabilité** : N'importe qui peut appeler l'API
-✅ **Scalabilité** : Plusieurs serveurs API derrière load balancer
-✅ **Versioning** : API v1, v2 coexistent
-✅ **Sécurité** : API peut ajouter authentification
+**Séparation** : Dashboard peut être en React, Python, mobile, etc.
+**Réutilisabilité** : N'importe qui peut appeler l'API
+**Scalabilité** : Plusieurs serveurs API derrière load balancer
+**Versioning** : API v1, v2 coexistent
+**Sécurité** : API peut ajouter authentification
 
 **REST = REpresentational State Transfer**
 - Utilise HTTP (GET, POST, PUT, DELETE)
@@ -2660,7 +2660,7 @@ CLIENT (affiche jauge ou texte)
 function predict() {
   const espece = document.getElementById('espece').value;
   const jour = document.getElementById('jour_annee').value;
-  
+
   fetch('http://localhost:8000/predict', {
     method: 'POST',
     body: JSON.stringify({espece, meteo: {jour_annee: jour}}),
@@ -2674,7 +2674,7 @@ function predict() {
 </script>
 ```
 
-❌ **Problèmes** :
+**Problèmes** :
 - Mélange HTML/CSS/JS
 - Beaucoup de code pour résultat simple
 - Design à gérer manuellement
@@ -2696,7 +2696,7 @@ if st.button("Prédire"):
     st.plotly_chart(create_gauge(result['probabilite']))
 ```
 
-✅ **Avantages** :
+**Avantages** :
 - Tout en Python (pas de HTML/CSS/JS)
 - Widgets intégrés (slider, selectbox, metric)
 - Graphiques intégrés (plotly, matplotlib)
@@ -2704,14 +2704,14 @@ if st.button("Prédire"):
 - Prototypage ultra-rapide
 
 **QUAND UTILISER STREAMLIT ?**
-✅ POC, MVP, dashboard interne
-✅ Projets data science (pas besoin de full-stack dev)
-✅ Besoin de graphiques interactifs
+POC, MVP, dashboard interne
+Projets data science (pas besoin de full-stack dev)
+Besoin de graphiques interactifs
 
 **QUAND NE PAS UTILISER ?**
-❌ Application grand public (besoins custom UI/UX)
-❌ Besoin de contrôle total sur design
-❌ Application mobile
+Application grand public (besoins custom UI/UX)
+Besoin de contrôle total sur design
+Application mobile
 
 **DANS NOTRE PROJET** :
 - Streamlit PARFAIT pour dashboard ornithologue
@@ -2727,10 +2727,10 @@ if st.button("Prédire"):
 
 Imaginons 1 million de lignes avec ces données :
 
-| annee | semaine | espece          | lat_discrete | lon_discrete | presence |
+| annee | semaine | espece | lat_discrete | lon_discrete | presence |
 |-------|---------|-----------------|--------------|--------------|----------|
-| 2015  | 1       | cigogne_blanche | 50.5         | 2.8          | 0        |
-| ...   | ...     | ...             | ...          | ...          | ...      |
+| 2015 | 1 | cigogne_blanche | 50.5 | 2.8 | 0 |
+| ... | ... | ... | ... | ... | ... |
 
 **FORMAT CSV** (texte brut) :
 ```
@@ -2740,10 +2740,10 @@ annee,semaine,espece,lat_discrete,lon_discrete,presence
 ...
 ```
 
-📏 **Taille** : ~150 MB
-⏱️ **Chargement** : 5-10 secondes
-🔍 **Lecture partielle** : Impossible (doit tout lire)
-📊 **Types** : Non garantis (tout est string, conversion nécessaire)
+**Taille** : ~150 MB
+**Chargement** : 5-10 secondes
+**Lecture partielle** : Impossible (doit tout lire)
+**Types** : Non garantis (tout est string, conversion nécessaire)
 
 **FORMAT PARQUET** (binaire optimisé) :
 ```
@@ -2752,10 +2752,10 @@ Métadonnées : {annee: int16, semaine: int8, espece: string, ...}
 Index : [offsets par colonne]
 ```
 
-📏 **Taille** : ~15 MB (10x plus petit !)
-⏱️ **Chargement** : 0.5 seconde (10x plus rapide !)
-🔍 **Lecture partielle** : Peut lire juste colonnes nécessaires
-📊 **Types** : Garantis (int, float, string préservés)
+**Taille** : ~15 MB (10x plus petit !)
+**Chargement** : 0.5 seconde (10x plus rapide !)
+**Lecture partielle** : Peut lire juste colonnes nécessaires
+**Types** : Garantis (int, float, string préservés)
 
 **POURQUOI CETTE DIFFÉRENCE ?**
 
@@ -2793,7 +2793,7 @@ semaines = df["semaine"]      # Extrait colonne
 
 # Lire juste une colonne avec Parquet
 df = pd.read_parquet("data.parquet", columns=["semaine"])
-# ✅ Charge JUSTE cette colonne ! 50x plus rapide
+#  Charge JUSTE cette colonne ! 50x plus rapide
 ```
 
 **DANS NOTRE PROJET** :
@@ -2847,7 +2847,7 @@ df = pd.read_parquet("data.parquet", columns=["semaine"])
 
 ---
 
-## ❓ FAQ : Questions fréquentes du jury
+## FAQ : Questions fréquentes du jury
 
 ### Q1 : "Pourquoi n'avez-vous pas utilisé les données météo dans les features ?"
 
@@ -2904,14 +2904,14 @@ df = pd.read_parquet("data.parquet", columns=["semaine"])
 "C'est une question de compromis entre quantité et qualité.
 
 **AVANTAGES 10 ans** :
-- ✅ Capture variation climatique (années chaudes/froides)
-- ✅ Données récentes (2015-2024) = plus pertinentes que 1990-2000
-- ✅ Qualité GBIF s'est améliorée (GPS précis depuis 2010+)
-- ✅ 10 000 observations = statistiquement significatif
+- Capture variation climatique (années chaudes/froides)
+- Données récentes (2015-2024) = plus pertinentes que 1990-2000
+- Qualité GBIF s'est améliorée (GPS précis depuis 2010+)
+- 10 000 observations = statistiquement significatif
 
 **LIMITES** :
-- ❌ Tendance long terme (réchauffement 50 ans) pas capturée
-- ❌ Événements rares (canicule 2003) pas dans dataset
+- Tendance long terme (réchauffement 50 ans) pas capturée
+- Événements rares (canicule 2003) pas dans dataset
 
 **IDÉAL** : 20-30 ans
 - Plus de cycles climatiques
@@ -2940,11 +2940,11 @@ df = pd.read_parquet("data.parquet", columns=["semaine"])
 - Relations relativement simples (saisonnalité, géographie)
 
 **AVANTAGES XGBOOST ICI** :
-✅ **Performance équivalente** : 98.5% (un réseau de neurones ne ferait pas mieux)
-✅ **Vitesse** : Entraînement 3 minutes vs 30+ pour DL
-✅ **Interprétabilité** : Je peux voir quelle feature est importante
-✅ **Moins de données nécessaires** : DL voudrait 1M+ exemples
-✅ **Pas d'hyperparamètres complexes** : Pas besoin de GPU, architecture simple
+**Performance équivalente** : 98.5% (un réseau de neurones ne ferait pas mieux)
+**Vitesse** : Entraînement 3 minutes vs 30+ pour DL
+**Interprétabilité** : Je peux voir quelle feature est importante
+**Moins de données nécessaires** : DL voudrait 1M+ exemples
+**Pas d'hyperparamètres complexes** : Pas besoin de GPU, architecture simple
 
 **EXEMPLE CONCRET** :
 ```
@@ -2970,10 +2970,10 @@ Résultat : 98.5% vs 98.6% (gain marginal)
 - Données météo (température, pluie, vent)
 
 **AUCUNE DONNÉE PERSONNELLE** :
-❌ Pas de noms d'observateurs
-❌ Pas d'emails, téléphones, adresses
-❌ Pas de tracking utilisateurs
-✅ Uniquement données scientifiques anonymisées
+Pas de noms d'observateurs
+Pas d'emails, téléphones, adresses
+Pas de tracking utilisateurs
+Uniquement données scientifiques anonymisées
 
 **GBIF ET RGPD** :
 - GBIF fournit données déjà anonymisées
@@ -3216,7 +3216,7 @@ with mlflow.start_run():
     mlflow.log_params({"max_depth": 6, "lr": 0.05})
     mlflow.log_metrics({"accuracy": 0.985, "auc": 0.97})
     mlflow.sklearn.log_model(pipeline, "xgboost_model")
-    
+
 # Déploiement
 mlflow.register_model(
     f"runs:/{run.info.run_id}/xgboost_model",
@@ -3259,18 +3259,18 @@ if new_model_feedback > old_model:
 **POURQUOI C'EST IMPORTANT ?**
 
 Beaucoup de projets académiques s'arrêtent à :
-- ❌ Notebook Jupyter avec modèle entraîné → Pas utilisable
-- ❌ API sans données réelles → Pas testable
-- ❌ Modèle précis mais pas déployé → Pas d'impact
+- Notebook Jupyter avec modèle entraîné → Pas utilisable
+- API sans données réelles → Pas testable
+- Modèle précis mais pas déployé → Pas d'impact
 
 **MON PROJET** :
-✅ Pipeline acquisition RÉEL (GBIF API)
-✅ ETL robuste (gère erreurs, formats mixtes)
-✅ Modèle performant (98.5%, 0.97 AUC-ROC)
-✅ API production-ready (FastAPI + Pydantic)
-✅ Interface utilisateur (Dashboard Streamlit)
-✅ Documentation exhaustive (README 2000+ lignes)
-✅ Reproductible (venv, requirements, seed)
+Pipeline acquisition RÉEL (GBIF API)
+ETL robuste (gère erreurs, formats mixtes)
+Modèle performant (98.5%, 0.97 AUC-ROC)
+API production-ready (FastAPI + Pydantic)
+Interface utilisateur (Dashboard Streamlit)
+Documentation exhaustive (README 2000+ lignes)
+Reproductible (venv, requirements, seed)
 
 **IMPACT CONCRET** :
 Un ornithologiste peut DEMAIN :
@@ -3290,9 +3290,9 @@ Le parsing des dates GBIF ! Formats mixtes m'ont fait passer de 12 observations 
 
 ---
 
-## 📋 Checklist pré-soutenance
+## Checklist pré-soutenance
 
-### ✅ Préparation technique
+### Préparation technique
 
 - [ ] **API démarrée** : `uvicorn api.main:app --reload` sur port 8000
 - [ ] **Dashboard lancé** : `streamlit run dashboard.py` sur port 8501
@@ -3302,7 +3302,7 @@ Le parsing des dates GBIF ! Formats mixtes m'ont fait passer de 12 observations 
 - [ ] **Code éditeur** : Avoir VS Code ouvert sur fichiers clés
 - [ ] **Terminal prêt** : Commandes curl préparées
 
-### ✅ Présentation
+### Présentation
 
 - [ ] **Slides** : 8-10 diapositives préparées
 - [ ] **Timer** : S'entraîner à tenir 15-20 minutes
@@ -3310,14 +3310,14 @@ Le parsing des dates GBIF ! Formats mixtes m'ont fait passer de 12 observations 
 - [ ] **Questions anticipées** : Relire FAQ ci-dessus
 - [ ] **Exemples concrets** : Chiffres, graphiques, résultats
 
-### ✅ Documentation
+### Documentation
 
 - [ ] **README** : Relu, sans typos
 - [ ] **Code commenté** : Chaque fichier clair
 - [ ] **Architecture claire** : Diagrammes à jour
 - [ ] **Git propre** : Commits avec messages explicites
 
-### ✅ Secours
+### Secours
 
 - [ ] **Plan B si démo crash** : Captures d'écran, vidéo
 - [ ] **PDF présentation** : Export statique

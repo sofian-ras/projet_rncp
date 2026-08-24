@@ -1,6 +1,6 @@
 # Guide de Démarrage - Projet Oiseaux Migrateurs
 
-## 🚀 Initialisation rapide (5 minutes)
+## Initialisation rapide (5 minutes)
 
 ### 1. Clone et setup environnement
 ```bash
@@ -22,15 +22,15 @@ python scripts/config.py
 
 Expected output:
 ```
-✓ Configuration chargée
-✓ Répertoires créés
+ Configuration chargée
+ Répertoires créés
 ZONE: Nord-Pas-de-Calais (49.5-51.5°N, 1.5-4.0°E)
 ESPECES: 4 (hirondelle, cigogne, martinet, bergeronnette)
 ```
 
 ---
 
-## 📅 Roadmap par jour
+## Roadmap par jour
 
 ### **Jour 1-2 : Acquisition de données (BC01)**
 
@@ -39,8 +39,8 @@ ESPECES: 4 (hirondelle, cigogne, martinet, bergeronnette)
 python scripts/acquisition.py
 
 # Résultat attendu:
-# ✓ donnees/brutes/observations_gbif.csv (10,000+ lignes)
-# ✓ donnees/brutes/meteo_npdc.csv (3,650 jours)
+#  donnees/brutes/observations_gbif.csv (10,000+ lignes)
+#  donnees/brutes/meteo_npdc.csv (3,650 jours)
 ```
 
 **Checkpoint :** Vérifier fichiers existent
@@ -57,8 +57,8 @@ ls -lh donnees/brutes/
 python scripts/nettoyage.py
 
 # Résultat:
-# ✓ donnees/traitees/observations_nettoyees.parquet
-# ✓ donnees/traitees/grille_presence_hebdo.parquet
+#  donnees/traitees/observations_nettoyees.parquet
+#  donnees/traitees/grille_presence_hebdo.parquet
 ```
 
 ```bash
@@ -66,9 +66,9 @@ python scripts/nettoyage.py
 python scripts/eda.py
 
 # Résultat:
-# ✓ outputs/eda/saisonnalite.png
-# ✓ outputs/eda/correlations_meteo.png
-# ✓ outputs/eda/carte_densite.html
+#  outputs/eda/saisonnalite.png
+#  outputs/eda/correlations_meteo.png
+#  outputs/eda/carte_densite.html
 ```
 
 **Visualiser résultats :**
@@ -89,7 +89,7 @@ jupyter notebook
 # Et exécuter toutes cellules (Ctrl+A puis Ctrl+Enter)
 ```
 
-**Checkpoint :** Tous graphiques visualisés ✓
+**Checkpoint :** Tous graphiques visualisés
 
 ---
 
@@ -107,8 +107,8 @@ jupyter notebook notebooks/02_machine_learning.ipynb
 ```
 
 **Résultats attendus :**
-- ✓ Accuracy > 75%
-- ✓ Modèles sauvegardés : modeles/pipeline_ml.pkl
+- Accuracy > 75%
+- Modèles sauvegardés : modeles/pipeline_ml.pkl
 
 ---
 
@@ -120,9 +120,9 @@ python scripts/entrainer_modele.py
 ```
 
 **Résultats attendus :**
-- ✓ Modèle principal sauvegardé : modeles/pipeline_ml.pkl
-- ✓ Modèles de comparaison sauvegardés
-- ✓ Évaluations disponibles : modeles/evaluations.csv
+- Modèle principal sauvegardé : modeles/pipeline_ml.pkl
+- Modèles de comparaison sauvegardés
+- Évaluations disponibles : modeles/evaluations.csv
 
 ---
 
@@ -177,7 +177,7 @@ curl http://localhost:8000/health
 
 ---
 
-## 📊 Commandes d'analyse utiles
+## Commandes d'analyse utiles
 
 ### Vérifier données
 ```python
@@ -202,7 +202,7 @@ pytest tests/test_acquisition.py -v --cov
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Erreur : "Modèle non trouvé"
 ```bash
@@ -242,7 +242,7 @@ print(f'Lon range: {df.longitude.min()} - {df.longitude.max()}')
 
 ---
 
-## 📈 Métriques clés à tracker
+## Métriques clés à tracker
 
 ```bash
 # Après acquisition
@@ -267,20 +267,20 @@ print(df)
 
 ---
 
-## 🎤 Avant soutenance
+## Avant soutenance
 
 ### Checklist finale
 - [ ] Tous scripts exécutés sans erreur
-- [ ] Données téléchargées (> 10,000 observations) ✓
-- [ ] Nettoyage complet (0 nulls) ✓
-- [ ] EDA avec visualisations ✓
-- [ ] ML avec 3+ modèles comparés ✓
-- [ ] Deep Learning (LSTM) entraîné ✓
-- [ ] API localhost fonctionne ✓
-- [ ] Dashboard Streamlit marche ✓
-- [ ] Docker buildable ✓
-- [ ] Documentation complète ✓
-- [ ] Slides powerpoint prêtes ✓
+- [ ] Données téléchargées (> 10,000 observations)
+- [ ] Nettoyage complet (0 nulls)
+- [ ] EDA avec visualisations
+- [ ] ML avec 3+ modèles comparés
+- [ ] Deep Learning (LSTM) entraîné
+- [ ] API localhost fonctionne
+- [ ] Dashboard Streamlit marche
+- [ ] Docker buildable
+- [ ] Documentation complète
+- [ ] Slides powerpoint prêtes
 
 ### Démo soutenance
 ```bash
@@ -300,7 +300,7 @@ streamlit run dashboard.py
 
 ---
 
-## 📞 Aide
+## Aide
 
 **Ressources :**
 - Documentation : [docs/PLAN_OPERATIONNEL.md](docs/PLAN_OPERATIONNEL.md)
@@ -313,5 +313,5 @@ streamlit run dashboard.py
 
 ---
 
-**Bon courage ! 🚀**  
+**Bon courage ! **  
 Commence par Jour 1-2 (acquisition), puis suis le calendrier.

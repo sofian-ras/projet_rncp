@@ -1,6 +1,6 @@
 # Plan Opérationnel Détaillé - Oiseaux Migrateurs NPDC
 
-## 📅 Planification Agile (4 semaines)
+## Planification Agile (4 semaines)
 
 ### **SEMAINE 1 - BC01 : Infrastructure de Données**
 
@@ -10,7 +10,7 @@
   - Cigogne blanche : ~2000 obs  
   - Martinet noir : ~3000 obs
   - Bergeronnette : ~4000 obs
-- [ ] Validation : `Total > 10,000 observations ✓`
+- [ ] Validation : `Total > 10,000 observations `
 
 **Commandes:**
 ```bash
@@ -18,7 +18,7 @@ python scripts/acquisition.py
 ```
 
 **Livrables :**
-- ✓ `donnees/brutes/observations_gbif.csv`
+- `donnees/brutes/observations_gbif.csv`
 
 ---
 
@@ -28,15 +28,15 @@ python scripts/acquisition.py
 - [ ] Supprimer doublons
 - [ ] Formater dates (ISO 8601)
 - [ ] Agrégation hebdomadaire
-  
+
 **Commandes:**
 ```bash
 python scripts/nettoyage.py
 ```
 
 **Livrables :**
-- ✓ `donnees/traitees/observations_nettoyees.parquet`
-- ✓ `donnees/traitees/grille_presence_hebdo.parquet`
+- `donnees/traitees/observations_nettoyees.parquet`
+- `donnees/traitees/grille_presence_hebdo.parquet`
 
 ---
 
@@ -47,9 +47,9 @@ python scripts/nettoyage.py
 - [ ] Créer diagramme architecture (PNG)
 
 **Livrables :**
-- ✓ `donnees/traitees/meteo_npdc.parquet`
-- ✓ `docs/ARCHITECTURE.md`
-- ✓ `docs/schema_base_donnees.png`
+- `donnees/traitees/meteo_npdc.parquet`
+- `docs/ARCHITECTURE.md`
+- `docs/schema_base_donnees.png`
 
 ---
 
@@ -66,8 +66,8 @@ python scripts/nettoyage.py
 - Cellule 3 : Visualisations saisonnières
 
 **Livrables :**
-- ✓ Heatmap saisonnière 4 espèces
-- ✓ Rapport corrélations (Pearson)
+- Heatmap saisonnière 4 espèces
+- Rapport corrélations (Pearson)
 
 ---
 
@@ -77,8 +77,8 @@ python scripts/nettoyage.py
 - [ ] Statistique par région (Nord vs Pas-de-Calais)
 
 **Livrables :**
-- ✓ Cartes interactives HTML
-- ✓ Résultats tests statistiques (p-values)
+- Cartes interactives HTML
+- Résultats tests statistiques (p-values)
 
 ---
 
@@ -88,7 +88,7 @@ python scripts/nettoyage.py
 - [ ] Recommandations pour ML
 
 **Livrable :**
-- ✓ `docs/RAPPORT_EDA.md` (2-3 pages)
+- `docs/RAPPORT_EDA.md` (2-3 pages)
 
 ---
 
@@ -109,9 +109,9 @@ python scripts/nettoyage.py
 **Notebook :** `notebooks/02_machine_learning.ipynb`
 
 **Livrables :**
-- ✓ Modèles sérialisés (`modeles/pipeline_ml.pkl`)
-- ✓ Matrice confusion (images)
-- ✓ Courbes ROC (4 espèces x 3 modèles)
+- Modèles sérialisés (`modeles/pipeline_ml.pkl`)
+- Matrice confusion (images)
+- Courbes ROC (4 espèces x 3 modèles)
 
 ---
 
@@ -123,9 +123,9 @@ python scripts/nettoyage.py
 **Script :** `scripts/entrainer_modele.py`
 
 **Livrables :**
-- ✓ Modèle principal (`modeles/pipeline_ml.pkl`)
-- ✓ Modèles de comparaison (`modeles/random_forest.pkl`, `modeles/logistic_regression.pkl`)
-- ✓ Tableau récapitulatif performances (`modeles/evaluations.csv`)
+- Modèle principal (`modeles/pipeline_ml.pkl`)
+- Modèles de comparaison (`modeles/random_forest.pkl`, `modeles/logistic_regression.pkl`)
+- Tableau récapitulatif performances (`modeles/evaluations.csv`)
 
 ---
 
@@ -135,7 +135,7 @@ python scripts/nettoyage.py
 - [ ] Documenter rationale choix
 
 **Livrable :**
-- ✓ `docs/RESULTATS_MODELES.md`
+- `docs/RESULTATS_MODELES.md`
 
 ---
 
@@ -152,8 +152,8 @@ python scripts/nettoyage.py
 **Fichier :** `api/main.py`
 
 **Livrables :**
-- ✓ API fonctionnelle sur `localhost:8000`
-- ✓ Documentation Swagger auto (FastAPI)
+- API fonctionnelle sur `localhost:8000`
+- Documentation Swagger auto (FastAPI)
 
 ---
 
@@ -166,7 +166,7 @@ python scripts/nettoyage.py
 **Fichier :** `dashboard.py`
 
 **Livrable :**
-- ✓ Dashboard interactif (`streamlit run dashboard.py`)
+- Dashboard interactif (`streamlit run dashboard.py`)
 
 ---
 
@@ -177,8 +177,8 @@ python scripts/nettoyage.py
 - [ ] Documentation déploiement
 
 **Livrables :**
-- ✓ `Dockerfile`
-- ✓ `docs/DEPLOIEMENT.md`
+- `Dockerfile`
+- `docs/DEPLOIEMENT.md`
 
 ---
 
@@ -188,13 +188,13 @@ python scripts/nettoyage.py
 - [ ] Vidéo démo (optionnel)
 
 **Livrables :**
-- ✓ `docs/RAPPORT_TECHNIQUE.md`
-- ✓ `slides.pptx`
-- ✓ Licence CC-BY
+- `docs/RAPPORT_TECHNIQUE.md`
+- `slides.pptx`
+- Licence CC-BY
 
 ---
 
-## 🎯 Ressources par bloc
+## Ressources par bloc
 
 ### BC01 - Infrastructure
 ```
@@ -238,7 +238,7 @@ slides.pptx
 
 ---
 
-## ✅ Critères de réussite
+## Critères de réussite
 
 | Critère | Cible | Validation |
 |---------|-------|----------|
@@ -253,7 +253,7 @@ slides.pptx
 
 ---
 
-## 🚀 Commandes clés
+## Commandes clés
 
 ```bash
 # Installation
@@ -287,6 +287,6 @@ docker run -p 8000:8000 oiseaux:latest
 
 ---
 
-**Statut :** 🟢 PRET A DEMARRER  
+**Statut :** PRET A DEMARRER  
 **Région :** Nord-Pas-de-Calais  
 **Année universitaire :** 2025-2026

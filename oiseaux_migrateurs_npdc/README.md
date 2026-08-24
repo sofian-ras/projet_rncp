@@ -1,4 +1,4 @@
-# 🐦 Prédiction des Oiseaux Migrateurs - Nord-Pas-de-Calais
+# Prédiction des Oiseaux Migrateurs - Nord-Pas-de-Calais
 
 ## Objectif
 Prédire la probabilité de présence d'oiseaux migrateurs dans la région Nord-Pas-de-Calais selon les conditions météorologiques et la saison.
@@ -7,7 +7,7 @@ Prédire la probabilité de présence d'oiseaux migrateurs dans la région Nord-
 
 ---
 
-## 📊 Données utilisées
+## Données utilisées
 
 ### Observations d'oiseaux
 - **Source** : Global Biodiversity Information Facility (GBIF)
@@ -28,7 +28,7 @@ Prédire la probabilité de présence d'oiseaux migrateurs dans la région Nord-
 
 ---
 
-## 🏗️ Structure du projet
+## Structure du projet
 
 ```
 oiseaux_migrateurs_npdc/
@@ -66,44 +66,44 @@ oiseaux_migrateurs_npdc/
 
 ---
 
-## 🔄 Blocs de compétences RNCP
+## Blocs de compétences RNCP
 
 ### BC01 - Infrastructure de données
-- ✅ Téléchargement GBIF API + Open-Meteo
-- ✅ Pipeline ETL (nettoyage, validation, agrégation)
-- ✅ Stockage Parquet (data lake)
-- ✅ Schema technique documenté
+- Téléchargement GBIF API + Open-Meteo
+- Pipeline ETL (nettoyage, validation, agrégation)
+- Stockage Parquet (data lake)
+- Schema technique documenté
 
 ### BC02 - Analyse exploratoire
-- ✅ Corrélations météo ↔ présence
-- ✅ Analyse saisonnière par espèce
-- ✅ Cartes densité observations
-- ✅ Tests statistiques (seuils de température)
+- Corrélations météo ↔ présence
+- Analyse saisonnière par espèce
+- Cartes densité observations
+- Tests statistiques (seuils de température)
 
 ### BC03 - Machine Learning
-- ✅ Classification binaire (présence/absence)
-- ✅ Features engineered (température, pluie, jour année, région)
-- ✅ Modèles : Logistic Regression, Random Forest, XGBoost
-- ✅ Comparaison : Accuracy, F1-score, AUC-ROC
+- Classification binaire (présence/absence)
+- Features engineered (température, pluie, jour année, région)
+- Modèles : Logistic Regression, Random Forest, XGBoost
+- Comparaison : Accuracy, F1-score, AUC-ROC
 
 ### BC04 - Deep Learning
-- 🔄 Optionnel (piste d'extension notebook)
+- Optionnel (piste d'extension notebook)
 
 ### BC05 - Industrialisation
-- ✅ API FastAPI (`/predict`, `/species`, `/health`)
-- ✅ Dashboard Streamlit interactif
-- ✅ Docker Dockerfile
-- ✅ Logging & monitoring
+- API FastAPI (`/predict`, `/species`, `/health`)
+- Dashboard Streamlit interactif
+- Docker Dockerfile
+- Logging & monitoring
 
 ### BC06 - Gestion de projet
-- ✅ Planning agile (4 semaines)
-- ✅ Documentation technique
-- ✅ Présentation soutenance
-- ✅ Analyse ROI écologique
+- Planning agile (4 semaines)
+- Documentation technique
+- Présentation soutenance
+- Analyse ROI écologique
 
 ---
 
-## 🚀 Démarrage rapide
+## Démarrage rapide
 
 ### Installation
 
@@ -143,7 +143,7 @@ streamlit run dashboard.py
 
 ---
 
-## 📅 Calendrier
+## Calendrier
 
 | Phase | Durée | Livrables |
 |-------|-------|-----------|
@@ -156,14 +156,14 @@ streamlit run dashboard.py
 
 ---
 
-## 🎯 Indicateurs de succès
+## Indicateurs de succès
 
-- ✅ Données > 10,000 observations GBIF
-- ✅ Couverture météo > 95% (Open-Meteo)
-- ✅ Accuracy modèle > 75% (baseline XGBoost)
-- ✅ Comparaison de modèles classiques documentée
-- ✅ API en production (réponse < 500ms)
-- ✅ Dashboard interactif fonctionnel
+- Données > 10,000 observations GBIF
+- Couverture météo > 95% (Open-Meteo)
+- Accuracy modèle > 75% (baseline XGBoost)
+- Comparaison de modèles classiques documentée
+- API en production (réponse < 500ms)
+- Dashboard interactif fonctionnel
 
 ---
 
