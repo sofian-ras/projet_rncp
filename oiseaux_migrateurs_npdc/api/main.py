@@ -1,6 +1,6 @@
 """
-BC05 - API FastAPI pour prédictions oiseaux
-Endpoints de prédiction et gestion modèles
+BC05 - API FastAPI pour predictions oiseaux
+Endpoints de prediction et gestion modeles
 """
 
 from typing import Dict, List, Optional
@@ -28,7 +28,7 @@ logger.add(lambda msg: print(msg, end=""), format=FORMAT_LOG)
 # ========== SCHEMAS PYDANTIC ==========
 
 class ObservationMeteo(BaseModel):
-    """Données météorologiques pour prédiction"""
+    """Donnees meteorologiques pour prediction"""
     temperature_max: float = Field(..., ge=-50, le=50)
     temperature_min: float = Field(..., ge=-50, le=50)
     precipitation_sum: float = Field(..., ge=0, le=500)
@@ -38,8 +38,8 @@ class ObservationMeteo(BaseModel):
 
 
 class DemandePredicton(BaseModel):
-    """Demande de prédiction"""
-    espece: str = Field(..., description="Nom espèce (ex: hirondelle_rustique)")
+    """Demande de prediction"""
+    espece: str = Field(..., description="Nom espece (ex: hirondelle_rustique)")
     latitude: float = Field(..., ge=49.5, le=51.5)
     longitude: float = Field(..., ge=1.5, le=4.0)
     meteo: ObservationMeteo
@@ -63,9 +63,9 @@ class DemandePredicton(BaseModel):
 
 
 class ReponsePredicton(BaseModel):
-    """Réponse prédiction"""
+    """Reponse prediction"""
     espece: str
-    probabilite_presence: float = Field(..., ge=0, le=1, description="Probabilité 0-1")
+    probabilite_presence: float = Field(..., ge=0, le=1, description="Probabilite 0-1")
     confiance: str = Field(..., description="BASSE / MOYENNE / HAUTE")
     date_prediction: datetime
     modele_utilise: str = Field(default="XGBoost")
@@ -83,7 +83,7 @@ class ReponsePredicton(BaseModel):
 
 
 class EspeceInfo(BaseModel):
-    """Information espèce"""
+    """Information espece"""
     nom_francais: str
     nom_scientifique: str
     mois_arrivee: List[int]
@@ -106,25 +106,25 @@ app = FastAPI(
     version=ParametresAPI.VERSION,
 )
 
-# Charger modèle en mémoire
+# Charger modele en memoire
 MODELE_CHARGE = None
 try:
     chemin_modele = REPERTOIRE_MODELES / "pipeline_ml.pkl"
     if chemin_modele.exists():
         MODELE_CHARGE = joblib.load(chemin_modele)
-        logger.info(f"✓ Modèle chargé : {chemin_modele}")
+        logger.info(f"Modele charge : {chemin_modele}")
     else:
-        logger.warning(f"Modèle non trouvé : {chemin_modele}")
+        logger.warning(f"Modele non trouve : {chemin_modele}")
 except Exception as e:
-    logger.error(f"Erreur chargement modèle : {e}")
+    logger.error(f"Erreur chargement modele : {e}")
     MODELE_CHARGE = None
 
 
 # ========== ENDPOINTS ==========
 
-@app.get("/health", response_model=Sante, tags=["Santé"])
+@app.get("/health", response_model=Sante, tags=["Sante"])
 def verifier_sante():
-    """Vérifie statut API et modèles"""
+    """Verifie statut API et modeles"""
     return Sante(
         statut="OK",
         modele_charge=(MODELE_CHARGE is not None),
@@ -133,10 +133,10 @@ def verifier_sante():
     )
 
 
-@app.get("/species", response_model=Dict[str, EspeceInfo], tags=["Données"])
-@app.get("/Species", response_model=Dict[str, EspeceInfo], tags=["Données"])
+@app.get("/species", response_model=Dict[str, EspeceInfo], tags=["Donnees"])
+@app.get("/Species", response_model=Dict[str, EspeceInfo], tags=["Donnees"])
 def lister_especes():
-    """Liste toutes espèces disponibles"""
+    """Liste toutes especes disponibles"""
     from config import ESPECES
     
     resultat = {}
@@ -151,42 +151,42 @@ def lister_especes():
     return resultat
 
 
-@app.post("/predict", response_model=ReponsePredicton, tags=["Prédictions"])
+@app.post("/predict", response_model=ReponsePredicton, tags=["Predictions"])
 async def predire_presence(demande: DemandePredicton) -> ReponsePredicton:
     """
-    Prédire présence oiseau migrateur
+    Predire presence oiseau migrateur
     
-    **Paramètres :**
+    **Parametres :**
     - espece : hirondelle_rustique, cigogne_blanche, martinet_noir, bergeronnette_printaniere
-    - latitude / longitude : coordonnées NPDC (49.5-51.5°N, 1.5-4.0°E)
-    - meteo : conditions météorologiques
+    - latitude / longitude : coordonnees NPDC (49.5-51.5 deg N, 1.5-4.0 deg E)
+    - meteo : conditions meteorologiques
     
     **Retour :**
     - probabilite_presence : 0-1 (1 = certain, 0 = impossible)
     - confiance : BASSE (<0.6), MOYENNE (0.6-0.75), HAUTE (>0.75)
     """
     
-    # Validation espèce
+    # Validation espece
     from config import ESPECES
     if demande.espece not in ESPECES:
         raise HTTPException(
             status_code=400,
-            detail=f"Espèce inconnue. Valeurs acceptées : {list(ESPECES.keys())}"
+            detail=f"Espece inconnue. Valeurs acceptees : {list(ESPECES.keys())}"
         )
     
-    # Vérifier modèle chargé
+    # Verifier modele charge
     if MODELE_CHARGE is None:
         raise HTTPException(
             status_code=503,
-            detail="Modèle non disponible. Entraînez d'abord le modèle."
+            detail="Modele non disponible. Entrainez d'abord le modele."
         )
     
-    # Préparer features pour prédiction
-    # Le modèle a été entraîné sur : annee, semaine, lat_discrete, lon_discrete
+    # Preparer features pour prediction
+    # Le modele a ete entraine sur : annee, semaine, lat_discrete, lon_discrete
     from datetime import datetime as dt
     jour_annee = demande.meteo.jour_annee
     semaine = (jour_annee - 1) // 7 + 1  # Calculer semaine depuis jour_annee
-    annee = dt.now().year  # Utiliser année courante
+    annee = dt.now().year  # Utiliser annee courante
     
     donnees_features = {
         "annee": annee,
@@ -202,7 +202,7 @@ async def predire_presence(demande: DemandePredicton) -> ReponsePredicton:
         "pression_moyenne": np.nan,
     }
 
-    # Respecter exactement l'ordre des colonnes attendues par le pipeline entraîné
+    # Respecter exactement l'ordre des colonnes attendues par le pipeline entraine
     colonnes_attendues = list(getattr(MODELE_CHARGE, "feature_names_in_", []))
     if colonnes_attendues:
         donnees_features = {col: donnees_features.get(col, 0) for col in colonnes_attendues}
@@ -212,18 +212,18 @@ async def predire_presence(demande: DemandePredicton) -> ReponsePredicton:
         if features[col].isna().any():
             features[col] = features[col].fillna(0)
     
-    # Prédiction
+    # Prediction
     try:
         prediction_proba = MODELE_CHARGE.predict_proba(features)[0][1]
         prediction = float(prediction_proba)
     except Exception as e:
-        logger.error(f"Erreur prédiction : {e}")
+        logger.error(f"Erreur prediction : {e}")
         raise HTTPException(
             status_code=500,
-            detail=f"Erreur lors de la prédiction : {str(e)}"
+            detail=f"Erreur lors de la prediction : {str(e)}"
         )
     
-    # Déterminer confiance
+    # Determiner confiance
     if prediction > 0.75:
         confiance = "HAUTE"
     elif prediction > 0.60:
@@ -259,7 +259,7 @@ def index():
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """Gère erreurs globales"""
+    """Gere erreurs globales"""
     logger.error(f"Erreur API : {str(exc)}")
     return JSONResponse(
         status_code=500,

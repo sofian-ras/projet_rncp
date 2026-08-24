@@ -1,5 +1,5 @@
 """
-BC03 - Entraînement modèle XGBoost pour prédiction présence oiseaux
+BC03 - Entrainement modele XGBoost pour prediction presence oiseaux
 """
 
 import pandas as pd
@@ -31,12 +31,12 @@ logger.add(FICHIER_LOG, format=FORMAT_LOG)
 
 def preparer_features(df_grille: pd.DataFrame, df_meteo: pd.DataFrame = None) -> tuple:
     """
-    Prépare features pour ML
+    Prepare features pour ML
     
     Returns:
         X, y, feature_names
     """
-    logger.info("🔧 Préparation features...")
+    logger.info("Preparation features...")
     
     # Features de base disponibles dans grille
     feature_cols = [
@@ -47,7 +47,7 @@ def preparer_features(df_grille: pd.DataFrame, df_meteo: pd.DataFrame = None) ->
     ]
 
     if df_meteo is not None and not df_meteo.empty:
-        logger.info("  Fusion des variables météo hebdomadaires...")
+        logger.info("  Fusion des variables meteo hebdomadaires...")
         meteo = df_meteo.copy()
         meteo["date"] = pd.to_datetime(meteo["date"], errors="coerce")
         meteo = meteo.dropna(subset=["date"])
@@ -69,7 +69,7 @@ def preparer_features(df_grille: pd.DataFrame, df_meteo: pd.DataFrame = None) ->
             meteo_hebdo = meteo.groupby(["annee", "semaine"], as_index=False)[colonnes_meteo_presentes].mean()
             df_grille = df_grille.merge(meteo_hebdo, on=["annee", "semaine"], how="left")
             feature_cols.extend(colonnes_meteo_presentes)
-            logger.info(f"  Variables météo ajoutées : {colonnes_meteo_presentes}")
+            logger.info(f"  Variables meteo ajoutees : {colonnes_meteo_presentes}")
     
     # Features disponibles
     available_features = [col for col in feature_cols if col in df_grille.columns]
@@ -88,16 +88,16 @@ def preparer_features(df_grille: pd.DataFrame, df_meteo: pd.DataFrame = None) ->
 
 
 def entrainer_modeles(X_train, X_test, y_train, y_test):
-    """Entraîne plusieurs modèles et compare"""
+    """Entraine plusieurs modeles et compare"""
     logger.info("=" * 60)
-    logger.info("🤖 ENTRAINEMENT MODELES")
+    logger.info("ENTRAINEMENT MODELES")
     logger.info("=" * 60)
     
     gestionnaire = GestionnaireModeles()
     resultats = {}
     
     # 1. XGBoost
-    logger.info("\n📦 Entraînement XGBoost...")
+    logger.info("\nEntrainement XGBoost...")
     xgb_params = ParametresML.XGBOOST_PARAMS.copy()
     xgb_params["random_state"] = ParametresML.RANDOM_STATE
     xgb_params["eval_metric"] = "logloss"
@@ -113,7 +113,7 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
     resultats["XGBoost"] = metriques_xgb
     
     # 2. Random Forest
-    logger.info("\n🌲 Entraînement Random Forest...")
+    logger.info("\nEntrainement Random Forest...")
     rf_params = ParametresML.RANDOM_FOREST_PARAMS.copy()
     
     pipeline_rf = Pipeline([
@@ -127,7 +127,7 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
     resultats["RandomForest"] = metriques_rf
     
     # 3. Logistic Regression
-    logger.info("\n📈 Entraînement Logistic Regression...")
+    logger.info("\nEntrainement Logistic Regression...")
     pipeline_lr = Pipeline([
         ("scaler", StandardScaler()),
         ("lr", LogisticRegression(max_iter=1000, random_state=ParametresML.RANDOM_STATE))
@@ -146,31 +146,31 @@ def entrainer_modeles(X_train, X_test, y_train, y_test):
 
 
 def executer_entrainement():
-    """Pipeline complet d'entraînement"""
+    """Pipeline complet d'entrainement"""
     logger.info("=" * 60)
-    logger.info("🚀 DEBUT ENTRAINEMENT MODELES ML")
+    logger.info("DEBUT ENTRAINEMENT MODELES ML")
     logger.info("=" * 60)
     
     # Charger grille
     chemin_grille = REPERTOIRE_DONNEES_TRAITEES / "grille_presence_hebdo.parquet"
     
     if not chemin_grille.exists():
-        logger.error(f"Grille non trouvée : {chemin_grille}")
-        logger.error("Exécutez scripts/nettoyage.py d'abord")
+        logger.error(f"Grille non trouvee : {chemin_grille}")
+        logger.error("Executez scripts/nettoyage.py d'abord")
         return
     
     df_grille = pd.read_parquet(chemin_grille)
-    logger.info(f"✓ Grille chargée : {len(df_grille)} lignes")
+    logger.info(f"Grille chargee : {len(df_grille)} lignes")
 
     chemin_meteo = REPERTOIRE_DONNEES_TRAITEES / "meteo_processed.parquet"
     df_meteo = None
     if chemin_meteo.exists():
         df_meteo = pd.read_parquet(chemin_meteo)
-        logger.info(f"✓ Météo chargée : {len(df_meteo)} lignes")
+        logger.info(f"Meteo chargee : {len(df_meteo)} lignes")
     else:
-        logger.warning("⚠️ Fichier météo traité absent, entraînement sans météo")
+        logger.warning("Fichier meteo traite absent, entrainement sans meteo")
     
-    # Préparer features
+    # Preparer features
     X, y, feature_names = preparer_features(df_grille, df_meteo)
     
     # Split train/test
@@ -181,23 +181,23 @@ def executer_entrainement():
         stratify=y
     )
     
-    logger.info(f"\n✓ Split données :")
+    logger.info("\nSplit donnees :")
     logger.info(f"  Train : {len(X_train)} | Test : {len(X_test)}")
     logger.info(f"  Distribution train : {y_train.value_counts().to_dict()}")
     logger.info(f"  Distribution test : {y_test.value_counts().to_dict()}")
     
-    # Entraîner modèles
+    # Entrainer modeles
     resultats, df_comparaison = entrainer_modeles(X_train, X_test, y_train, y_test)
     
     # Sauvegarder comparaison
     chemin_csv = REPERTOIRE_MODELES / "evaluations.csv"
     df_comparaison.to_csv(chemin_csv)
-    logger.info(f"\n✓ Comparaison sauvegardée : {chemin_csv}")
-    
+    logger.info(f"\nComparaison sauvegardee : {chemin_csv}")
+
     logger.info("\n" + "=" * 60)
-    logger.info("✓ ENTRAINEMENT TERMINE")
+    logger.info("ENTRAINEMENT TERMINE")
     logger.info("=" * 60)
-    logger.info(f"Modèles disponibles dans : {REPERTOIRE_MODELES}")
+    logger.info(f"Modeles disponibles dans : {REPERTOIRE_MODELES}")
     logger.info("  - pipeline_ml.pkl (XGBoost)")
     logger.info("  - random_forest.pkl")
     logger.info("  - logistic_regression.pkl")

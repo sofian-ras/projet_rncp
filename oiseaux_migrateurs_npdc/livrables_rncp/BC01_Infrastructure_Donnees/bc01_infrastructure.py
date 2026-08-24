@@ -20,7 +20,7 @@ def run() -> None:
     print("[BC01] Lancement acquisition...")
     executer_acquisition()
     checks = verifier_sorties()
-    print("[BC01] Vérification sorties:", checks)
+    print("[BC01] Verification sorties:", checks)
 
 
 if __name__ == "__main__":

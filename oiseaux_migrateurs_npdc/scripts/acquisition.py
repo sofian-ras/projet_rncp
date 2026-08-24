@@ -1,6 +1,6 @@
 """
-BC01 - Acquisition de données GBIF et Open-Meteo
-Télécharge les observations d'oiseaux et données météorologiques
+BC01 - Acquisition de donnees GBIF et Open-Meteo
+Telecharge les observations d'oiseaux et donnees meteorologiques
 """
 
 import json
@@ -31,7 +31,7 @@ logger.add(FICHIER_LOG, format=FORMAT_LOG)
 
 
 class AcquisiteurGBIF:
-    """Télécharge observations d'oiseaux depuis GBIF"""
+    """Telecharge observations d'oiseaux depuis GBIF"""
 
     COLONNES_OBSERVATIONS = [
         "espece",
@@ -55,10 +55,10 @@ class AcquisiteurGBIF:
         infos_espece: Dict
     ) -> pd.DataFrame:
         """
-        Télécharge toutes les observations GBIF pour une espèce
-        dans la région Nord-Pas-de-Calais
+        Telecharge toutes les observations GBIF pour une espece
+        dans la region Nord-Pas-de-Calais
         """
-        logger.info(f"🐦 Téléchargement {infos_espece['nom_francais']}...")
+        logger.info(f"Telechargement {infos_espece['nom_francais']}...")
         
         observations_liste = []
         decalage = 0
@@ -95,12 +95,12 @@ class AcquisiteurGBIF:
                 decalage += len(resultats)
                 
                 logger.debug(
-                    f"  ✓ Récupéré {len(observations_liste)} observations"
+                    f"  Recupere {len(observations_liste)} observations"
                 )
                 time.sleep(self.params_acquisition.DELAI_ENTRE_REQUETES)
-                
+
             except Exception as erreur:
-                logger.error(f"  ✗ Erreur requête GBIF : {erreur}")
+                logger.error(f"  Erreur requete GBIF : {erreur}")
                 break
         
         # Transformer en DataFrame
@@ -108,12 +108,12 @@ class AcquisiteurGBIF:
         df = pd.DataFrame(donnees_extraites, columns=self.COLONNES_OBSERVATIONS)
         
         logger.info(
-            f"  ✓ {len(df)} observations téléchargées pour {infos_espece['nom_francais']}"
+            f"  {len(df)} observations telechargees pour {infos_espece['nom_francais']}"
         )
         return df
     
     def _creer_bbox_geometrie(self) -> str:
-        """Crée géométrie WKT pour filtrer par région"""
+        """Cree geometrie WKT pour filtrer par region"""
         zone = ZONE_GEOGRAPHIQUE
         return (
             f"POLYGON(("
@@ -145,7 +145,7 @@ class AcquisiteurGBIF:
 
 
 class AcquisiteurMeteo:
-    """Télécharge données météorologiques depuis Open-Meteo"""
+    """Telecharge donnees meteorologiques depuis Open-Meteo"""
     
     def __init__(self):
         self.url_api = ParametresAcquisition.API_METEO_URL
@@ -158,7 +158,7 @@ class AcquisiteurMeteo:
         date_fin: str
     ) -> pd.DataFrame:
         """
-        Télécharge historique météo pour une localité et période
+        Telecharge historique meteo pour une localite et periode
         Format date : "YYYY-MM-DD"
         """
         parametres = {
@@ -191,25 +191,25 @@ class AcquisiteurMeteo:
             return df
             
         except Exception as erreur:
-            logger.error(f"Erreur téléchargement météo : {erreur}")
+            logger.error(f"Erreur telechargement meteo : {erreur}")
             return pd.DataFrame()
 
 
 def executer_acquisition():
-    """Exécute complet d'acquisition"""
+    """Execute complet d'acquisition"""
     logger.info("=" * 60)
-    logger.info("🌍 DEBUT ACQUISITION DONNEES")
+    logger.info("DEBUT ACQUISITION DONNEES")
     logger.info("=" * 60)
     
     acquisiteur_gbif = AcquisiteurGBIF()
     
-    # Télécharger observations par espèce
+    # Telecharger observations par espece
     donnees_gbif_liste = []
     for nom_espece, infos in ESPECES.items():
         df = acquisiteur_gbif.telecharger_observations_espece(nom_espece, infos)
         donnees_gbif_liste.append(df)
     
-    # Fusionner tous données
+    # Fusionner tous donnees
     donnees_non_vides = [df for df in donnees_gbif_liste if not df.empty]
     if donnees_non_vides:
         donnees_gbif_globales = pd.concat(donnees_non_vides, ignore_index=True)
@@ -222,10 +222,10 @@ def executer_acquisition():
     # Sauvegarder brute
     fichier_sortie = REPERTOIRE_DONNEES_BRUTES / "observations_gbif.csv"
     donnees_gbif_globales.to_csv(fichier_sortie, index=False)
-    logger.info(f"✓ Données GBIF sauvegardées : {fichier_sortie}")
+    logger.info(f"Donnees GBIF sauvegardees : {fichier_sortie}")
 
-    # Télécharger météo régionale (centre NPDC)
-    logger.info("🌦️ Téléchargement météo Open-Meteo...")
+    # Telecharger meteo regionale (centre NPDC)
+    logger.info("Telechargement meteo Open-Meteo...")
     acquisiteur_meteo = AcquisiteurMeteo()
     date_debut = f"{ParametresAcquisition.ANNEE_DEBUT}-01-01"
     date_fin = f"{ParametresAcquisition.ANNEE_FIN}-12-31"
@@ -240,12 +240,12 @@ def executer_acquisition():
     if not df_meteo.empty:
         fichier_meteo = REPERTOIRE_DONNEES_BRUTES / "meteo_npdc.csv"
         df_meteo.to_csv(fichier_meteo, index=False)
-        logger.info(f"✓ Données météo sauvegardées : {fichier_meteo}")
+        logger.info(f"Donnees meteo sauvegardees : {fichier_meteo}")
     else:
-        logger.warning("⚠️ Données météo non récupérées (pipeline poursuit avec GBIF)")
-    
+        logger.warning("Donnees meteo non recuperees (pipeline poursuit avec GBIF)")
+
     logger.info("=" * 60)
-    logger.info("✓ ACQUISITION TERMINEE")
+    logger.info("ACQUISITION TERMINEE")
     logger.info("=" * 60)
 
 

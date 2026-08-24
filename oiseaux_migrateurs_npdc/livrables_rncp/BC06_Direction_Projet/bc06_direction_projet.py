@@ -20,18 +20,18 @@ def audit_documents() -> dict:
 def run() -> None:
     rapport = {
         "bloc": "BC06",
-        "objectif": "Pilotage projet, gouvernance documentaire, qualité",
+        "objectif": "Pilotage projet, gouvernance documentaire, qualite",
         "documents_disponibles": audit_documents(),
         "actions_recommandees": [
-            "Ajouter cahier des charges chiffré",
-            "Ajouter rétroplanning détaillé",
+            "Ajouter cahier des charges chiffre",
+            "Ajouter retroplanning detaille",
             "Ajouter budget estimatif",
             "Ajouter KPI de suivi projet"
         ]
     }
     out = OUT / "bc06_rapport_projet.json"
     out.write_text(json.dumps(rapport, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"[BC06] Rapport généré: {out}")
+    print(f"[BC06] Rapport genere: {out}")
 
 
 if __name__ == "__main__":

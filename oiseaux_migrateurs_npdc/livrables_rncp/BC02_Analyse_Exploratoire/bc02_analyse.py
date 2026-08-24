@@ -26,7 +26,7 @@ def run() -> None:
     executer_nettoyage()
     executer_eda()
     checks = verifier_sorties()
-    print("[BC02] Vérification sorties:", checks)
+    print("[BC02] Verification sorties:", checks)
 
 
 if __name__ == "__main__":

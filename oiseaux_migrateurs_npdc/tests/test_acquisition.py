@@ -15,17 +15,17 @@ class TestAcquisiteurGBIF:
     """Tests pour acquisition GBIF"""
     
     def test_creation_bbox(self):
-        """Test création bounding box WKT"""
+        """Test creation bounding box WKT"""
         acquisiteur = AcquisiteurGBIF()
         bbox = acquisiteur._creer_bbox_geometrie()
         
-        # Vérifier format WKT
+        # Verifier format WKT
         assert bbox.startswith("POLYGON")
         assert "(" in bbox
-        assert bbox.count(",") >= 4  # Au minimum 4 coordonnées
+        assert bbox.count(",") >= 4  # Au minimum 4 coordonnees
     
     def test_extraction_colonnes(self):
-        """Test extraction colonnes depuis réponse GBIF"""
+        """Test extraction colonnes depuis reponse GBIF"""
         observations_mock = [
             {
                 "scientificName": "Barn Swallow",
@@ -50,16 +50,16 @@ class TestAcquisiteurGBIF:
 
 
 class TestConfigurationEspeces:
-    """Tests configuration espèces"""
+    """Tests configuration especes"""
     
     def test_especes_definies(self):
-        """Vérifie espèces définies"""
+        """Verifie especes definies"""
         assert len(ESPECES) == 4
         assert "hirondelle_rustique" in ESPECES
         assert "cigogne_blanche" in ESPECES
     
     def test_structure_espece(self):
-        """Vérifie structure données espèce"""
+        """Verifie structure donnees espece"""
         for nom, infos in ESPECES.items():
             assert "nom_francais" in infos
             assert "nom_scientifique" in infos
@@ -69,10 +69,10 @@ class TestConfigurationEspeces:
 
 
 class TestZoneGeographique:
-    """Tests zone géographique"""
+    """Tests zone geographique"""
     
     def test_zone_valide(self):
-        """Vérifie coordonnées zone NPDC"""
+        """Verifie coordonnees zone NPDC"""
         zone = ZONE_GEOGRAPHIQUE
         
         assert zone.latitude_min < zone.latitude_max
@@ -80,7 +80,7 @@ class TestZoneGeographique:
         assert zone.nom_region == "Nord-Pas-de-Calais"
     
     def test_centre_dans_zone(self):
-        """Vérifie centre dans zone"""
+        """Verifie centre dans zone"""
         zone = ZONE_GEOGRAPHIQUE
         
         assert zone.latitude_min <= zone.centre_latitude <= zone.latitude_max

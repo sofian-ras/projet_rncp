@@ -1,6 +1,6 @@
 """
-Utilitaires gestion modèles ML
-Sérialisation, chargement, évaluation
+Utilitaires gestion modeles ML
+Serialisation, chargement, evaluation
 """
 
 import pickle
@@ -22,7 +22,7 @@ logger.add(FICHIER_LOG, format=FORMAT_LOG)
 
 
 class GestionnaireModeles:
-    """Gère cycle vie modèles ML"""
+    """Gere cycle vie modeles ML"""
     
     def __init__(self, repertoire: Path = REPERTOIRE_MODELES):
         self.repertoire = repertoire
@@ -37,13 +37,13 @@ class GestionnaireModeles:
         metadata: Dict[str, Any] = None
     ) -> Path:
         """
-        Sauvegarde modèle sklearn en pickle
+        Sauvegarde modele sklearn en pickle
         
         Args:
-            modele : Modèle sklearn entraîné
+            modele : Modele sklearn entraine
             nom_modele : Identificateur (ex: "xgboost_v1")
-            metriques : Dictionnaire metriques d'évaluation
-            metadata : Métadonnées additionnelles
+            metriques : Dictionnaire metriques d'evaluation
+            metadata : Metadonnees additionnelles
         """
         chemin_modele = self.repertoire / f"{nom_modele}.pkl"
         
@@ -51,7 +51,7 @@ class GestionnaireModeles:
             with open(chemin_modele, "wb") as f:
                 pickle.dump(modele, f)
             
-            logger.info(f"✓ Modèle sauvegardé : {chemin_modele}")
+            logger.info(f"Modele sauvegarde : {chemin_modele}")
             
             # Sauvegarder metadata
             if metriques or metadata:
@@ -60,25 +60,25 @@ class GestionnaireModeles:
             return chemin_modele
             
         except Exception as e:
-            logger.error(f"Erreur sauvegarde modèle : {e}")
+            logger.error(f"Erreur sauvegarde modele : {e}")
             raise
     
     def charger_modele(self, nom_modele: str) -> Any:
-        """Charge modèle depuis pickle"""
+        """Charge modele depuis pickle"""
         chemin_modele = self.repertoire / f"{nom_modele}.pkl"
         
         if not chemin_modele.exists():
-            raise FileNotFoundError(f"Modèle non trouvé : {chemin_modele}")
+            raise FileNotFoundError(f"Modele non trouve : {chemin_modele}")
         
         try:
             with open(chemin_modele, "rb") as f:
                 modele = pickle.load(f)
             
-            logger.info(f"✓ Modèle chargé : {nom_modele}")
+            logger.info(f"Modele charge : {nom_modele}")
             return modele
             
         except Exception as e:
-            logger.error(f"Erreur chargement modèle : {e}")
+            logger.error(f"Erreur chargement modele : {e}")
             raise
     
     def evaluator_modele(
@@ -89,22 +89,22 @@ class GestionnaireModeles:
         nom_modele: str = "evaluation"
     ) -> Dict[str, float]:
         """
-        Évalue modèle sur données test
+        Evalue modele sur donnees test
         
         Retourne : Accuracy, F1, AUC-ROC
         """
-        logger.info(f"📊 Évaluation modèle : {nom_modele}")
+        logger.info(f"Evaluation modele : {nom_modele}")
         
-        # Prédictions
+        # Predictions
         y_pred = modele.predict(X_test)
         
         try:
             y_pred_proba = modele.predict_proba(X_test)[:, 1]
         except AttributeError:
             y_pred_proba = None
-            logger.warning("  Prédictions probabilistes non disponibles")
+            logger.warning("  Predictions probabilistes non disponibles")
         
-        # Métriques
+        # Metriques
         metriques = {
             "accuracy": float(accuracy_score(y_test, y_pred)),
             "f1_score": float(f1_score(y_test, y_pred, zero_division=0)),
@@ -133,7 +133,7 @@ class GestionnaireModeles:
         metriques: Dict = None,
         metadata: Dict = None
     ):
-        """Sauvegarde métadonnées en JSON"""
+        """Sauvegarde metadonnees en JSON"""
         donnees_metadata = {
             "nom_modele": nom_modele,
             "date_sauvegarde": datetime.now().isoformat(),
@@ -146,12 +146,12 @@ class GestionnaireModeles:
         with open(chemin_json, "w", encoding="utf-8") as f:
             json.dump(donnees_metadata, f, indent=2, ensure_ascii=False)
         
-        logger.debug(f"Metadata sauvegardée : {chemin_json.name}")
+        logger.debug(f"Metadata sauvegardee : {chemin_json.name}")
     
     def lister_modeles(self) -> list:
-        """Liste tous modèles disponibles"""
+        """Liste tous modeles disponibles"""
         modeles = [f.stem for f in self.repertoire.glob("*.pkl")]
-        logger.info(f"Modèles disponibles : {len(modeles)}")
+        logger.info(f"Modeles disponibles : {len(modeles)}")
         for m in modeles:
             logger.info(f"  - {m}")
         return modeles
@@ -159,7 +159,7 @@ class GestionnaireModeles:
 
 def comparer_modeles(resultats_eval: Dict[str, Dict[str, float]]) -> pd.DataFrame:
     """
-    Compare performances plusieurs modèles
+    Compare performances plusieurs modeles
     
     Args:
         resultats_eval : {nom_modele: {metrique: valeur}}
@@ -173,7 +173,7 @@ def comparer_modeles(resultats_eval: Dict[str, Dict[str, float]]) -> pd.DataFram
     df_comparaison = df_comparaison.sort_values("accuracy", ascending=False)
     
     logger.info("\n" + "=" * 60)
-    logger.info("📊 COMPARAISON MODELES")
+    logger.info("COMPARAISON MODELES")
     logger.info("=" * 60)
     logger.info(df_comparaison.to_string())
     logger.info("=" * 60 + "\n")

@@ -1,5 +1,5 @@
 """
-BC05 - Dashboard Streamlit pour prédictions oiseaux migrateurs
+BC05 - Dashboard Streamlit pour predictions oiseaux migrateurs
 Interface utilisateur interactive
 """
 
@@ -15,8 +15,7 @@ from config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_MODELES, REPERTOIRE_R
 
 # Configuration page
 st.set_page_config(
-    page_title="🐦 Oiseaux Migrateurs NPDC",
-    page_icon="🐦",
+    page_title="Oiseaux Migrateurs NPDC",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -45,90 +44,90 @@ st.markdown("""
 
 
 # Titre principal
-st.markdown('<p class="main-header">🐦 Prédiction Oiseaux Migrateurs - Nord-Pas-de-Calais</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-header">Prediction Oiseaux Migrateurs - Nord-Pas-de-Calais</p>', unsafe_allow_html=True)
 
 # Sidebar
 with st.sidebar:
-    st.header("⚙️ Configuration")
-    
-    # Vérifier santé API
+    st.header("Configuration")
+
+    # Verifier sante API
     try:
         response = requests.get(f"{API_URL}/health", timeout=5)
         if response.status_code == 200:
             health = response.json()
-            st.success("✅ API connectée")
+            st.success("API connectee")
             st.metric("Version API", health.get("version", "N/A"))
-            st.metric("Modèle chargé", "✅ Oui" if health.get("modele_charge") else "❌ Non")
+            st.metric("Modele charge", "Oui" if health.get("modele_charge") else "Non")
         else:
-            st.error("⚠️ API non disponible")
+            st.error("API non disponible")
     except Exception as e:
-        st.error(f"❌ Erreur connexion API : {e}")
-    
+        st.error(f"Erreur connexion API : {e}")
+
     st.markdown("---")
-    st.markdown("### 📊 À propos")
+    st.markdown("### A propos")
     st.markdown("""
-    Ce dashboard permet de prédire la probabilité de présence d'oiseaux migrateurs 
-    en fonction de la saison et des conditions météorologiques.
+    Ce dashboard permet de predire la probabilite de presence d'oiseaux migrateurs 
+    en fonction de la saison et des conditions meteorologiques.
     
-    **Modèle :** XGBoost  
-    **Région :** Nord-Pas-de-Calais  
-    **Données :** GBIF + Open-Meteo
+    **Modele :** XGBoost  
+    **Region :** Nord-Pas-de-Calais  
+    **Donnees :** GBIF + Open-Meteo
     """)
 
 
 # Onglets
-tab1, tab2, tab3, tab4 = st.tabs(["🔮 Prédiction", "📈 Statistiques", "📂 Données", "ℹ️ Documentation"])
+tab1, tab2, tab3, tab4 = st.tabs(["Prediction", "Statistiques", "Donnees", "Documentation"])
 
-# ========== ONGLET 1 : PRÉDICTION ==========
+# ========== ONGLET 1 : PREDICTION ==========
 with tab1:
-    st.header("🔮 Faire une prédiction")
-    
+    st.header("Faire une prediction")
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
-        st.subheader("🐦 Paramètres biologiques")
+        st.subheader("Parametres biologiques")
         
         espece = st.selectbox(
-            "Espèce",
+            "Espece",
             options=["cigogne_blanche", "hirondelle_rustique", "martinet_noir", "bergeronnette_printaniere"],
             format_func=lambda x: {
                 "cigogne_blanche": "Cigogne blanche",
                 "hirondelle_rustique": "Hirondelle rustique",
                 "martinet_noir": "Martinet noir",
-                "bergeronnette_printaniere": "Bergeronnette printanière"
+                "bergeronnette_printaniere": "Bergeronnette printaniere"
             }[x]
         )
         
         jour_annee = st.slider(
-            "Jour de l'année",
+            "Jour de l'annee",
             min_value=1,
             max_value=365,
             value=120,
-            help="1 = 1er janvier, 120 = début mai"
+            help="1 = 1er janvier, 120 = debut mai"
         )
         
         # Afficher date correspondante
         date_correspondante = pd.Timestamp('2024-01-01') + pd.Timedelta(days=jour_annee-1)
-        st.info(f"📅 {date_correspondante.strftime('%d %B')}")
-    
+        st.info(date_correspondante.strftime('%d %B'))
+
     with col2:
-        st.subheader("🌦️ Conditions météorologiques")
+        st.subheader("Conditions meteorologiques")
         
-        temperature_max = st.slider("Température max (°C)", -10.0, 40.0, 18.5, 0.5)
-        temperature_min = st.slider("Température min (°C)", -20.0, 30.0, 12.3, 0.5)
-        precipitation_sum = st.slider("Précipitations (mm)", 0.0, 100.0, 2.1, 0.1)
+        temperature_max = st.slider("Temperature max (deg C)", -10.0, 40.0, 18.5, 0.5)
+        temperature_min = st.slider("Temperature min (deg C)", -20.0, 30.0, 12.3, 0.5)
+        precipitation_sum = st.slider("Precipitations (mm)", 0.0, 100.0, 2.1, 0.1)
         vent_max = st.slider("Vent max (km/h)", 0.0, 100.0, 15.0, 1.0)
-        humidite_moyenne = st.slider("Humidité moyenne (%)", 0.0, 100.0, 65.0, 1.0)
+        humidite_moyenne = st.slider("Humidite moyenne (%)", 0.0, 100.0, 65.0, 1.0)
     
-    st.subheader("📍 Localisation")
+    st.subheader("Localisation")
     col_lat, col_lon = st.columns(2)
     with col_lat:
         latitude = st.number_input("Latitude", 49.5, 51.5, 50.5, 0.1)
     with col_lon:
         longitude = st.number_input("Longitude", 1.5, 4.0, 2.75, 0.1)
     
-    # Bouton prédiction
-    if st.button("🚀 Lancer la prédiction", type="primary", use_container_width=True):
+    # Bouton prediction
+    if st.button("Lancer la prediction", type="primary", use_container_width=True):
         with st.spinner("Calcul en cours..."):
             try:
                 payload = {
@@ -150,29 +149,28 @@ with tab1:
                 if response.status_code == 200:
                     resultat = response.json()
                     
-                    # Affichage résultats
-                    st.success("✅ Prédiction réussie !")
+                    # Affichage resultats
+                    st.success("Prediction reussie")
                     
                     col_res1, col_res2, col_res3 = st.columns(3)
                     
                     with col_res1:
                         st.metric(
-                            "Probabilité de présence",
+                            "Probabilite de presence",
                             f"{resultat['probabilite_presence']*100:.2f}%"
                         )
                     
                     with col_res2:
                         confiance = resultat['confiance']
-                        couleur = {"HAUTE": "🟢", "MOYENNE": "🟡", "BASSE": "🔴"}
-                        st.metric("Confiance", f"{couleur.get(confiance, '⚪')} {confiance}")
+                        st.metric("Confiance", confiance)
                     
                     with col_res3:
-                        st.metric("Modèle", resultat['modele_utilise'])
+                        st.metric("Modele", resultat['modele_utilise'])
                     
                     # Jauge visuelle
                     fig = px.bar(
                         x=[resultat['probabilite_presence']],
-                        y=["Probabilité"],
+                        y=["Probabilite"],
                         orientation='h',
                         range_x=[0, 1],
                         color_discrete_sequence=['#1f77b4']
@@ -181,27 +179,27 @@ with tab1:
                         showlegend=False,
                         height=150,
                         margin=dict(l=0, r=0, t=20, b=0),
-                        xaxis_title="Probabilité",
+                        xaxis_title="Probabilite",
                         yaxis_title=""
                     )
                     st.plotly_chart(fig, use_container_width=True)
                     
                 else:
-                    st.error(f"❌ Erreur API : {response.status_code}")
+                    st.error(f"Erreur API : {response.status_code}")
                     st.json(response.json())
-                    
+
             except Exception as e:
-                st.error(f"❌ Erreur : {e}")
+                st.error(f"Erreur : {e}")
 
 
 # ========== ONGLET 2 : STATISTIQUES ==========
 with tab2:
-    st.header("📈 Statistiques du projet")
-    
+    st.header("Statistiques du projet")
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
-        st.subheader("📊 Données")
+        st.subheader("Donnees")
         try:
             from pathlib import Path
             from config import REPERTOIRE_DONNEES_TRAITEES
@@ -211,47 +209,47 @@ with tab2:
             
             if chemin_obs.exists():
                 df_obs = pd.read_parquet(chemin_obs)
-                st.metric("Observations nettoyées", f"{len(df_obs):,}")
-                st.metric("Espèces", df_obs['espece'].nunique())
+                st.metric("Observations nettoyees", f"{len(df_obs):,}")
+                st.metric("Especes", df_obs['espece'].nunique())
                 
                 if 'date_observation' in df_obs.columns:
                     date_min = pd.to_datetime(df_obs['date_observation']).min()
                     date_max = pd.to_datetime(df_obs['date_observation']).max()
-                    st.metric("Période", f"{date_min.year} - {date_max.year}")
+                    st.metric("Periode", f"{date_min.year} - {date_max.year}")
             else:
-                st.warning("Données non disponibles")
+                st.warning("Donnees non disponibles")
                 
         except Exception as e:
-            st.error(f"Erreur chargement données : {e}")
+            st.error(f"Erreur chargement donnees : {e}")
     
     with col2:
-        st.subheader("🤖 Modèles")
+        st.subheader("Modeles")
         try:
             chemin_eval = REPERTOIRE_MODELES / "evaluations.csv"
             if chemin_eval.exists():
                 df_eval = pd.read_csv(chemin_eval, index_col=0)
                 st.dataframe(df_eval.style.highlight_max(axis=0), use_container_width=True)
             else:
-                st.info("Évaluations non disponibles")
+                st.info("Evaluations non disponibles")
         except Exception as e:
             st.error(f"Erreur : {e}")
     
-    # Graphique saisonnalité
-    st.subheader("📅 Saisonnalité des observations")
+    # Graphique saisonnalite
+    st.subheader("Saisonnalite des observations")
     try:
         image_path = REPERTOIRE_RACINE / "outputs" / "eda" / "saisonnalite.png"
         if image_path.exists():
             st.image(str(image_path), use_column_width=True)
         else:
-            st.info("Graphique non disponible. Exécutez scripts/eda.py")
+            st.info("Graphique non disponible. Executez scripts/eda.py")
     except Exception as e:
-        st.warning(f"Image non chargée : {e}")
+        st.warning(f"Image non chargee : {e}")
 
 
-# ========== ONGLET 3 : DONNÉES ==========
+# ========== ONGLET 3 : DONNEES ==========
 with tab3:
-    st.header("📂 Données visibles")
-    st.caption("Aperçu des données nettoyées et des distributions principales.")
+    st.header("Donnees visibles")
+    st.caption("Apercu des donnees nettoyees et des distributions principales.")
 
     try:
         from config import REPERTOIRE_DONNEES_TRAITEES
@@ -264,11 +262,11 @@ with tab3:
 
             col1, col2 = st.columns(2)
             with col1:
-                st.subheader("Aperçu des observations")
+                st.subheader("Apercu des observations")
                 st.dataframe(df_obs.head(50), use_container_width=True)
 
             with col2:
-                st.subheader("Répartition par espèce")
+                st.subheader("Repartition par espece")
                 if "espece" in df_obs.columns:
                     counts = df_obs["espece"].value_counts().reset_index()
                     counts.columns = ["espece", "nombre_observations"]
@@ -277,13 +275,13 @@ with tab3:
                         x="espece",
                         y="nombre_observations",
                         color="espece",
-                        title="Nombre d'observations par espèce",
+                        title="Nombre d'observations par espece",
                     )
                     st.plotly_chart(fig, use_container_width=True)
 
             if chemin_grille.exists():
                 df_grille = pd.read_parquet(chemin_grille)
-                st.subheader("Présence / absence")
+                st.subheader("Presence / absence")
                 if "presence" in df_grille.columns:
                     presence_counts = df_grille["presence"].value_counts().reset_index()
                     presence_counts.columns = ["presence", "nombre"]
@@ -291,69 +289,69 @@ with tab3:
                         presence_counts,
                         names="presence",
                         values="nombre",
-                        title="Répartition présence / absence",
+                        title="Repartition presence / absence",
                     )
                     st.plotly_chart(fig2, use_container_width=True)
         else:
-            st.warning("Les données nettoyées ne sont pas encore disponibles. Lance d'abord le pipeline.")
+            st.warning("Les donnees nettoyees ne sont pas encore disponibles. Lance d'abord le pipeline.")
 
     except Exception as e:
-        st.error(f"Erreur affichage données : {e}")
+        st.error(f"Erreur affichage donnees : {e}")
 
 
 # ========== ONGLET 3 : DOCUMENTATION ==========
 with tab4:
-    st.header("ℹ️ Documentation")
-    
+    st.header("Documentation")
+
     st.markdown("""
-    ### 🎯 Objectif du projet
-    
-    Prédire la probabilité de présence d'oiseaux migrateurs dans le Nord-Pas-de-Calais 
+    ### Objectif du projet
+
+    Predire la probabilite de presence d'oiseaux migrateurs dans le Nord-Pas-de-Calais
     en fonction de :
-    - La **saison** (jour de l'année)
-    - Les **conditions météorologiques** (température, pluie, vent, humidité)
-    - La **géolocalisation** (latitude, longitude)
-    
-    ### 📊 Sources de données
-    
+    - La **saison** (jour de l'annee)
+    - Les **conditions meteorologiques** (temperature, pluie, vent, humidite)
+    - La **geolocalisation** (latitude, longitude)
+
+    ### Sources de donnees
+
     - **GBIF** : Global Biodiversity Information Facility (observations d'oiseaux)
-    - **Open-Meteo** : Données météorologiques historiques gratuites
-    
-    ### 🤖 Modèles
-    
-    - **XGBoost** : Gradient Boosting optimisé (en production)
-    - **Random Forest** : Forêts aléatoires (comparaison)
-    - **Logistic Regression** : Régression logistique (baseline)
-    
-    ### 🐦 Espèces étudiées
-    
+    - **Open-Meteo** : Donnees meteorologiques historiques gratuites
+
+    ### Modeles
+
+    - **XGBoost** : Gradient Boosting optimise (en production)
+    - **Random Forest** : Forets aleatoires (comparaison)
+    - **Logistic Regression** : Regression logistique (baseline)
+
+    ### Especes etudiees
+
     1. **Hirondelle rustique** (*Barn Swallow*) - Arrive en avril-mai
     2. **Cigogne blanche** (*White Stork*) - Arrive en mars-avril
     3. **Martinet noir** (*Common Swift*) - Arrive en mai-juin
-    4. **Bergeronnette printanière** (*White Wagtail*) - Arrive en mars-avril
-    
-    ### 📁 Architecture
-    
+    4. **Bergeronnette printaniere** (*White Wagtail*) - Arrive en mars-avril
+
+    ### Architecture
+
     ```
     oiseaux_migrateurs_npdc/
-    ├── api/                    # API FastAPI
-    ├── scripts/                # Pipeline data + ML
-    ├── donnees/                # Datasets
-    ├── modeles/                # Modèles sérialisés
-    ├── dashboard.py            # Cette interface
-    └── requirements.txt
+    |-- api/                    # API FastAPI
+    |-- scripts/                # Pipeline data + ML
+    |-- donnees/                # Datasets
+    |-- modeles/                # Modeles serialises
+    |-- dashboard.py            # Cette interface
+    `-- requirements.txt
     ```
-    
-    ### 🚀 Utilisation API
+
+    ### Utilisation API
     
     ```bash
-    # Santé
+    # Sante
     GET http://localhost:8000/health
     
-    # Liste espèces
+    # Liste especes
     GET http://localhost:8000/species
     
-    # Prédiction
+    # Prediction
     POST http://localhost:8000/predict
     {
       "espece": "cigogne_blanche",
@@ -370,11 +368,11 @@ with tab4:
     }
     ```
 
-    ### 🌐 Mise en ligne
+    ### Mise en ligne
 
     Pour rendre l'interface accessible sur internet :
-    - déployer l'API FastAPI sur Render, Railway ou Cloud Run ;
-    - déployer le dashboard Streamlit sur Streamlit Community Cloud ou un service équivalent ;
+    - deployer l'API FastAPI sur Render, Railway ou Cloud Run ;
+    - deployer le dashboard Streamlit sur Streamlit Community Cloud ou un service equivalent ;
     - configurer la variable d'environnement `API_URL` avec l'URL publique de l'API.
 
     Exemple :
@@ -382,17 +380,17 @@ with tab4:
     API_URL=https://mon-api-publique.example.com
     ```
     
-    ### 👨‍💻 Développeur
+    ### Developpeur
     
-    Projet RNCP - Concepteur Développeur en Science des Données  
-    Année 2026
+    Projet RNCP - Concepteur Developpeur en Science des Donnees  
+    Annee 2026
     """)
 
 
 # Footer
 st.markdown("---")
 st.markdown(
-    "<div style='text-align: center; color: gray;'>🐦 Oiseaux Migrateurs NPDC | "
-    "Propulsé par FastAPI + Streamlit + XGBoost</div>",
+    "<div style='text-align: center; color: gray;'>Oiseaux Migrateurs NPDC | "
+    "Propulse par FastAPI + Streamlit + XGBoost</div>",
     unsafe_allow_html=True
 )

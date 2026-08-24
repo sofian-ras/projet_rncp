@@ -28,10 +28,10 @@ def afficher_resume_evaluations() -> None:
 
 
 def run() -> None:
-    print("[BC03] Entraînement modèles...")
+    print("[BC03] Entrainement modeles...")
     executer_entrainement()
     checks = verifier_sorties()
-    print("[BC03] Vérification sorties:", checks)
+    print("[BC03] Verification sorties:", checks)
     afficher_resume_evaluations()
 
 

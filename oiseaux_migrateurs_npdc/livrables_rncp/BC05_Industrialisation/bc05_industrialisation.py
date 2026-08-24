@@ -46,7 +46,7 @@ def verifier_dashboard() -> bool:
 
 
 def run() -> None:
-    print("[BC05] Vérification industrialisation...")
+    print("[BC05] Verification industrialisation...")
     print("[BC05] Dashboard file:", verifier_dashboard())
     print("[BC05] API checks:", verifier_api())
 

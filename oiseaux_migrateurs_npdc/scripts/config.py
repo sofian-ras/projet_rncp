@@ -1,6 +1,6 @@
 """
-Configuration centralisée du projet
-Variables en français, clean et maintenable
+Configuration centralisee du projet
+Variables en francais, clean et maintenable
 """
 
 from pathlib import Path
@@ -17,7 +17,7 @@ REPERTOIRE_CARACTERISTIQUES = REPERTOIRE_DONNEES / "caracteristiques"
 REPERTOIRE_MODELES = REPERTOIRE_RACINE / "modeles"
 REPERTOIRE_SCRIPTS = REPERTOIRE_RACINE / "scripts"
 
-# Créer répertoires s'ils n'existent pas
+# Creer repertoires s'ils n'existent pas
 for repertoire in [REPERTOIRE_DONNEES_BRUTES, REPERTOIRE_DONNEES_TRAITEES, 
                    REPERTOIRE_CARACTERISTIQUES, REPERTOIRE_MODELES]:
     repertoire.mkdir(parents=True, exist_ok=True)
@@ -26,7 +26,7 @@ for repertoire in [REPERTOIRE_DONNEES_BRUTES, REPERTOIRE_DONNEES_TRAITEES,
 # ========== REGION GEOGRAPHIQUE ==========
 @dataclass
 class BoundingBoxNPdC:
-    """Bounding box Nord-Pas-de-Calais en coordonnées GPS"""
+    """Bounding box Nord-Pas-de-Calais en coordonnees GPS"""
     latitude_min: float = 49.5
     latitude_max: float = 51.5
     longitude_min: float = 1.5
@@ -54,18 +54,18 @@ ESPECES = {
         "nom_francais": "Cigogne blanche",
         "code_gbif": 2481912,
         "mois_arrivee": [3, 4],   # Mars, Avril
-        "mois_depart": [8, 9],    # Août, Septembre
+        "mois_depart": [8, 9],    # Aout, Septembre
     },
     "martinet_noir": {
         "nom_scientifique": "Apus apus",
         "nom_francais": "Martinet noir",
         "code_gbif": 5228676,
         "mois_arrivee": [5, 6],   # Mai, Juin
-        "mois_depart": [8, 9],    # Août, Septembre
+        "mois_depart": [8, 9],    # Aout, Septembre
     },
     "bergeronnette_printaniere": {
         "nom_scientifique": "Motacilla alba",
-        "nom_francais": "Bergeronnette printanière",
+        "nom_francais": "Bergeronnette printaniere",
         "code_gbif": 9687165,
         "mois_arrivee": [3, 4],   # Mars, Avril
         "mois_depart": [10, 11],  # Octobre, Novembre
@@ -75,7 +75,7 @@ ESPECES = {
 
 # ========== PARAMETRES ACQUISITION ==========
 class ParametresAcquisition:
-    """Paramètres pour téléchargement données"""
+    """Parametres pour telechargement donnees"""
     
     # GBIF
     ANNEE_DEBUT = 2015
@@ -98,29 +98,29 @@ class ParametresAcquisition:
 
 # ========== PARAMETRES NETTOYAGE ==========
 class ParametresNettoyage:
-    """Paramètres pour traitement et validation données"""
+    """Parametres pour traitement et validation donnees"""
     
     # Filtrage observations
-    PRECISION_MIN_KM = 1  # Exclure observations imprécises
-    DISTANCE_MAX_REGION_KM = 10  # Garder observations maxD km de la région
+    PRECISION_MIN_KM = 1  # Exclure observations imprecises
+    DISTANCE_MAX_REGION_KM = 10  # Garder observations maxD km de la region
     
-    # Validation coordonnées
+    # Validation coordonnees
     LATITUDE_MIN = ZONE_GEOGRAPHIQUE.latitude_min - 1
     LATITUDE_MAX = ZONE_GEOGRAPHIQUE.latitude_max + 1
     LONGITUDE_MIN = ZONE_GEOGRAPHIQUE.longitude_min - 1
     LONGITUDE_MAX = ZONE_GEOGRAPHIQUE.longitude_max + 1
     
-    # Agrégation temporelle
+    # Agregation temporelle
     AGREGATION_SEMAINES = True  # Grouper par semaine
 
 
 # ========== PARAMETRES FEATURES ==========
 class ParametresFeatures:
-    """Paramètres engineering des features"""
+    """Parametres engineering des features"""
     
     # Windows temporels (en jours)
-    FENETRE_HISTORIQUE_METEO = 7  # 1 semaine de météo avant observation
-    FENETRE_AGREGATION = 7  # Agréger par semaine
+    FENETRE_HISTORIQUE_METEO = 7  # 1 semaine de meteo avant observation
+    FENETRE_AGREGATION = 7  # Agreger par semaine
     
     # Variables to include
     VARIABLES_METEO_FINALES = [
@@ -137,19 +137,19 @@ class ParametresFeatures:
     AJOUTER_SEMAINE_ANNEE = True
     AJOUTER_MOIS = True
     
-    # Classes imbalancées
+    # Classes imbalancees
     EQUILIBRAGE_SMOTE = True
 
 
 # ========== PARAMETRES ML ==========
 class ParametresML:
-    """Paramètres entraînement modèles Machine Learning"""
+    """Parametres entrainement modeles Machine Learning"""
     
     TEST_SIZE = 0.2
     VALIDATION_SIZE = 0.1
     RANDOM_STATE = 42
     
-    # Hyperparamètres XGBoost
+    # Hyperparametres XGBoost
     XGBOOST_PARAMS = {
         "max_depth": 6,
         "learning_rate": 0.05,
@@ -158,7 +158,7 @@ class ParametresML:
         "colsample_bytree": 0.8,
     }
     
-    # Hyperparamètres Random Forest
+    # Hyperparametres Random Forest
     RANDOM_FOREST_PARAMS = {
         "n_estimators": 100,
         "max_depth": 10,
@@ -166,13 +166,13 @@ class ParametresML:
         "random_state": RANDOM_STATE,
     }
     
-    # Métriques seuil
+    # Metriques seuil
     SEUIL_PRECISION_ACCEPTABLE = 0.70
 
 
 # ========== PARAMETRES DEEP LEARNING ==========
 class ParametresDL:
-    """Paramètres entrainement LSTM"""
+    """Parametres entrainement LSTM"""
     
     # Architecture LSTM
     LSTM_UNITES = [64, 32]
@@ -181,9 +181,9 @@ class ParametresDL:
     EPOCHS = 50
     LEARNING_RATE = 0.001
     
-    # Séquences temporelles
-    LONGUEUR_SEQUENCE = 8  # 8 semaines en entrée
-    PREDICTION_SEMAINES = 1  # Prédire semaine suivante
+    # Sequences temporelles
+    LONGUEUR_SEQUENCE = 8  # 8 semaines en entree
+    PREDICTION_SEMAINES = 1  # Predire semaine suivante
     
     # Early stopping
     PATIENCE = 10
@@ -191,11 +191,11 @@ class ParametresDL:
 
 # ========== PARAMETRES API ==========
 class ParametresAPI:
-    """Paramètres serveur API"""
+    """Parametres serveur API"""
     
-    TITRE = "API Prédiction Oiseaux Migrateurs"
+    TITRE = "API Prediction Oiseaux Migrateurs"
     VERSION = "1.0.0"
-    DESCRIPTION = "Prédiction arrivée oiseaux migrateurs - Nord-Pas-de-Calais"
+    DESCRIPTION = "Prediction arrivee oiseaux migrateurs - Nord-Pas-de-Calais"
     HOST = "127.0.0.1"
     PORT = 8000
     LOG_LEVEL = "info"
@@ -211,3 +211,15 @@ FORMAT_LOG = (
 
 FICHIER_LOG = REPERTOIRE_RACINE / "logs" / f"projet_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
 FICHIER_LOG.parent.mkdir(exist_ok=True)
+
+
+if __name__ == "__main__":
+    print("Configuration chargee")
+    print("Repertoires crees")
+    print(
+        f"ZONE: {ZONE_GEOGRAPHIQUE.nom_region} "
+        f"({ZONE_GEOGRAPHIQUE.latitude_min}-{ZONE_GEOGRAPHIQUE.latitude_max}deg N, "
+        f"{ZONE_GEOGRAPHIQUE.longitude_min}-{ZONE_GEOGRAPHIQUE.longitude_max}deg E)"
+    )
+    noms_especes = ", ".join(nom.split("_")[0] for nom in ESPECES)
+    print(f"ESPECES: {len(ESPECES)} ({noms_especes})")

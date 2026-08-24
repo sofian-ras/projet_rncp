@@ -1,5 +1,5 @@
 """
-Configuration - Réexporte depuis scripts.config
+Configuration - Reexporte depuis scripts.config
 """
 
 try:

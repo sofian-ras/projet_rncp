@@ -1,6 +1,6 @@
 """
-BC01 - Nettoyage et validation des données
-ETL pipeline : observations + météo
+BC01 - Nettoyage et validation des donnees
+ETL pipeline : observations + meteo
 """
 
 import logging
@@ -35,12 +35,12 @@ class NettoyeurObservations:
     
     def charger_et_nettoyer(self, chemin_fichier: Path) -> pd.DataFrame:
         """Charge CSV brut et applique nettoyage complet"""
-        logger.info(f"📂 Chargement observations : {chemin_fichier.name}")
+        logger.info(f"Chargement observations : {chemin_fichier.name}")
 
         try:
             df = pd.read_csv(chemin_fichier)
         except EmptyDataError:
-            logger.warning("  Fichier observations vide : aucune donnée à nettoyer")
+            logger.warning("  Fichier observations vide : aucune donnee a nettoyer")
             return pd.DataFrame(
                 columns=[
                     "espece",
@@ -59,22 +59,22 @@ class NettoyeurObservations:
         logger.info(f"  Observations initiales : {nb_initial}")
 
         if df.empty:
-            logger.warning("  Aucune observation disponible après chargement")
+            logger.warning("  Aucune observation disponible apres chargement")
             return df
         
-        # Étape 1 : Supprimer nulls
+        # Etape 1 : Supprimer nulls
         df = self._supprimer_valeurs_nulles(df)
-        logger.info(f"  Après suppression nulls : {len(df)} (-{nb_initial - len(df)})")
+        logger.info(f"  Apres suppression nulls : {len(df)} (-{nb_initial - len(df)})")
         
-        # Étape 2 : Valider coordonnées
+        # Etape 2 : Valider coordonnees
         df = self._valider_coordonnees(df)
-        logger.info(f"  Après validation coords : {len(df)} (-{nb_initial - len(df)})")
+        logger.info(f"  Apres validation coords : {len(df)} (-{nb_initial - len(df)})")
         
-        # Étape 3 : Filtrer région NPDC
+        # Etape 3 : Filtrer region NPDC
         df = self._filtrer_region(df)
-        logger.info(f"  Après filtrage région : {len(df)}")
+        logger.info(f"  Apres filtrage region : {len(df)}")
         
-        # Étape 4 : Formater dates (GBIF peut mixer date simple et timestamp)
+        # Etape 4 : Formater dates (GBIF peut mixer date simple et timestamp)
         df["date_observation"] = pd.to_datetime(
             df["date_observation"],
             errors="coerce",
@@ -83,7 +83,7 @@ class NettoyeurObservations:
         ).dt.tz_localize(None)
         df = df.dropna(subset=["date_observation"])
         
-        # Étape 5 : Supprimer doublons
+        # Etape 5 : Supprimer doublons
         nb_avant_doublon = len(df)
         if "id_gbif" in df.columns and df["id_gbif"].notna().any():
             df = df.drop_duplicates(subset=["id_gbif"], keep="first")
@@ -92,7 +92,7 @@ class NettoyeurObservations:
                 subset=["espece", "date_observation", "latitude", "longitude"],
                 keep="first"
             )
-        logger.info(f"  Après suppression doublons : {len(df)} (-{nb_avant_doublon - len(df)})")
+        logger.info(f"  Apres suppression doublons : {len(df)} (-{nb_avant_doublon - len(df)})")
         
         return df
     
@@ -127,7 +127,7 @@ class NettoyeurObservations:
 
 
 class AggregeurTemporel:
-    """Agrège observations par semaine + période"""
+    """Agrege observations par semaine + periode"""
     
     @staticmethod
     def creer_grille_hebdomadaire(
@@ -136,16 +136,16 @@ class AggregeurTemporel:
         annee_fin: int = 2024
     ) -> pd.DataFrame:
         """
-        Crée grille complète (semaine x espèce x localité)
-        Assigne présence/absence
+        Cree grille complete (semaine x espece x localite)
+        Assigne presence/absence
         """
-        logger.info("📊 Création grille hebdomadaire...")
+        logger.info("Creation grille hebdomadaire...")
         
-        # Extraire année et semaine
+        # Extraire annee et semaine
         df_observations["annee"] = df_observations["date_observation"].dt.isocalendar().year
         df_observations["semaine"] = df_observations["date_observation"].dt.isocalendar().week
         
-        # Discrétiser coordonnées (grille 0.1°x0.1°)
+        # Discretiser coordonnees (grille 0.1deg x 0.1deg)
         df_observations["lat_discrete"] = (
             df_observations["latitude"].round(1)
         )
@@ -153,8 +153,8 @@ class AggregeurTemporel:
             df_observations["longitude"].round(1)
         )
         
-        # Créer grille complète
-        années = list(range(annee_debut, annee_fin + 1))
+        # Creer grille complete
+        annees = list(range(annee_debut, annee_fin + 1))
         semaines = list(range(1, 53))
         especes = df_observations["espece"].unique()
         lats = df_observations["lat_discrete"].unique()
@@ -162,11 +162,11 @@ class AggregeurTemporel:
         
         import itertools
         grille = pd.DataFrame(
-            itertools.product(années, semaines, especes, lats, lons),
+            itertools.product(annees, semaines, especes, lats, lons),
             columns=["annee", "semaine", "espece", "lat_discrete", "lon_discrete"]
         )
         
-        # Marquer présence si observation
+        # Marquer presence si observation
         observations_marquees = df_observations.groupby(
             ["annee", "semaine", "espece", "lat_discrete", "lon_discrete"]
         ).size().reset_index(name="nombre_observations")
@@ -180,26 +180,26 @@ class AggregeurTemporel:
         grille["nombre_observations"] = grille["nombre_observations"].fillna(0)
         grille["presence"] = (grille["nombre_observations"] > 0).astype(int)
         
-        logger.info(f"  Grille créée : {len(grille)} lignes")
-        logger.info(f"  Équilibre classes : {grille['presence'].value_counts().to_dict()}")
+        logger.info(f"  Grille creee : {len(grille)} lignes")
+        logger.info(f"  Equilibre classes : {grille['presence'].value_counts().to_dict()}")
         
         return grille
 
 
 def traiter_meteo(chemin_fichier_meteo: Path) -> pd.DataFrame:
-    """Charge et nettoie les données météo brutes"""
+    """Charge et nettoie les donnees meteo brutes"""
     if not chemin_fichier_meteo.exists():
-        logger.warning(f"Fichier météo non trouvé : {chemin_fichier_meteo}")
+        logger.warning(f"Fichier meteo non trouve : {chemin_fichier_meteo}")
         return pd.DataFrame()
 
     try:
         df_meteo = pd.read_csv(chemin_fichier_meteo)
     except EmptyDataError:
-        logger.warning("Fichier météo vide")
+        logger.warning("Fichier meteo vide")
         return pd.DataFrame()
 
     if df_meteo.empty:
-        logger.warning("Aucune donnée météo disponible")
+        logger.warning("Aucune donnee meteo disponible")
         return df_meteo
 
     colonnes_attendues = [
@@ -223,14 +223,14 @@ def traiter_meteo(chemin_fichier_meteo: Path) -> pd.DataFrame:
         df_meteo[colonne] = pd.to_numeric(df_meteo[colonne], errors="coerce")
 
     df_meteo = df_meteo.sort_values("date").drop_duplicates(subset=["date"], keep="first")
-    logger.info(f"✓ Données météo nettoyées : {len(df_meteo)} lignes")
+    logger.info(f"Donnees meteo nettoyees : {len(df_meteo)} lignes")
     return df_meteo
 
 
 def executer_nettoyage():
     """Pipeline complet nettoyage"""
     logger.info("=" * 60)
-    logger.info("🧹 DEBUT NETTOYAGE ET ETL")
+    logger.info("DEBUT NETTOYAGE ET ETL")
     logger.info("=" * 60)
     
     # Charger et nettoyer observations GBIF
@@ -238,59 +238,59 @@ def executer_nettoyage():
     fichier_brut = REPERTOIRE_DONNEES_BRUTES / "observations_gbif.csv"
     
     if not fichier_brut.exists():
-        logger.error(f"Fichier non trouvé : {fichier_brut}")
-        logger.error("Exécutez d'abord scripts/acquisition.py")
+        logger.error(f"Fichier non trouve : {fichier_brut}")
+        logger.error("Executez d'abord scripts/acquisition.py")
         return
     
     df_observations = nettoyeur.charger_et_nettoyer(fichier_brut)
 
     if df_observations.empty:
-        logger.warning("Aucune observation exploitable. Sauvegarde d'un parquet vide et arrêt du pipeline ETL.")
+        logger.warning("Aucune observation exploitable. Sauvegarde d'un parquet vide et arret du pipeline ETL.")
 
         fichier_observations_nettoyees = (
             REPERTOIRE_DONNEES_TRAITEES / "observations_nettoyees.parquet"
         )
         df_observations.to_parquet(fichier_observations_nettoyees)
-        logger.info("✓ Observations nettoyées (vides) sauvegardées")
+        logger.info("Observations nettoyees (vides) sauvegardees")
 
-        logger.info("✓ NETTOYAGE TERMINE (sans données observations)")
+        logger.info("NETTOYAGE TERMINE (sans donnees observations)")
         return
     
-    # Sauvegarder observations nettoyées
+    # Sauvegarder observations nettoyees
     fichier_observations_nettoyees = (
         REPERTOIRE_DONNEES_TRAITEES / "observations_nettoyees.parquet"
     )
     df_observations.to_parquet(fichier_observations_nettoyees)
-    logger.info(f"✓ Observations nettoyées sauvegardées")
+    logger.info("Observations nettoyees sauvegardees")
     
-    # Créer grille hebdomadaire
+    # Creer grille hebdomadaire
     aggregeur = AggregeurTemporel()
     df_grille = aggregeur.creer_grille_hebdomadaire(df_observations)
     
     # Sauvegarder grille
     fichier_grille = REPERTOIRE_DONNEES_TRAITEES / "grille_presence_hebdo.parquet"
     df_grille.to_parquet(fichier_grille)
-    logger.info(f"✓ Grille hebdomadaire sauvegardée")
+    logger.info("Grille hebdomadaire sauvegardee")
 
-    # Nettoyer et sauvegarder météo
+    # Nettoyer et sauvegarder meteo
     fichier_meteo_brut = REPERTOIRE_DONNEES_BRUTES / "meteo_npdc.csv"
     df_meteo = traiter_meteo(fichier_meteo_brut)
     if not df_meteo.empty:
         fichier_meteo_traite = REPERTOIRE_DONNEES_TRAITEES / "meteo_processed.parquet"
         df_meteo.to_parquet(fichier_meteo_traite)
-        logger.info("✓ Données météo traitées sauvegardées")
-    
+        logger.info("Donnees meteo traitees sauvegardees")
+
     # Statistiques finales
     logger.info("=" * 60)
-    logger.info("📈 STATISTIQUES FINALES")
+    logger.info("STATISTIQUES FINALES")
     logger.info("=" * 60)
-    logger.info(f"Total observations nettoyées : {len(df_observations)}")
-    logger.info(f"Espèces : {df_observations['espece'].nunique()}")
-    logger.info(f"Plage temporelle : {df_observations['date_observation'].min()} à {df_observations['date_observation'].max()}")
-    logger.info(f"Zone géographique : {df_observations['latitude'].min():.2f}°N à {df_observations['latitude'].max():.2f}°N")
+    logger.info(f"Total observations nettoyees : {len(df_observations)}")
+    logger.info(f"Especes : {df_observations['espece'].nunique()}")
+    logger.info(f"Plage temporelle : {df_observations['date_observation'].min()} a {df_observations['date_observation'].max()}")
+    logger.info(f"Zone geographique : {df_observations['latitude'].min():.2f} deg N a {df_observations['latitude'].max():.2f} deg N")
     
     logger.info("=" * 60)
-    logger.info("✓ NETTOYAGE TERMINE")
+    logger.info("NETTOYAGE TERMINE")
     logger.info("=" * 60)
 
 

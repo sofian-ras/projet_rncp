@@ -1,5 +1,5 @@
 """
-BC02 - Analyse Exploratoire des observations et météo
+BC02 - Analyse Exploratoire des observations et meteo
 Visualisations et tests statistiques
 """
 
@@ -35,14 +35,14 @@ sns.set_palette("husl")
 
 
 class AnalyseurExploratoire:
-    """Analyse exploratoire observations + météo"""
+    """Analyse exploratoire observations + meteo"""
     
     def __init__(self):
         self.repertoire_sorties = REPERTOIRE_RACINE / "outputs" / "eda"
         self.repertoire_sorties.mkdir(parents=True, exist_ok=True)
     
     def charger_donnees(self) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        """Charge observations, grille et météo traitée"""
+        """Charge observations, grille et meteo traitee"""
         chemin_obs = REPERTOIRE_DONNEES_TRAITEES / "observations_nettoyees.parquet"
         chemin_grille = REPERTOIRE_DONNEES_TRAITEES / "grille_presence_hebdo.parquet"
         chemin_meteo = REPERTOIRE_DONNEES_TRAITEES / "meteo_processed.parquet"
@@ -51,25 +51,25 @@ class AnalyseurExploratoire:
         df_grille = pd.read_parquet(chemin_grille)
         df_meteo = pd.read_parquet(chemin_meteo) if chemin_meteo.exists() else pd.DataFrame()
         
-        logger.info(f"✓ Observations chargées : {len(df_obs)}")
-        logger.info(f"✓ Grille chargée : {len(df_grille)}")
-        logger.info(f"✓ Météo chargée : {len(df_meteo)}")
+        logger.info(f"Observations chargees : {len(df_obs)}")
+        logger.info(f"Grille chargee : {len(df_grille)}")
+        logger.info(f"Meteo chargee : {len(df_meteo)}")
         
         return df_obs, df_grille, df_meteo
     
     def analyser_saisonnalite(self, df_obs: pd.DataFrame) -> pd.DataFrame:
         """Analyse distribution observations par mois/semaine"""
-        logger.info("📊 Analyse saisonnalité...")
+        logger.info("Analyse saisonnalite...")
         
         df_obs["mois"] = pd.to_datetime(df_obs["date_observation"]).dt.month
         df_obs["semaine_annee"] = pd.to_datetime(df_obs["date_observation"]).dt.isocalendar().week
         
-        # Agrégation par mois et espèce
+        # Agregation par mois et espece
         saisonnalite = df_obs.groupby(["mois", "espece"]).size().reset_index(name="nombre_observations")
         
         # Visualiser
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-        fig.suptitle("Saisonnalité des Observations - NPDC", fontsize=16, fontweight="bold")
+        fig.suptitle("Saisonnalite des Observations - NPDC", fontsize=16, fontweight="bold")
         
         for idx, (espece, infos) in enumerate(ESPECES.items()):
             ax = axes[idx // 2, idx % 2]
@@ -91,13 +91,13 @@ class AnalyseurExploratoire:
         
         plt.tight_layout()
         plt.savefig(self.repertoire_sorties / "saisonnalite.png", dpi=300, bbox_inches="tight")
-        logger.info("  ✓ Graphique saisonnalité sauvegardé")
+        logger.info("  Graphique saisonnalite sauvegarde")
         
         return saisonnalite
     
     def creer_carte_densite(self, df_obs: pd.DataFrame) -> folium.Map:
-        """Crée carte heatmap densité observations"""
-        logger.info("🗺️ Création carte densité...")
+        """Cree carte heatmap densite observations"""
+        logger.info("Creation carte densite...")
         
         # Centre NPDC
         centre = [ZONE_GEOGRAPHIQUE.centre_latitude, ZONE_GEOGRAPHIQUE.centre_longitude]
@@ -109,7 +109,7 @@ class AnalyseurExploratoire:
             tiles="OpenStreetMap"
         )
         
-        # Données heatmap
+        # Donnees heatmap
         donnees_heatmap = df_obs[["latitude", "longitude"]].values.tolist()
         
         HeatMap(donnees_heatmap, radius=15, blur=25, max_zoom=1).add_to(carte)
@@ -126,19 +126,19 @@ class AnalyseurExploratoire:
         # Sauvegarder
         chemin_carte = self.repertoire_sorties / "carte_densite.html"
         carte.save(str(chemin_carte))
-        logger.info(f"  ✓ Carte sauvegardée : {chemin_carte.name}")
+        logger.info(f"  Carte sauvegardee : {chemin_carte.name}")
         
         return carte
     
     def analyser_correlations(self, df_grille: pd.DataFrame, df_meteo: pd.DataFrame) -> pd.DataFrame:
-        """Analyse corrélations météo ↔ présence"""
-        logger.info("🔗 Analyse corrélations...")
+        """Analyse correlations meteo / presence"""
+        logger.info("Analyse correlations...")
 
         if df_meteo.empty:
-            logger.warning("  Données météo absentes. Corrélations non calculées.")
+            logger.warning("  Donnees meteo absentes. Correlations non calculees.")
             return pd.DataFrame()
         
-        # Préparer météo en agrégation hebdomadaire
+        # Preparer meteo en agregation hebdomadaire
         df_meteo["date"] = pd.to_datetime(df_meteo["date"])
         df_meteo["annee"] = df_meteo["date"].dt.isocalendar().year.astype(int)
         df_meteo["semaine"] = df_meteo["date"].dt.isocalendar().week.astype(int)
@@ -156,21 +156,21 @@ class AnalyseurExploratoire:
 
         meteo_hebdo = df_meteo.groupby(["annee", "semaine"], as_index=False)[variables_meteo].mean()
 
-        # Fusionner grille présence/absence + météo
+        # Fusionner grille presence/absence + meteo
         df_fusion = df_grille.merge(meteo_hebdo, on=["annee", "semaine"], how="left")
 
         if df_fusion.empty or "presence" not in df_fusion.columns:
-            logger.warning("  Aucune donnée exploitable pour les corrélations.")
+            logger.warning("  Aucune donnee exploitable pour les correlations.")
             return pd.DataFrame()
 
         if df_fusion["presence"].nunique() < 2:
             logger.warning(
-                "  La variable 'presence' est constante dans ce jeu de données. "
-                "Corrélations non interprétables."
+                "  La variable 'presence' est constante dans ce jeu de donnees. "
+                "Correlations non interpretables."
             )
             return pd.DataFrame()
         
-        # Corrélations par espèce
+        # Correlations par espece
         correlations = {}
         for espece in df_fusion["espece"].unique():
             df_espece = df_fusion[df_fusion["espece"] == espece]
@@ -189,37 +189,37 @@ class AnalyseurExploratoire:
         if not df_corr.empty:
             fig, ax = plt.subplots(figsize=(10, 6))
             sns.heatmap(df_corr, annot=True, fmt=".3f", cmap="RdBu_r", 
-                        center=0, cbar_kws={"label": "Corrélation"}, ax=ax,
+                        center=0, cbar_kws={"label": "Correlation"}, ax=ax,
                         vmin=-0.5, vmax=0.5)
-            ax.set_title("Corrélations Météo ↔ Présence Oiseaux", fontsize=14, fontweight="bold")
-            ax.set_xlabel("Variables météorologiques", fontsize=11)
-            ax.set_ylabel("Espèces", fontsize=11)
+            ax.set_title("Correlations Meteo / Presence Oiseaux", fontsize=14, fontweight="bold")
+            ax.set_xlabel("Variables meteorologiques", fontsize=11)
+            ax.set_ylabel("Especes", fontsize=11)
             
             plt.tight_layout()
             plt.savefig(self.repertoire_sorties / "correlations_meteo.png", dpi=300, bbox_inches="tight")
-            logger.info("  ✓ Heatmap corrélations sauvegardée")
+            logger.info("  Heatmap correlations sauvegardee")
         
         return df_corr
     
     @staticmethod
     def test_independance_chi2(df_obs: pd.DataFrame) -> Dict[str, float]:
-        """Test indépendance χ² entre espèce et mois"""
-        logger.info("📈 Tests d'indépendance (χ²)...")
-        
+        """Test independance chi2 entre espece et mois"""
+        logger.info("Tests d'independance (chi2)...")
+
         df_obs["mois"] = pd.to_datetime(df_obs["date_observation"]).dt.month
-        
+
         # Contingency table
         tableau_contingence = pd.crosstab(df_obs["espece"], df_obs["mois"])
-        
-        # χ² test
+
+        # chi2 test
         chi2, p_value, dof, expected = stats.chi2_contingency(tableau_contingence)
-        
-        logger.info(f"  χ² = {chi2:.4f}, p-value = {p_value:.2e}, ddl = {dof}")
+
+        logger.info(f"  chi2 = {chi2:.4f}, p-value = {p_value:.2e}, ddl = {dof}")
         
         if p_value < 0.05:
-            logger.info("  ✓ Saisonnalité SIGNIFICATIVE (p < 0.05)")
+            logger.info("  Saisonnalite SIGNIFICATIVE (p < 0.05)")
         else:
-            logger.info("  ✗ Pas de saisonnalité significative")
+            logger.info("  Pas de saisonnalite significative")
         
         return {
             "chi2": chi2,
@@ -229,18 +229,18 @@ class AnalyseurExploratoire:
 
 
 def executer_eda():
-    """Exécute pipeline complet EDA"""
+    """Execute pipeline complet EDA"""
     logger.info("=" * 60)
-    logger.info("📊 DEBUT ANALYSE EXPLORATOIRE")
+    logger.info("DEBUT ANALYSE EXPLORATOIRE")
     logger.info("=" * 60)
     
     analyseur = AnalyseurExploratoire()
     
-    # Charger données
+    # Charger donnees
     try:
         df_obs, df_grille, df_meteo = analyseur.charger_donnees()
     except FileNotFoundError:
-        logger.error("Données non trouvées. Exécutez scripts/nettoyage.py d'abord.")
+        logger.error("Donnees non trouvees. Executez scripts/nettoyage.py d'abord.")
         return
     
     # Analyses
@@ -257,7 +257,7 @@ def executer_eda():
     resultats_test = analyseur.test_independance_chi2(df_obs)
     
     logger.info("\n" + "=" * 60)
-    logger.info("✓ EXPLORATION TERMINEE")
+    logger.info("EXPLORATION TERMINEE")
     logger.info(f"Sorties : {analyseur.repertoire_sorties}")
     logger.info("=" * 60)
 
