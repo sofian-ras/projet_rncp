@@ -2,10 +2,11 @@
 BC03 - Machine Learning : prediction sur donnees structurees
 ================================================================
 
-Ce script est AUTONOME : il lit la grille et la meteo produites par
-BC01 (donnees/traitees/*.parquet), prepare les features, entraine et
-compare 3 modeles de classification (Regression logistique, Foret
-aleatoire, XGBoost), et sauvegarde les modeles + leurs metriques.
+Ce script est AUTONOME : donnees/traitees/ embarque une copie figee de la
+grille et de la meteo produites par BC01, pour pouvoir etre execute (et
+envoye) seul. Il prepare les features, entraine et compare 3 modeles de
+classification (Regression logistique, Foret aleatoire, XGBoost), et
+sauvegarde les modeles + leurs metriques.
 
 Utilisation :
     python blocs/bc03_machine_learning/run.py
@@ -15,11 +16,9 @@ Duree : quelques dizaines de secondes a ~2 minutes selon la machine
 aleatoire sur environ 900 000 lignes).
 """
 
-import sys
 from pathlib import Path
 
 import pandas as pd
-from loguru import logger
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
@@ -27,22 +26,13 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
-RACINE_PROJET = Path(__file__).resolve().parents[2]
-if str(RACINE_PROJET) not in sys.path:
-    sys.path.insert(0, str(RACINE_PROJET))
+from commun.config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_MODELES, ParametresML
+from commun.journalisation import configurer_logger
+from commun.chargement import charger_grille_hebdomadaire, charger_meteo_traitee
+from gestion_modeles import GestionnaireModeles, comparer_modeles
 
-from commun.config import (  # noqa: E402
-    REPERTOIRE_DONNEES_TRAITEES,
-    REPERTOIRE_MODELES,
-    ParametresML,
-    FORMAT_LOG,
-    FICHIER_LOG,
-)
-from blocs.bc03_machine_learning.gestion_modeles import GestionnaireModeles, comparer_modeles  # noqa: E402
-
-logger.remove()
-logger.add(lambda msg: print(msg, end=""), format=FORMAT_LOG)
-logger.add(FICHIER_LOG, format=FORMAT_LOG)
+RACINE_PROJET = Path(__file__).resolve().parent
+logger = configurer_logger()
 
 
 def preparer_features(df_grille: pd.DataFrame, df_meteo: pd.DataFrame = None) -> tuple:
@@ -131,14 +121,14 @@ def main() -> None:
 
     chemin_grille = REPERTOIRE_DONNEES_TRAITEES / "grille_presence_hebdo.parquet"
     if not chemin_grille.exists():
-        logger.error("Donnees de BC01 introuvables. Lancez d'abord : python blocs/bc01_infrastructure_donnees/run.py")
+        logger.error("Donnees introuvables dans donnees/traitees/ (copie figee produite par BC01, livree avec ce dossier).")
         return
 
-    df_grille = pd.read_parquet(chemin_grille)
+    df_grille = charger_grille_hebdomadaire()
     logger.info(f"Grille chargee : {len(df_grille)} lignes")
 
     chemin_meteo = REPERTOIRE_DONNEES_TRAITEES / "meteo_processed.parquet"
-    df_meteo = pd.read_parquet(chemin_meteo) if chemin_meteo.exists() else None
+    df_meteo = charger_meteo_traitee() if chemin_meteo.exists() else None
     if df_meteo is None:
         logger.warning("Fichier meteo traite absent, entrainement sans meteo")
 
@@ -166,7 +156,7 @@ def main() -> None:
 
     print(f"\nMeilleur modele (AUC-ROC) : "
           f"{df_comparaison['auc_roc'].idxmax() if 'auc_roc' in df_comparaison else '?'}")
-    print("\nBC03 termine. Bloc suivant : blocs/bc04_deep_learning/run.py\n")
+    print("\nBC03 termine.\n")
 
 
 if __name__ == "__main__":

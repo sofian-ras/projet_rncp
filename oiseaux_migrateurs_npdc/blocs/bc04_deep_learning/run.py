@@ -22,7 +22,7 @@ Le referentiel RNCP distingue explicitement deux competences :
     telechargement manuel a organiser), qui permet de montrer une vraie
     architecture de reseau de neurones sur du texte brut.
 
-Architecture du modele (Embedding + LSTM) :
+Architecture du modele (voir modele.py::construire_modele) :
   1. Embedding : transforme chaque mot (represente par un simple numero)
      en un vecteur de nombres qui capture un peu de son "sens"
      statistique -- deux mots au sens proche auront des vecteurs proches.
@@ -41,40 +41,18 @@ connexion internet est donc necessaire au moins une fois avant la
 demonstration devant le jury. Les lancements suivants sont hors-ligne.
 """
 
-import sys
+import json
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-RACINE_PROJET = Path(__file__).resolve().parents[2]
-if str(RACINE_PROJET) not in sys.path:
-    sys.path.insert(0, str(RACINE_PROJET))
+from commun.config import REPERTOIRE_MODELES, REPERTOIRE_RACINE, ParametresDL
+from commun.journalisation import configurer_logger
+from modele import construire_modele, decoder_avis
 
-from commun.config import REPERTOIRE_MODELES, REPERTOIRE_RACINE, ParametresDL  # noqa: E402
-
-
-def construire_modele(taille_vocabulaire: int, longueur_sequence: int):
-    """Construit l'architecture Embedding + LSTM + Dense"""
-    from tensorflow import keras
-    from tensorflow.keras import layers
-
-    modele = keras.Sequential([
-        layers.Input(shape=(longueur_sequence,)),
-        layers.Embedding(input_dim=taille_vocabulaire, output_dim=ParametresDL.TAILLE_EMBEDDING),
-        layers.LSTM(ParametresDL.UNITES_LSTM, dropout=ParametresDL.DROPOUT_RATE),
-        layers.Dense(1, activation="sigmoid"),
-    ])
-    modele.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
-    return modele
-
-
-def decoder_avis(sequence: np.ndarray, index_mots: dict) -> str:
-    """Retraduit une sequence de numeros de mots en texte lisible (pour la demo)"""
-    index_inverse = {valeur: cle for cle, valeur in index_mots.items()}
-    # Keras decale les indices de 3 (0=padding, 1=debut, 2=mot inconnu)
-    mots = [index_inverse.get(i - 3, "?") for i in sequence if i > 2]
-    return " ".join(mots)
+RACINE_PROJET = REPERTOIRE_RACINE
+logger = configurer_logger()
 
 
 def main() -> None:
@@ -82,7 +60,7 @@ def main() -> None:
     print("# BC04 - DEEP LEARNING (donnees non structurees : texte)")
     print("#" * 70 + "\n")
 
-    print("Chargement de TensorFlow/Keras (peut prendre quelques secondes)...")
+    logger.info("Chargement de TensorFlow/Keras (peut prendre quelques secondes)...")
     from tensorflow import keras
     from tensorflow.keras.datasets import imdb
     from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -90,7 +68,7 @@ def main() -> None:
 
     keras.utils.set_random_seed(ParametresDL.RANDOM_STATE)
 
-    print("Chargement du jeu de donnees IMDB (25 000 critiques de films)...")
+    logger.info("Chargement du jeu de donnees IMDB (25 000 critiques de films)...")
     (X_train_brut, y_train), (X_test_brut, y_test) = imdb.load_data(num_words=ParametresDL.NB_MOTS_VOCABULAIRE)
 
     # Sous-echantillonnage pour un entrainement rapide en demonstration
@@ -100,18 +78,18 @@ def main() -> None:
     X_train_brut, y_train = X_train_brut[idx_train], y_train[idx_train]
     X_test_brut, y_test = X_test_brut[idx_test], y_test[idx_test]
 
-    print(f"  Jeu d'entrainement : {len(X_train_brut)} critiques (sous-echantillon, pour une demo rapide)")
-    print(f"  Jeu de test         : {len(X_test_brut)} critiques")
-    print(f"  Vocabulaire retenu  : {ParametresDL.NB_MOTS_VOCABULAIRE} mots les plus frequents")
+    logger.info(f"  Jeu d'entrainement : {len(X_train_brut)} critiques (sous-echantillon, pour une demo rapide)")
+    logger.info(f"  Jeu de test         : {len(X_test_brut)} critiques")
+    logger.info(f"  Vocabulaire retenu  : {ParametresDL.NB_MOTS_VOCABULAIRE} mots les plus frequents")
 
     X_train = pad_sequences(X_train_brut, maxlen=ParametresDL.LONGUEUR_SEQUENCE)
     X_test = pad_sequences(X_test_brut, maxlen=ParametresDL.LONGUEUR_SEQUENCE)
 
-    print("\nConstruction du modele (Embedding + LSTM + Dense)...")
+    logger.info("Construction du modele (Embedding + LSTM + Dense)...")
     modele = construire_modele(ParametresDL.NB_MOTS_VOCABULAIRE, ParametresDL.LONGUEUR_SEQUENCE)
     modele.summary()
 
-    print(f"\nEntrainement ({ParametresDL.EPOCHS} epochs)...")
+    logger.info(f"Entrainement ({ParametresDL.EPOCHS} epochs)...")
     historique = modele.fit(
         X_train, y_train,
         validation_data=(X_test, y_test),
@@ -120,7 +98,7 @@ def main() -> None:
         verbose=2,
     )
 
-    print("\nEvaluation sur le jeu de test...")
+    logger.info("Evaluation sur le jeu de test...")
     y_proba = modele.predict(X_test, verbose=0).ravel()
     y_pred = (y_proba > 0.5).astype(int)
 
@@ -129,9 +107,9 @@ def main() -> None:
         "f1_score": float(f1_score(y_test, y_pred)),
         "auc_roc": float(roc_auc_score(y_test, y_proba)),
     }
-    print(f"  Accuracy : {metriques['accuracy']:.4f}")
-    print(f"  F1-Score : {metriques['f1_score']:.4f}")
-    print(f"  AUC-ROC  : {metriques['auc_roc']:.4f}")
+    logger.info(f"  Accuracy : {metriques['accuracy']:.4f}")
+    logger.info(f"  F1-Score : {metriques['f1_score']:.4f}")
+    logger.info(f"  AUC-ROC  : {metriques['auc_roc']:.4f}")
 
     # --- Sauvegardes : modele, metriques, courbe d'apprentissage, matrice de confusion ---
     repertoire_dl = REPERTOIRE_RACINE / "outputs" / "dl"
@@ -139,9 +117,8 @@ def main() -> None:
 
     chemin_modele = REPERTOIRE_MODELES / "deep_learning_sentiment.keras"
     modele.save(chemin_modele)
-    print(f"\nModele sauvegarde : {chemin_modele}")
+    logger.info(f"Modele sauvegarde : {chemin_modele}")
 
-    import json
     with open(REPERTOIRE_MODELES / "deep_learning_sentiment_metadata.json", "w", encoding="utf-8") as f:
         json.dump({"nom_modele": "deep_learning_sentiment", "metriques": metriques,
                     "architecture": "Embedding + LSTM + Dense", "dataset": "IMDB (sentiment, texte)"},
@@ -178,10 +155,10 @@ def main() -> None:
     exemple_reel = "positive" if y_test[idx_exemple] == 1 else "negative"
     exemple_predite = "positive" if y_pred[idx_exemple] == 1 else "negative"
 
-    print("\nExemple concret (une critique du jeu de test, decodee en texte lisible) :")
-    print(f'  Extrait : "{exemple_texte[:300]}..."')
-    print(f"  Sentiment reel     : {exemple_reel}")
-    print(f"  Sentiment predit   : {exemple_predite} (probabilite = {y_proba[idx_exemple]:.2f})")
+    logger.info("Exemple concret (une critique du jeu de test, decodee en texte lisible) :")
+    logger.info(f'  Extrait : "{exemple_texte[:300]}..."')
+    logger.info(f"  Sentiment reel     : {exemple_reel}")
+    logger.info(f"  Sentiment predit   : {exemple_predite} (probabilite = {y_proba[idx_exemple]:.2f})")
 
     print("\nPreuves produites (fichiers verifiables sur disque) :")
     for chemin in [
@@ -192,7 +169,7 @@ def main() -> None:
         marque = "OK" if chemin.exists() else "MANQUANT"
         print(f"  [{marque}] {chemin.relative_to(RACINE_PROJET)}")
 
-    print("\nBC04 termine. Bloc suivant : blocs/bc05_industrialisation/run.py\n")
+    print("\nBC04 termine.\n")
 
 
 if __name__ == "__main__":

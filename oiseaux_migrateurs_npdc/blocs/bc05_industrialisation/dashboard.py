@@ -3,26 +3,22 @@ BC05 - Dashboard Streamlit pour predictions oiseaux migrateurs
 ==================================================================
 
 Interface utilisateur interactive, pensee pour un utilisateur qui ne
-sait pas coder. Appelle l'API definie dans blocs/bc05_industrialisation/api.py.
+sait pas coder. Appelle l'API definie dans api.py (meme dossier).
 
-Lancement (depuis la racine du projet oiseaux_migrateurs_npdc) :
-    python -m streamlit run blocs/bc05_industrialisation/dashboard.py
+Ce bloc est autonome : lancement depuis son propre dossier
+(blocs/bc05_industrialisation/) :
+    python -m streamlit run dashboard.py
 """
 
 import os
-import sys
-from pathlib import Path
 
 import pandas as pd
 import plotly.express as px
 import requests
 import streamlit as st
 
-RACINE_PROJET = Path(__file__).resolve().parents[2]
-if str(RACINE_PROJET) not in sys.path:
-    sys.path.insert(0, str(RACINE_PROJET))
-
-from commun.config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_MODELES, REPERTOIRE_RACINE  # noqa: E402
+from commun.config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_MODELES, REPERTOIRE_RACINE
+from commun.chargement import charger_observations_nettoyees, charger_grille_hebdomadaire
 
 st.set_page_config(page_title="Oiseaux Migrateurs NPDC", layout="wide", initial_sidebar_state="expanded")
 
@@ -150,7 +146,7 @@ with tab2:
         try:
             chemin_obs = REPERTOIRE_DONNEES_TRAITEES / "observations_nettoyees.parquet"
             if chemin_obs.exists():
-                df_obs = pd.read_parquet(chemin_obs)
+                df_obs = charger_observations_nettoyees()
                 st.metric("Observations nettoyees", f"{len(df_obs):,}")
                 st.metric("Especes", df_obs["espece"].nunique())
                 if "date_observation" in df_obs.columns:
@@ -158,7 +154,7 @@ with tab2:
                     date_max = pd.to_datetime(df_obs["date_observation"]).max()
                     st.metric("Periode", f"{date_min.year} - {date_max.year}")
             else:
-                st.warning("Donnees non disponibles. Lancez blocs/bc01_infrastructure_donnees/run.py")
+                st.warning("Donnees non disponibles (donnees/traitees/ manquant dans ce dossier).")
         except Exception as e:
             st.error(f"Erreur chargement donnees : {e}")
 
@@ -170,7 +166,7 @@ with tab2:
                 df_eval = pd.read_csv(chemin_eval, index_col=0)
                 st.dataframe(df_eval.style.highlight_max(axis=0), use_container_width=True)
             else:
-                st.info("Evaluations non disponibles. Lancez blocs/bc03_machine_learning/run.py")
+                st.info("Evaluations non disponibles (modeles/evaluations.csv manquant dans ce dossier).")
         except Exception as e:
             st.error(f"Erreur : {e}")
 
@@ -180,7 +176,7 @@ with tab2:
         if image_path.exists():
             st.image(str(image_path), use_column_width=True)
         else:
-            st.info("Graphique non disponible. Lancez blocs/bc02_analyse_exploratoire/run.py")
+            st.info("Graphique non disponible (outputs/eda/saisonnalite.png manquant dans ce dossier).")
     except Exception as e:
         st.warning(f"Image non chargee : {e}")
 
@@ -193,7 +189,7 @@ with tab3:
         chemin_grille = REPERTOIRE_DONNEES_TRAITEES / "grille_presence_hebdo.parquet"
 
         if chemin_obs.exists():
-            df_obs = pd.read_parquet(chemin_obs)
+            df_obs = charger_observations_nettoyees()
             col1, col2 = st.columns(2)
             with col1:
                 st.subheader("Apercu des observations")
@@ -208,7 +204,7 @@ with tab3:
                     st.plotly_chart(fig, use_container_width=True)
 
             if chemin_grille.exists():
-                df_grille = pd.read_parquet(chemin_grille)
+                df_grille = charger_grille_hebdomadaire()
                 st.subheader("Presence / absence")
                 if "presence" in df_grille.columns:
                     presence_counts = df_grille["presence"].value_counts().reset_index()
@@ -217,8 +213,8 @@ with tab3:
                                   title="Repartition presence / absence")
                     st.plotly_chart(fig2, use_container_width=True)
         else:
-            st.warning("Les donnees nettoyees ne sont pas encore disponibles. "
-                       "Lancez blocs/bc01_infrastructure_donnees/run.py")
+            st.warning("Les donnees nettoyees ne sont pas disponibles (donnees/traitees/ manquant "
+                       "dans ce dossier).")
     except Exception as e:
         st.error(f"Erreur affichage donnees : {e}")
 
@@ -239,16 +235,11 @@ with tab4:
     - **Random Forest** : comparaison
     - **Regression logistique** : reference
 
-    ### Architecture (voir blocs/)
-    ```
-    blocs/
-    |-- bc01_infrastructure_donnees/   Acquisition + nettoyage
-    |-- bc02_analyse_exploratoire/     Visualisations, tests statistiques
-    |-- bc03_machine_learning/         Entrainement et comparaison des 3 modeles
-    |-- bc04_deep_learning/            Reseau de neurones (texte)
-    |-- bc05_industrialisation/        API + ce dashboard
-    `-- bc06_gestion_projet/           Tests automatises, rapport de projet
-    ```
+    ### Ce dossier (BC05 - Industrialisation)
+    Ce bloc est autonome : `api.py` (API FastAPI), `dashboard.py` (ce tableau de bord),
+    `prediction.py` (logique de prediction partagee) et une copie figee du modele de production
+    (`modeles/pipeline_ml.pkl`) et des donnees necessaires a l'affichage (`donnees/traitees/`,
+    `outputs/eda/`), produits par les blocs BC01/BC02/BC03 du meme projet RNCP.
 
     ### Utilisation API
     ```

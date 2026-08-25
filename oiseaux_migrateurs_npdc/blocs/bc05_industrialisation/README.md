@@ -22,24 +22,28 @@ dashboard ouverts. Le lancement réel de l'API et du dashboard reste disponible 
 
 - `api.py` : schémas Pydantic (`ObservationMeteo`, `DemandePredicton`), les 3 endpoints.
 - `dashboard.py` : formulaire de prédiction, appel HTTP à l'API, affichage des statistiques.
-- `Dockerfile` (racine du projet) : image de base, dépendances, commande de démarrage.
+- `Dockerfile` (dans ce dossier) : image de base, dépendances, commande de démarrage.
+- `prediction.py` : logique de prédiction (construction des features, alignement des colonnes, calcul
+  de la confiance) — partagée entre `api.py::predire_presence` et `run.py::demo_prediction`, pour
+  qu'un changement de logique de prédiction ne puisse pas être fait dans l'un et oublié dans l'autre.
 - `run.py` : reproduit exactement la logique de `/predict`, sans serveur, à partir du vrai modèle de
   production (`modeles/pipeline_ml.pkl`, produit par BC03).
 
 ## Démonstration
 
 ```bash
-cd oiseaux_migrateurs_npdc
+cd blocs/bc05_industrialisation
+pip install -r requirements.txt
 
 # Démonstration sans serveur (rapide, toujours disponible)
-python blocs/bc05_industrialisation/run.py
+python run.py
 
 # Lancement réel de l'API (terminal 1)
-python -m uvicorn blocs.bc05_industrialisation.api:app --reload
+python -m uvicorn api:app --reload
 # -> documentation interactive : http://127.0.0.1:8000/docs
 
 # Lancement réel du dashboard (terminal 2)
-python -m streamlit run blocs/bc05_industrialisation/dashboard.py
+python -m streamlit run dashboard.py
 # -> http://localhost:8501
 
 # Construire et lancer le conteneur Docker

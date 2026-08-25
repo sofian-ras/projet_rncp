@@ -13,8 +13,19 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# Logs applicatifs
-oiseaux_migrateurs_npdc/logs/*.log
+# Logs applicatifs (chaque bloc RNCP a son propre logs/ local, cf README racine)
+oiseaux_migrateurs_npdc/blocs/*/logs/
+
+# Fichiers generes par l'execution de chaque bloc (regenerables via son run.py, cf README).
+# Chaque bloc est autonome (commun/ + donnees d'entree embarquees) : ne JAMAIS ignorer
+# les fixtures d'entree figees necessaires a son fonctionnement seul.
+oiseaux_migrateurs_npdc/blocs/bc01_infrastructure_donnees/donnees/
+oiseaux_migrateurs_npdc/blocs/bc02_analyse_exploratoire/outputs/
+oiseaux_migrateurs_npdc/blocs/bc03_machine_learning/modeles/
+oiseaux_migrateurs_npdc/blocs/bc04_deep_learning/modeles/
+oiseaux_migrateurs_npdc/blocs/bc04_deep_learning/outputs/
+# blocs/bc05_industrialisation/{donnees,modeles,outputs}/ : NE PAS ignorer, ce sont des
+# copies figees d'entree (produites par BC01/BC02/BC03), pas des sorties de ce bloc.
 
 # OS/editor artifacts
 .DS_Store
@@ -27,3 +38,4 @@ Thumbs.db
 
 # Notes de preparation personnelles (jamais partagees / poussees)
 EXPLICATION_ORALE.md
+Support_Presentation_Soutenance.pptx

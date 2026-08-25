@@ -28,8 +28,9 @@ clair.
 ## Démonstration
 
 ```bash
-cd oiseaux_migrateurs_npdc
-python blocs/bc02_analyse_exploratoire/run.py
+cd blocs/bc02_analyse_exploratoire
+pip install -r requirements.txt
+python run.py
 ```
 
 Puis ouvrir `outputs/eda/carte_densite.html` dans un navigateur pour la carte interactive.

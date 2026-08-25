@@ -23,25 +23,28 @@ Ce bloc est **autonome** : il peut être présenté et exécuté seul, sans avoi
 
 ## Où le voir dans le code
 
-- `run.py`, classe `AcquisiteurGBIF` : pagination de l'API GBIF, filtre géographique WKT.
-- `run.py`, classe `AcquisiteurMeteo` : appel à l'API Open-Meteo.
-- `run.py`, classe `NettoyeurObservations` : les 5 étapes de nettoyage, dans l'ordre.
-- `run.py`, classe `AggregeurTemporel.creer_grille_hebdomadaire` : le cœur de la transformation
+- `acquisition.py`, classe `AcquisiteurGBIF` : pagination de l'API GBIF, filtre géographique WKT.
+- `acquisition.py`, classe `AcquisiteurMeteo` : appel à l'API Open-Meteo.
+- `nettoyage.py`, classe `NettoyeurObservations` : les 5 étapes de nettoyage, dans l'ordre.
+- `nettoyage.py`, classe `AggregeurTemporel.creer_grille_hebdomadaire` : le cœur de la transformation
   (discrétisation spatiale à 0.1°, grille complète par produit cartésien, marquage présence/absence).
+- `run.py` : orchestrateur mince (argparse + appel de `acquisition.executer_acquisition` puis
+  `nettoyage.executer_nettoyage`) — acquisition et nettoyage sont deux métiers séparés en deux fichiers.
 - Configuration centrale utilisée : `commun/config.py` (zone géographique, espèces, paramètres).
 
 ## Démonstration
 
 ```bash
-cd oiseaux_migrateurs_npdc
-python blocs/bc01_infrastructure_donnees/run.py
+cd blocs/bc01_infrastructure_donnees
+pip install -r requirements.txt
+python run.py
 ```
 
 Par défaut, si les fichiers bruts sont déjà présents (`donnees/brutes/*.csv`), le téléchargement est
 sauté et seul le nettoyage est rejoué (rapide, ne dépend pas d'internet). Pour tout re-télécharger :
 
 ```bash
-python blocs/bc01_infrastructure_donnees/run.py --forcer-telechargement
+python run.py --forcer-telechargement
 ```
 
 ## Livrables produits (vérifiables sur disque)

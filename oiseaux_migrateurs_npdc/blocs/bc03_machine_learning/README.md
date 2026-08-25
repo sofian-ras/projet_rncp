@@ -30,8 +30,9 @@ jamais ré-exécuter son code. Si ces fichiers n'existent pas, le script s'arrê
 ## Démonstration
 
 ```bash
-cd oiseaux_migrateurs_npdc
-python blocs/bc03_machine_learning/run.py
+cd blocs/bc03_machine_learning
+pip install -r requirements.txt
+python run.py
 ```
 
 Durée : environ 1 minute (l'essentiel du temps est pris par la forêt aléatoire sur ~900 000 lignes).

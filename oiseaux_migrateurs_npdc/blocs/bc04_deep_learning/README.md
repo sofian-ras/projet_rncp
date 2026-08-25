@@ -27,15 +27,18 @@ sans dépendre d'un jeu de données externe compliqué à obtenir.
 
 ## Où le voir dans le code
 
-- `run.py`, fonction `construire_modele` (l'architecture du réseau).
-- `run.py`, fonction `decoder_avis` (retraduit les identifiants de mots en texte lisible).
+- `modele.py`, fonction `construire_modele` (l'architecture du réseau).
+- `modele.py`, fonction `decoder_avis` (retraduit les identifiants de mots en texte lisible).
+- `run.py` : orchestration (chargement IMDB, split, entraînement, évaluation, sauvegardes) — la
+  définition du modèle est séparée dans `modele.py`, sur le même principe que BC01 et BC03.
 - Hyperparamètres dans `commun/config.py`, classe `ParametresDL`.
 
 ## Démonstration
 
 ```bash
-cd oiseaux_migrateurs_npdc
-python blocs/bc04_deep_learning/run.py
+cd blocs/bc04_deep_learning
+pip install -r requirements.txt
+python run.py
 ```
 
 Durée : environ 1 minute. **Le tout premier lancement nécessite une connexion internet** (téléchargement

@@ -7,14 +7,13 @@ Ce script est AUTONOME : il lit les donnees deja nettoyees par BC01
 statistiques de l'analyse exploratoire. Il ne re-execute jamais le
 code de BC01 : il se contente de lire ses resultats sur disque.
 
+Ce bloc est autonome : donnees/traitees/ embarque une copie figee des
+parquets produits par BC01, pour pouvoir etre execute (et envoye) seul.
+
 Utilisation :
     python blocs/bc02_analyse_exploratoire/run.py
-
-Si les fichiers requis n'existent pas encore, le script s'arrete avec
-un message clair indiquant de lancer BC01 au prealable.
 """
 
-import sys
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -24,24 +23,18 @@ import seaborn as sns
 import folium
 from folium.plugins import HeatMap
 from scipy import stats
-from loguru import logger
 
-RACINE_PROJET = Path(__file__).resolve().parents[2]
-if str(RACINE_PROJET) not in sys.path:
-    sys.path.insert(0, str(RACINE_PROJET))
-
-from commun.config import (  # noqa: E402
-    REPERTOIRE_DONNEES_TRAITEES,
-    REPERTOIRE_RACINE,
-    ESPECES,
-    ZONE_GEOGRAPHIQUE,
-    FORMAT_LOG,
-    FICHIER_LOG,
+from commun.config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_RACINE, ESPECES, ZONE_GEOGRAPHIQUE
+from commun.journalisation import configurer_logger
+from commun.chargement import (
+    charger_observations_nettoyees,
+    charger_grille_hebdomadaire,
+    charger_meteo_traitee,
 )
 
-logger.remove()
-logger.add(lambda msg: print(msg, end=""), format=FORMAT_LOG)
-logger.add(FICHIER_LOG, format=FORMAT_LOG)
+RACINE_PROJET = REPERTOIRE_RACINE
+
+logger = configurer_logger()
 
 plt.style.use("seaborn-v0_8-darkgrid")
 sns.set_palette("husl")
@@ -62,13 +55,13 @@ class AnalyseurExploratoire:
 
         if not chemin_obs.exists() or not chemin_grille.exists():
             raise FileNotFoundError(
-                "Donnees de BC01 introuvables. Lancez d'abord : "
-                "python blocs/bc01_infrastructure_donnees/run.py"
+                "Donnees introuvables dans donnees/traitees/ (copie figee produite par BC01, "
+                "livree avec ce dossier)."
             )
 
-        df_obs = pd.read_parquet(chemin_obs)
-        df_grille = pd.read_parquet(chemin_grille)
-        df_meteo = pd.read_parquet(chemin_meteo) if chemin_meteo.exists() else pd.DataFrame()
+        df_obs = charger_observations_nettoyees()
+        df_grille = charger_grille_hebdomadaire()
+        df_meteo = charger_meteo_traitee() if chemin_meteo.exists() else pd.DataFrame()
 
         logger.info(f"Observations chargees : {len(df_obs)}")
         logger.info(f"Grille chargee : {len(df_grille)}")
@@ -214,7 +207,7 @@ def main() -> None:
         marque = "OK" if chemin.exists() else "MANQUANT"
         print(f"  [{marque}] {chemin.relative_to(RACINE_PROJET)}")
 
-    print("\nBC02 termine. Bloc suivant : blocs/bc03_machine_learning/run.py\n")
+    print("\nBC02 termine.\n")
 
 
 if __name__ == "__main__":

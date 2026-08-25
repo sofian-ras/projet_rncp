@@ -1,3 +1,7 @@
+# Installe TOUTES les dependances de TOUS les blocs -- pratique pour explorer l'ensemble du
+# projet ou rouvrir le notebook de soutenance. Chaque dossier blocs/bc0X_.../ a aussi son PROPRE
+# requirements.txt, plus restreint, pour une installation autonome de ce bloc seul.
+
 # Acquisition et traitement données
 pandas==2.2.2
 numpy==1.26.4

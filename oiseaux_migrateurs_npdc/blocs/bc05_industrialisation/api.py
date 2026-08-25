@@ -2,36 +2,29 @@
 BC05 - API FastAPI pour les predictions de presence d'oiseaux
 ================================================================
 
-Ce module expose le modele entraine par BC03 (modeles/pipeline_ml.pkl)
-via 3 points d'entree HTTP.
+Ce module expose le modele entraine par BC03 (modeles/pipeline_ml.pkl,
+copie figee embarquee dans ce dossier) via 3 points d'entree HTTP.
 
-Lancement (depuis la racine du projet oiseaux_migrateurs_npdc) :
-    python -m uvicorn blocs.bc05_industrialisation.api:app --reload
+Ce bloc est autonome : lancement depuis son propre dossier
+(blocs/bc05_industrialisation/) :
+    python -m uvicorn api:app --reload
 
 Documentation interactive une fois lancee : http://127.0.0.1:8000/docs
 """
 
-import sys
 from datetime import datetime
-from pathlib import Path
 from typing import Dict, List
 
 import joblib
-import numpy as np
-import pandas as pd
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-from loguru import logger
 from pydantic import BaseModel, Field
 
-RACINE_PROJET = Path(__file__).resolve().parents[2]
-if str(RACINE_PROJET) not in sys.path:
-    sys.path.insert(0, str(RACINE_PROJET))
+from commun.config import ESPECES, ParametresAPI, REPERTOIRE_MODELES
+from commun.journalisation import configurer_logger
+from prediction import predire
 
-from commun.config import ESPECES, ParametresAPI, FORMAT_LOG, REPERTOIRE_MODELES  # noqa: E402
-
-logger.remove()
-logger.add(lambda msg: print(msg, end=""), format=FORMAT_LOG)
+logger = configurer_logger()
 
 
 # ========== SCHEMAS PYDANTIC ==========
@@ -171,42 +164,17 @@ async def predire_presence(demande: DemandePredicton) -> ReponsePredicton:
     if MODELE_CHARGE is None:
         raise HTTPException(status_code=503, detail="Modele non disponible. Lancez d'abord blocs/bc03_machine_learning/run.py")
 
-    jour_annee = demande.meteo.jour_annee
-    semaine = (jour_annee - 1) // 7 + 1
-    donnees_features = {
-        "annee": datetime.now().year,
-        "semaine": semaine,
-        "lat_discrete": round(demande.latitude, 1),
-        "lon_discrete": round(demande.longitude, 1),
-        "temperature_max": demande.meteo.temperature_max,
-        "temperature_min": demande.meteo.temperature_min,
-        "precipitation_sum": demande.meteo.precipitation_sum,
-        "vent_max": demande.meteo.vent_max,
-        "humidite_moyenne": demande.meteo.humidite_moyenne,
-        "temperature_moyenne": (demande.meteo.temperature_max + demande.meteo.temperature_min) / 2,
-        "pression_moyenne": np.nan,
-    }
-
-    colonnes_attendues = list(getattr(MODELE_CHARGE, "feature_names_in_", []))
-    if colonnes_attendues:
-        donnees_features = {col: donnees_features.get(col, 0) for col in colonnes_attendues}
-
-    features = pd.DataFrame([donnees_features])
-    for col in features.columns:
-        if features[col].isna().any():
-            features[col] = features[col].fillna(0)
-
     try:
-        prediction = float(MODELE_CHARGE.predict_proba(features)[0][1])
+        probabilite, confiance = predire(
+            MODELE_CHARGE, demande.latitude, demande.longitude, demande.meteo.model_dump(),
+        )
     except Exception as e:
         logger.error(f"Erreur prediction : {e}")
         raise HTTPException(status_code=500, detail=f"Erreur lors de la prediction : {str(e)}")
 
-    confiance = "HAUTE" if prediction > 0.75 else ("MOYENNE" if prediction > 0.60 else "BASSE")
-
     return ReponsePredicton(
         espece=demande.espece,
-        probabilite_presence=prediction,
+        probabilite_presence=probabilite,
         confiance=confiance,
         date_prediction=datetime.now(),
         modele_utilise="XGBoost",

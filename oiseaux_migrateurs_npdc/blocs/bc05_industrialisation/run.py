@@ -2,46 +2,41 @@
 BC05 - Industrialisation : demonstration hors-serveur
 ========================================================
 
-Ce script est AUTONOME : il ne lance pas de serveur (l'API et le
-dashboard sont des processus longue duree, prevus pour etre lances a la
-main -- voir les commandes affichees a la fin de ce script). A la place,
-il PROUVE que la chaine d'industrialisation fonctionne :
+Ce script est AUTONOME (dossier envoyable/executable seul) : il ne lance
+pas de serveur (l'API et le dashboard sont des processus longue duree,
+prevus pour etre lances a la main -- voir les commandes affichees a la
+fin de ce script). A la place, il PROUVE que la chaine d'industrialisation
+fonctionne :
 
-  1. Il charge le vrai modele de production (modeles/pipeline_ml.pkl,
-     produit par BC03) exactement comme le fait blocs/bc05_industrialisation/api.py
-     au demarrage.
+  1. Il charge le modele de production embarque dans ce dossier
+     (modeles/pipeline_ml.pkl, copie figee produite par BC03) exactement
+     comme le fait api.py au demarrage.
   2. Il rejoue, sans serveur, la logique exacte de l'endpoint POST /predict
      sur un exemple concret, et affiche le resultat.
   3. Il rappelle les commandes pour lancer reellement l'API, le dashboard,
      et l'image Docker, pour la demonstration live devant le jury.
 
 Utilisation :
-    python blocs/bc05_industrialisation/run.py
+    python run.py
 """
 
-import sys
-from datetime import datetime
-from pathlib import Path
-
 import joblib
-import numpy as np
-import pandas as pd
 
-RACINE_PROJET = Path(__file__).resolve().parents[2]
-if str(RACINE_PROJET) not in sys.path:
-    sys.path.insert(0, str(RACINE_PROJET))
+from commun.config import REPERTOIRE_MODELES, ESPECES
+from commun.journalisation import configurer_logger
+from prediction import predire
 
-from commun.config import REPERTOIRE_MODELES, ESPECES  # noqa: E402
+logger = configurer_logger()
 
 
 def demo_prediction() -> None:
     chemin_modele = REPERTOIRE_MODELES / "pipeline_ml.pkl"
     if not chemin_modele.exists():
-        print("Modele de production introuvable. Lancez d'abord : python blocs/bc03_machine_learning/run.py")
+        logger.warning("Modele de production introuvable. Lancez d'abord : python blocs/bc03_machine_learning/run.py")
         return
 
     modele = joblib.load(chemin_modele)
-    print(f"Modele de production charge : {chemin_modele.name}\n")
+    logger.info(f"Modele de production charge : {chemin_modele.name}")
 
     exemple_requete = {
         "espece": "hirondelle_rustique",
@@ -57,27 +52,9 @@ def demo_prediction() -> None:
         },
     }
 
-    jour_annee = exemple_requete["meteo"]["jour_annee"]
-    semaine = (jour_annee - 1) // 7 + 1
-    donnees_features = {
-        "annee": datetime.now().year,
-        "semaine": semaine,
-        "lat_discrete": round(exemple_requete["latitude"], 1),
-        "lon_discrete": round(exemple_requete["longitude"], 1),
-        "temperature_max": exemple_requete["meteo"]["temperature_max"],
-        "temperature_min": exemple_requete["meteo"]["temperature_min"],
-        "precipitation_sum": exemple_requete["meteo"]["precipitation_sum"],
-        "vent_max": exemple_requete["meteo"]["vent_max"],
-        "humidite_moyenne": exemple_requete["meteo"]["humidite_moyenne"],
-        "temperature_moyenne": (exemple_requete["meteo"]["temperature_max"] + exemple_requete["meteo"]["temperature_min"]) / 2,
-        "pression_moyenne": np.nan,
-    }
-    colonnes_attendues = list(getattr(modele, "feature_names_in_", donnees_features.keys()))
-    donnees_features = {col: donnees_features.get(col, 0) for col in colonnes_attendues}
-    features = pd.DataFrame([donnees_features]).fillna(0)
-
-    probabilite = float(modele.predict_proba(features)[0][1])
-    confiance = "HAUTE" if probabilite > 0.75 else ("MOYENNE" if probabilite > 0.60 else "BASSE")
+    probabilite, confiance = predire(
+        modele, exemple_requete["latitude"], exemple_requete["longitude"], exemple_requete["meteo"],
+    )
 
     print("Requete envoyee (equivalent d'un appel POST /predict) :")
     for cle, valeur in exemple_requete.items():
@@ -101,19 +78,20 @@ def main() -> None:
     demo_prediction()
 
     print("\n" + "-" * 70)
-    print("Pour lancer reellement les services (dans des terminaux separes) :")
+    print("Pour lancer reellement les services (dans des terminaux separes,")
+    print("depuis ce dossier blocs/bc05_industrialisation/) :")
     print("-" * 70)
     print("  # API (http://127.0.0.1:8000/docs pour la documentation interactive)")
-    print("  python -m uvicorn blocs.bc05_industrialisation.api:app --reload")
+    print("  python -m uvicorn api:app --reload")
     print()
     print("  # Dashboard (http://localhost:8501)")
-    print("  python -m streamlit run blocs/bc05_industrialisation/dashboard.py")
+    print("  python -m streamlit run dashboard.py")
     print()
     print("  # Conteneur Docker (empaquette l'API)")
     print("  docker build -t oiseaux-migrateurs-api .")
     print("  docker run -p 8000:8000 oiseaux-migrateurs-api")
 
-    print("\nBC05 termine. Bloc suivant : blocs/bc06_gestion_projet/run.py\n")
+    print("\nBC05 termine.\n")
 
 
 if __name__ == "__main__":

@@ -4,37 +4,44 @@
 bout en bout — pas seulement écrire du code, mais aussi le rendre fiable, compréhensible et
 transmissible.
 
-Ce bloc est **autonome** : il fonctionne même si aucun des autres blocs n'a encore été exécuté (il
-signale simplement quelles preuves manquent encore).
+Ce bloc est **autonome, y compris techniquement** : ce dossier peut être copié/envoyé seul (sans le
+reste du projet) et fonctionne quand même. Il embarque pour cela sa propre copie de `acquisition.py`
+(code de BC01) et de son test associé — c'est le code que ses tests vérifient.
+
+**Changement de périmètre assumé :** dans une version précédente, ce bloc dressait aussi un "état des
+lieux" vérifiant les fichiers de preuve produits par les 5 AUTRES blocs (`donnees/`, `modeles/`,
+`outputs/` à la racine du projet). Cette vérification inter-blocs a été retirée : elle supposait que
+tous les blocs soient présents ensemble dans la même arborescence, ce qui contredit l'autonomie totale
+recherchée pour chaque dossier de bloc. Chaque bloc prouve désormais ses propres livrables
+individuellement (voir la section "Livrables produits" de son propre `README.md`).
 
 ---
 
 ## Ce qui est implémenté
 
 - Un **planning agile** sur 4 semaines, une itération par bloc de compétence.
-- Une suite de **tests automatisés** (`tests/`, exécutée avec `pytest`) qui vérifie que le code fait
-  bien ce qu'il est censé faire.
-- Un **état des lieux automatisé** : pour chaque bloc, vérification que ses fichiers de preuve existent
-  réellement sur disque.
+- Une suite de **tests automatisés** (`tests/`, exécutée avec `pytest`) qui vérifie que le code
+  d'acquisition (copie de BC01) fait bien ce qu'il est censé faire.
 - Une liste de **limites assumées**, plutôt que cachées — la marque d'une bonne gestion de projet.
 
 ## Où le voir dans le code
 
 - `run.py`, fonction `executer_tests` (lance `pytest` en sous-processus et affiche le résultat).
-- `run.py`, dictionnaire `PREUVES_PAR_BLOC` (mappe chaque bloc à ses fichiers de preuve attendus).
+- `acquisition.py` : copie du code de BC01, testée ici.
 - `tests/test_acquisition.py`, `tests/conftest.py`.
 
 ## Démonstration
 
 ```bash
-cd oiseaux_migrateurs_npdc
-python blocs/bc06_gestion_projet/run.py
+cd blocs/bc06_gestion_projet
+pip install -r requirements.txt
+python run.py
 ```
 
 ## Livrables produits
 
 - Résultat des tests affiché en direct dans la console (6/6 tests passants).
-- État des lieux des 5 autres blocs (preuves présentes ou manquantes).
+- Planning et limites assumées affichés en console.
 
 ## Statut
 
