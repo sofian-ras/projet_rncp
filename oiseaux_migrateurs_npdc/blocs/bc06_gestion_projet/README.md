@@ -1,5 +1,7 @@
 # BC06 — Gestion et pilotage du projet
 
+**Dépôt GitHub (tout le code du projet) :** https://github.com/sofian-ras/projet_rncp
+
 **Objectif RNCP :** cadrer, planifier, documenter et fiabiliser un projet de science des données de
 bout en bout — pas seulement écrire du code, mais aussi le rendre fiable, compréhensible et
 transmissible.
