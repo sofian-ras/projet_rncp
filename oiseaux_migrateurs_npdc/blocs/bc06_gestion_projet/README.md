@@ -22,6 +22,11 @@ individuellement (voir la section "Livrables produits" de son propre `README.md`
 ## Ce qui est implémenté
 
 - Un **planning agile** sur 4 semaines, une itération par bloc de compétence.
+- Un document de cadrage — [`docs/gestion_projet.md`](docs/gestion_projet.md) — contenant : la
+  traduction de la problématique métier en problématique data, le **rétroplanning daté** avec
+  jalons et dépendances, l'**analyse des risques** (probabilité / impact / mitigation / statut),
+  les **coûts et bénéfices (ROI)**, et la gouvernance des données (RGPD, traçabilité,
+  reproductibilité).
 - Une suite de **tests automatisés** (`tests/`, exécutée avec `pytest`) qui vérifie que le code
   d'acquisition (copie de BC01) fait bien ce qu'il est censé faire.
 - Une liste de **limites assumées**, plutôt que cachées — la marque d'une bonne gestion de projet.

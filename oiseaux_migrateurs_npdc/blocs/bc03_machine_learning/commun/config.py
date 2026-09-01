@@ -25,6 +25,7 @@ class ParametresML:
     TEST_SIZE = 0.2
     VALIDATION_SIZE = 0.1
     RANDOM_STATE = 42
+    N_SPLITS_CV = 5  # nombre de plis pour la validation croisee du modele retenu
 
     XGBOOST_PARAMS = {
         "max_depth": 6,
@@ -42,6 +43,14 @@ class ParametresML:
     }
 
     SEUIL_PRECISION_ACCEPTABLE = 0.70
+
+
+# ========== PARAMETRES SEGMENTATION (non supervise) ==========
+class ParametresSegmentation:
+    """K-Means : on teste K de K_MIN a K_MAX et on retient le meilleur score de silhouette."""
+
+    K_MIN = 2
+    K_MAX = 8
 
 
 # ========== LOGGING ==========

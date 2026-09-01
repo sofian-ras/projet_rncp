@@ -56,9 +56,20 @@ docker run -p 8000:8000 oiseaux-migrateurs-api
 - `blocs/bc05_industrialisation/api.py`, `dashboard.py`
 - `Dockerfile` fonctionnel (image basée sur `commun/` + l'API seule, sans le dashboard)
 - Documentation interactive générée automatiquement par FastAPI (`/docs`)
+- Fichiers de déploiement prêts à l'emploi : `render.yaml` (Blueprint Docker), `Procfile`
+- [`docs/deploiement.md`](docs/deploiement.md) : procédure pas à pas pour obtenir une URL publique
+  (API sur Render, dashboard sur Streamlit Cloud) et traçabilité MLflow du modèle servi
+
+## Traçabilité du modèle
+
+Le modèle servi (`modeles/pipeline_ml.pkl`) provient de BC03, où chaque entraînement est enregistré
+dans **MLflow** (paramètres, métriques, comparaison des 3 modèles). L'industrialisation part donc
+d'un modèle tracé et reproductible.
 
 ## Statut
 
-**Complet en local.** L'API et le dashboard fonctionnent et ont été testés (démarrage vérifié,
-`/health` et `/species` répondent correctement). Le déploiement public (cloud) reste une piste
-documentée mais non réalisée (voir BC06, limites assumées).
+**Fonctionnel en local, prêt à déployer.** L'API et le dashboard fonctionnent et ont été testés
+(démarrage vérifié, `/health` et `/species` répondent correctement). Le déploiement public n'est
+pas encore effectué (comptes cloud à créer) mais tout est en place : `render.yaml`, `Procfile`,
+`Dockerfile` et procédure détaillée dans `docs/deploiement.md`. Le dashboard lit déjà l'adresse de
+l'API dans la variable d'environnement `API_URL`.

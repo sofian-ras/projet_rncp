@@ -19,6 +19,7 @@ folium==0.16.0
 scikit-learn==1.8.0
 xgboost==2.0.3
 imbalanced-learn==0.12.3
+mlflow==2.14.1
 
 # Deep Learning (utilisé par blocs/bc04_deep_learning)
 tensorflow==2.16.1

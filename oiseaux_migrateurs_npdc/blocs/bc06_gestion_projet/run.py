@@ -53,6 +53,7 @@ def afficher_planning() -> None:
     print("\n--- Planning agile (4 semaines) ---\n")
     for semaine, blocs, objectif in PLANNING:
         print(f"  {semaine:<10} {blocs:<14} {objectif}")
+    print("\n  Retroplanning date, jalons, analyse des risques et ROI : docs/gestion_projet.md")
 
 
 def main() -> None:

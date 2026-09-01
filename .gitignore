@@ -13,6 +13,9 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 
+# Suivi d'experiences MLflow (regenere par blocs/bc03_machine_learning/run.py)
+mlruns/
+
 # Logs applicatifs (chaque bloc RNCP a son propre logs/ local, cf README racine)
 oiseaux_migrateurs_npdc/blocs/*/logs/
 

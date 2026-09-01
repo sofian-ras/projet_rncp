@@ -4,24 +4,30 @@ BC03 - Machine Learning : prediction sur donnees structurees
 
 Ce script est AUTONOME : donnees/traitees/ embarque une copie figee de la
 grille et de la meteo produites par BC01, pour pouvoir etre execute (et
-envoye) seul. Il prepare les features, entraine et compare 3 modeles de
-classification (Regression logistique, Foret aleatoire, XGBoost), et
-sauvegarde les modeles + leurs metriques.
+envoye) seul.
+
+Il enchaine quatre etapes :
+  1. Preparation des features (position, periode, meteo) et de la cible.
+  2. Supervise : entrainement et comparaison de 3 modeles (Regression
+     logistique, Foret aleatoire, XGBoost), chaque run journalise dans MLflow.
+  3. Validation du modele retenu : validation croisee stratifiee + ecart
+     train/test (detection du sur-apprentissage).
+  4. Non supervise : segmentation des zones de densite d'observations (K-Means).
 
 Utilisation :
     python blocs/bc03_machine_learning/run.py
 
-Duree : quelques dizaines de secondes a ~2 minutes selon la machine
-(l'essentiel du temps est pris par l'entrainement de la foret
-aleatoire sur environ 900 000 lignes).
+Duree : ~1 a 2 minutes selon la machine.
 """
 
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
@@ -29,10 +35,19 @@ from xgboost import XGBClassifier
 from commun.config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_MODELES, ParametresML
 from commun.journalisation import configurer_logger
 from commun.chargement import charger_grille_hebdomadaire, charger_meteo_traitee
-from gestion_modeles import GestionnaireModeles, comparer_modeles
+from gestion_modeles import (
+    GestionnaireModeles,
+    comparer_modeles,
+    demarrer_suivi_experience,
+    journaliser_run,
+)
+from segmentation import segmenter_zones_densite
 
 RACINE_PROJET = Path(__file__).resolve().parent
 logger = configurer_logger()
+
+MODELE_RETENU = "xgboost"                       # modele mis "en production"
+FICHIER_MODELE = {"xgboost": "pipeline_ml"}     # nom de fichier .pkl par modele (defaut = son nom)
 
 
 def preparer_features(df_grille: pd.DataFrame, df_meteo: pd.DataFrame = None) -> tuple:
@@ -72,46 +87,84 @@ def preparer_features(df_grille: pd.DataFrame, df_meteo: pd.DataFrame = None) ->
     return X, y, available_features
 
 
-def entrainer_modeles(X_train, X_test, y_train, y_test):
-    """Entraine 3 modeles et les compare"""
+def construire_modeles() -> dict:
+    """Les 3 modeles a comparer, du plus simple au plus complexe (tous precedes d'une normalisation)."""
+    def avec_normalisation(estimateur):
+        return Pipeline([("normalisation", StandardScaler()), ("modele", estimateur)])
+
+    return {
+        "regression_logistique": avec_normalisation(
+            LogisticRegression(max_iter=1000, random_state=ParametresML.RANDOM_STATE)),
+        "foret_aleatoire": avec_normalisation(
+            RandomForestClassifier(**ParametresML.RANDOM_FOREST_PARAMS, n_jobs=-1)),
+        "xgboost": avec_normalisation(
+            XGBClassifier(**ParametresML.XGBOOST_PARAMS,
+                          random_state=ParametresML.RANDOM_STATE, eval_metric="logloss")),
+    }
+
+
+def entrainer_modeles(X_train, X_test, y_train, y_test) -> tuple:
+    """Entraine, evalue, sauvegarde les 3 modeles et journalise chaque run dans MLflow.
+
+    Retourne (tableau_comparaison, pipeline_du_modele_retenu).
+    """
     logger.info("=" * 60)
-    logger.info("ENTRAINEMENT MODELES")
+    logger.info("ENTRAINEMENT DES MODELES (supervise)")
     logger.info("=" * 60)
 
     gestionnaire = GestionnaireModeles(REPERTOIRE_MODELES)
-    resultats = {}
+    mlflow = demarrer_suivi_experience()
+    resultats, pipelines = {}, {}
 
-    logger.info("\nEntrainement Regression logistique...")
-    pipeline_lr = Pipeline([
-        ("scaler", StandardScaler()),
-        ("lr", LogisticRegression(max_iter=1000, random_state=ParametresML.RANDOM_STATE)),
-    ])
-    pipeline_lr.fit(X_train, y_train)
-    metriques_lr = gestionnaire.evaluator_modele(pipeline_lr, X_test, y_test, "logistic_regression")
-    gestionnaire.sauvegarder_modele(pipeline_lr, "logistic_regression", metriques_lr)
-    resultats["LogisticRegression"] = metriques_lr
+    for nom, pipeline in construire_modeles().items():
+        logger.info(f"\nEntrainement {nom}...")
+        pipeline.fit(X_train, y_train)
+        metriques = gestionnaire.evaluer_modele(pipeline, X_test, y_test, nom)
+        gestionnaire.sauvegarder_modele(pipeline, FICHIER_MODELE.get(nom, nom), metriques)
+        journaliser_run(mlflow, nom, pipeline, metriques)
+        resultats[nom], pipelines[nom] = metriques, pipeline
 
-    logger.info("\nEntrainement Foret aleatoire...")
-    rf_params = dict(ParametresML.RANDOM_FOREST_PARAMS)
-    rf_params["n_jobs"] = -1  # parallelise sur tous les coeurs, ne change pas le resultat
-    pipeline_rf = Pipeline([("scaler", StandardScaler()), ("rf", RandomForestClassifier(**rf_params))])
-    pipeline_rf.fit(X_train, y_train)
-    metriques_rf = gestionnaire.evaluator_modele(pipeline_rf, X_test, y_test, "random_forest")
-    gestionnaire.sauvegarder_modele(pipeline_rf, "random_forest", metriques_rf)
-    resultats["RandomForest"] = metriques_rf
+    return comparer_modeles(resultats), pipelines[MODELE_RETENU]
 
-    logger.info("\nEntrainement XGBoost...")
-    xgb_params = dict(ParametresML.XGBOOST_PARAMS)
-    xgb_params["random_state"] = ParametresML.RANDOM_STATE
-    xgb_params["eval_metric"] = "logloss"
-    pipeline_xgb = Pipeline([("scaler", StandardScaler()), ("xgb", XGBClassifier(**xgb_params))])
-    pipeline_xgb.fit(X_train, y_train)
-    metriques_xgb = gestionnaire.evaluator_modele(pipeline_xgb, X_test, y_test, "xgboost")
-    gestionnaire.sauvegarder_modele(pipeline_xgb, "pipeline_ml", metriques_xgb)
-    resultats["XGBoost"] = metriques_xgb
 
-    df_comparaison = comparer_modeles(resultats)
-    return resultats, df_comparaison
+def valider_modele_retenu(pipeline, X_train, y_train, X_test, y_test) -> None:
+    """Validation croisee stratifiee + ecart train/test (sur-apprentissage / sous-apprentissage)."""
+    logger.info("\n--- VALIDATION DU MODELE RETENU ---")
+    validation_croisee = StratifiedKFold(
+        n_splits=ParametresML.N_SPLITS_CV, shuffle=True, random_state=ParametresML.RANDOM_STATE
+    )
+    scores = cross_val_score(pipeline, X_train, y_train, cv=validation_croisee, scoring="roc_auc")
+    logger.info(f"AUC-ROC {ParametresML.N_SPLITS_CV}-fold : {scores.mean():.3f} +/- {scores.std():.3f}")
+
+    auc_train = roc_auc_score(y_train, pipeline.predict_proba(X_train)[:, 1])
+    auc_test = roc_auc_score(y_test, pipeline.predict_proba(X_test)[:, 1])
+    ecart = auc_train - auc_test
+    logger.info(f"AUC-ROC train {auc_train:.3f} | test {auc_test:.3f} | ecart {ecart:.3f}")
+    logger.info(
+        "  Ecart faible : pas de sur-apprentissage marque."
+        if ecart <= 0.05
+        else "  Ecart eleve (> 0.05) : sur-apprentissage probable."
+    )
+
+
+def analyser_influence_variables(pipeline, noms_features) -> None:
+    """Importance des variables du modele retenu -> CSV + graphique (competence C3.4)."""
+    logger.info("\n--- INFLUENCE DES VARIABLES ---")
+    importances = pd.Series(
+        pipeline.named_steps["modele"].feature_importances_, index=noms_features, name="importance"
+    ).sort_values(ascending=False)
+
+    importances.to_csv(REPERTOIRE_MODELES / "influence_variables.csv")
+
+    axe = importances.iloc[::-1].plot.barh(figsize=(8, 5), color="steelblue")
+    axe.set_title("Influence des variables - modele retenu", fontweight="bold")
+    axe.set_xlabel("Importance (gain XGBoost)")
+    axe.figure.tight_layout()
+    axe.figure.savefig(REPERTOIRE_MODELES / "influence_variables.png", dpi=150)
+    plt.close(axe.figure)
+
+    for nom, valeur in importances.head().items():
+        logger.info(f"  {nom:<22} {valeur:.3f}")
 
 
 def main() -> None:
@@ -132,30 +185,34 @@ def main() -> None:
     if df_meteo is None:
         logger.warning("Fichier meteo traite absent, entrainement sans meteo")
 
-    X, y, _ = preparer_features(df_grille, df_meteo)
-
+    X, y, noms_features = preparer_features(df_grille, df_meteo)
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=ParametresML.TEST_SIZE, random_state=ParametresML.RANDOM_STATE, stratify=y,
     )
     logger.info(f"\nSplit donnees : Train {len(X_train)} | Test {len(X_test)}")
 
-    resultats, df_comparaison = entrainer_modeles(X_train, X_test, y_train, y_test)
+    df_comparaison, modele_retenu = entrainer_modeles(X_train, X_test, y_train, y_test)
+    df_comparaison.to_csv(REPERTOIRE_MODELES / "evaluations.csv")
 
-    chemin_csv = REPERTOIRE_MODELES / "evaluations.csv"
-    df_comparaison.to_csv(chemin_csv)
+    valider_modele_retenu(modele_retenu, X_train, y_train, X_test, y_test)
+    analyser_influence_variables(modele_retenu, noms_features)
+    segmenter_zones_densite(df_grille)
 
     print("\nPreuves produites (fichiers verifiables sur disque) :")
     for chemin in [
         REPERTOIRE_MODELES / "pipeline_ml.pkl",
-        REPERTOIRE_MODELES / "random_forest.pkl",
-        REPERTOIRE_MODELES / "logistic_regression.pkl",
+        REPERTOIRE_MODELES / "foret_aleatoire.pkl",
+        REPERTOIRE_MODELES / "regression_logistique.pkl",
         REPERTOIRE_MODELES / "evaluations.csv",
+        REPERTOIRE_MODELES / "influence_variables.csv",
+        REPERTOIRE_MODELES / "influence_variables.png",
+        REPERTOIRE_MODELES / "zones_densite.csv",
     ]:
         marque = "OK" if chemin.exists() else "MANQUANT"
         print(f"  [{marque}] {chemin.relative_to(RACINE_PROJET)}")
 
-    print(f"\nMeilleur modele (AUC-ROC) : "
-          f"{df_comparaison['auc_roc'].idxmax() if 'auc_roc' in df_comparaison else '?'}")
+    if "auc_roc" in df_comparaison:
+        print(f"\nMeilleur modele (AUC-ROC) : {df_comparaison['auc_roc'].idxmax()}")
     print("\nBC03 termine.\n")
 
 

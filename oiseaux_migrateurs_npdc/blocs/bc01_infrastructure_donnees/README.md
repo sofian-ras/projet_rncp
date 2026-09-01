@@ -6,6 +6,9 @@ par la suite du projet.
 
 Ce bloc est **autonome** : il peut être présenté et exécuté seul, sans avoir besoin des autres blocs.
 
+**Schéma d'infrastructure, choix techniques, coûts et conformité RGPD :**
+[`docs/architecture.md`](docs/architecture.md) (1 page).
+
 ---
 
 ## Ce qui est implémenté

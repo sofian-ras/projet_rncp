@@ -1,8 +1,8 @@
 # BC03 — Machine Learning (prédiction sur données structurées)
 
-**Objectif RNCP :** entraîner, évaluer et comparer plusieurs modèles de Machine Learning sur un
-problème de classification, et savoir interpréter correctement leurs résultats — y compris leurs
-limites.
+**Objectif RNCP :** construire un pipeline de préparation, entraîner et comparer plusieurs modèles
+supervisés, mesurer l'influence des variables, contrôler le sur-apprentissage, et démontrer une
+approche non supervisée — en interprétant correctement les résultats, y compris leurs limites.
 
 Ce bloc est **autonome** : il lit la grille produite par BC01 (`donnees/traitees/*.parquet`) sans
 jamais ré-exécuter son code. Si ces fichiers n'existent pas, le script s'arrête avec un message clair.
@@ -11,21 +11,33 @@ jamais ré-exécuter son code. Si ces fichiers n'existent pas, le script s'arrê
 
 ## Ce qui est implémenté
 
+### Supervisé
 - Préparation des features (position, période, météo) et de la cible (`presence`) à partir de la
   grille de BC01.
-- Découpage entraînement/test stratifié (80/20), pour évaluer honnêtement les modèles.
-- Entraînement et comparaison de **3 modèles** de complexité croissante : Régression logistique
-  (référence), Forêt aléatoire, XGBoost.
-- Évaluation avec 3 indicateurs : Accuracy, F1-score, AUC-ROC — et une lecture critique de ces
-  indicateurs face au fort déséquilibre des classes (~98,6% d'absences).
+- Découpage entraînement/test stratifié (80/20).
+- Entraînement et comparaison de **3 modèles** de complexité croissante : régression logistique
+  (référence), forêt aléatoire, XGBoost. Chaque entraînement est enregistré dans **MLflow**
+  (paramètres + métriques).
+- Évaluation avec Accuracy, F1-score, AUC-ROC — lecture critique face au fort déséquilibre des
+  classes (~98,6 % d'absences).
+- **Validation croisée stratifiée 5-fold** sur le modèle retenu + contrôle de l'**écart train/test**
+  (détection du sur-apprentissage).
+- **Influence des variables** (`feature_importances_` du modèle retenu) → CSV + graphique.
+
+### Non supervisé
+- **Segmentation K-Means** des zones de densité d'observations. Le nombre de zones K n'est pas fixé
+  d'avance : on teste K de 2 à 8 et on retient celui qui maximise le **score de silhouette**.
 
 ## Où le voir dans le code
 
-- `run.py`, fonction `preparer_features`.
-- `run.py`, fonction `entrainer_modeles` (les 3 pipelines scikit-learn).
-- `gestion_modeles.py`, classe `GestionnaireModeles` (sauvegarde, évaluation, métadonnées).
-- Hyperparamètres définis dans `commun/config.py`, classe `ParametresML` — pas de valeurs magiques
-  dans le code d'entraînement.
+- `run.py`, `preparer_features` : construction de X / y.
+- `run.py`, `construire_modeles` / `entrainer_modeles` : les 3 pipelines scikit-learn + suivi MLflow.
+- `run.py`, `valider_modele_retenu` : validation croisée + écart train/test.
+- `run.py`, `analyser_influence_variables` : importance des variables.
+- `segmentation.py`, `segmenter_zones_densite` / `choisir_nombre_zones` : K-Means + silhouette.
+- `gestion_modeles.py` : sauvegarde, évaluation, métadonnées, helpers MLflow.
+- Hyperparamètres dans `commun/config.py` (`ParametresML`, `ParametresSegmentation`) — pas de
+  valeurs magiques dans le code.
 
 ## Démonstration
 
@@ -35,16 +47,19 @@ pip install -r requirements.txt
 python run.py
 ```
 
-Durée : environ 1 minute (l'essentiel du temps est pris par la forêt aléatoire sur ~900 000 lignes).
+Durée : ~1 minute. Le suivi MLflow est optionnel : sans le paquet `mlflow`, le bloc tourne quand
+même (le suivi est simplement ignoré).
 
 ## Livrables produits (vérifiables sur disque)
 
 - `modeles/pipeline_ml.pkl` (XGBoost, modèle retenu en production)
-- `modeles/random_forest.pkl`, `modeles/logistic_regression.pkl`
-- `modeles/evaluations.csv` (tableau comparatif)
-- `modeles/*_metadata.json` (métriques et features utilisées par modèle)
+- `modeles/foret_aleatoire.pkl`, `modeles/regression_logistique.pkl`
+- `modeles/evaluations.csv` (tableau comparatif) + `modeles/*_metadata.json` (métriques par modèle)
+- `modeles/influence_variables.csv` + `modeles/influence_variables.png`
+- `modeles/zones_densite.csv` (centres et volumes des zones K-Means)
+- `modeles/mlruns/` (suivi MLflow ; `mlflow ui --backend-store-uri modeles/mlruns` pour l'explorer)
 
 ## Statut
 
-**Complet.** Les 3 modèles sont réellement entraînés à chaque exécution (pas de résultats en dur), et
-comparés avec des métriques adaptées au déséquilibre des classes.
+**Complet.** Supervisé (3 modèles, MLflow, validation croisée, importance des variables) et non
+supervisé (K-Means + silhouette) sont réellement exécutés à chaque lancement, sans résultats en dur.

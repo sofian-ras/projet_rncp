@@ -40,12 +40,12 @@ Chaque bloc a été testé en le copiant seul, hors de ce projet, dans un dossie
 
 | Bloc | Dossier | Ce qu'il démontre |
 |---|---|---|
-| BC01 | [`blocs/bc01_infrastructure_donnees/`](blocs/bc01_infrastructure_donnees/README.md) | Acquisition (GBIF + Open-Meteo) et nettoyage (ETL) |
-| BC02 | [`blocs/bc02_analyse_exploratoire/`](blocs/bc02_analyse_exploratoire/README.md) | Visualisations et tests statistiques |
-| BC03 | [`blocs/bc03_machine_learning/`](blocs/bc03_machine_learning/README.md) | Prédiction sur données structurées (3 modèles ML comparés) |
+| BC01 | [`blocs/bc01_infrastructure_donnees/`](blocs/bc01_infrastructure_donnees/README.md) | Acquisition (GBIF + Open-Meteo), nettoyage (ETL), [schéma d'architecture + RGPD](blocs/bc01_infrastructure_donnees/docs/architecture.md) |
+| BC02 | [`blocs/bc02_analyse_exploratoire/`](blocs/bc02_analyse_exploratoire/README.md) | Analyse univariée, corrélations, tests statistiques, visualisations |
+| BC03 | [`blocs/bc03_machine_learning/`](blocs/bc03_machine_learning/README.md) | Supervisé (3 modèles + MLflow + validation croisée + importance des variables) et non supervisé (K-Means) |
 | BC04 | [`blocs/bc04_deep_learning/`](blocs/bc04_deep_learning/README.md) | Prédiction sur données non structurées (réseau de neurones sur texte) |
-| BC05 | [`blocs/bc05_industrialisation/`](blocs/bc05_industrialisation/README.md) | API FastAPI + Dashboard Streamlit + Docker |
-| BC06 | [`blocs/bc06_gestion_projet/`](blocs/bc06_gestion_projet/README.md) | Tests automatisés, planning, limites assumées |
+| BC05 | [`blocs/bc05_industrialisation/`](blocs/bc05_industrialisation/README.md) | API FastAPI + Dashboard Streamlit + Docker + [procédure de déploiement](blocs/bc05_industrialisation/docs/deploiement.md) |
+| BC06 | [`blocs/bc06_gestion_projet/`](blocs/bc06_gestion_projet/README.md) | Tests automatisés, [rétroplanning + risques + ROI](blocs/bc06_gestion_projet/docs/gestion_projet.md), limites assumées |
 
 ### Stack technique par bloc
 
@@ -53,7 +53,7 @@ Chaque bloc a été testé en le copiant seul, hors de ce projet, dans un dossie
 |---|---|
 | BC01 | `requests` (API GBIF + Open-Meteo), `pandas` (ETL), `loguru` |
 | BC02 | `pandas`, `matplotlib`/`seaborn`, `folium` (carte), `scipy` (tests statistiques) |
-| BC03 | `scikit-learn` (Régression logistique, Forêt aléatoire), `xgboost` |
+| BC03 | `scikit-learn` (régression logistique, forêt aléatoire, K-Means), `xgboost`, `mlflow` |
 | BC04 | `TensorFlow`/`Keras` (Embedding + LSTM) |
 | BC05 | `FastAPI`, `Pydantic`, `Streamlit`, `Docker` |
 | BC06 | `pytest` |
@@ -92,10 +92,12 @@ oiseaux_migrateurs_npdc/
 
 ### Feuille de route infrastructure
 
-Le stockage est aujourd'hui local (fichiers CSV/Parquet/pickle). Une itération suivante ajoutera :
-**MinIO** (data lake, remplace `donnees/brutes` et `donnees/traitees`), **PostgreSQL** (métadonnées
-structurées des jeux de données) et, si le volume de données le justifie, **Spark** — le volume actuel
-(~5 Mo) est traité instantanément par pandas et ne nécessite pas de calcul distribué en l'état.
+Le stockage est aujourd'hui local (fichiers CSV/Parquet/pickle). Le schéma d'infrastructure actuel,
+les choix techniques, les coûts et la cible d'industrialisation (**MinIO** data lake, **PostgreSQL**
+métadonnées, **Spark** si le volume le justifie) sont détaillés dans
+[`blocs/bc01_infrastructure_donnees/docs/architecture.md`](blocs/bc01_infrastructure_donnees/docs/architecture.md).
+Le volume actuel (~5 Mo) est traité instantanément par pandas et ne nécessite pas de calcul distribué
+en l'état.
 
 ---
 

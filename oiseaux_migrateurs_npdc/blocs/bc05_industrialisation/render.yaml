@@ -1,0 +1,19 @@
+# Render Blueprint - deploie l'API BC05 a partir du Dockerfile de ce dossier.
+#
+# Mise en service (une seule fois) :
+#   1. https://dashboard.render.com  ->  New  ->  Blueprint
+#   2. Connecter ce depot GitHub
+#   3. Root Directory : oiseaux_migrateurs_npdc/blocs/bc05_industrialisation
+#   4. Apply  ->  Render lit ce fichier et construit l'image
+#
+# L'URL publique est affichee par Render a la fin du deploiement
+# (ex : https://oiseaux-migrateurs-api.onrender.com/docs).
+services:
+  - type: web
+    name: oiseaux-migrateurs-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: false

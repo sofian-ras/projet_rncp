@@ -14,6 +14,8 @@ import pandas as pd
 from loguru import logger
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, roc_auc_score
 
+from commun.config import REPERTOIRE_MODELES
+
 
 class GestionnaireModeles:
     """Gere le cycle de vie des modeles ML : sauvegarde, chargement, evaluation"""
@@ -41,8 +43,8 @@ class GestionnaireModeles:
         with open(chemin_modele, "rb") as f:
             return pickle.load(f)
 
-    def evaluator_modele(self, modele: Any, X_test: pd.DataFrame, y_test: pd.Series,
-                          nom_modele: str = "evaluation") -> Dict[str, float]:
+    def evaluer_modele(self, modele: Any, X_test: pd.DataFrame, y_test: pd.Series,
+                        nom_modele: str = "evaluation") -> Dict[str, float]:
         """Evalue un modele sur le jeu de test : Accuracy, F1, AUC-ROC, matrice de confusion"""
         logger.info(f"Evaluation modele : {nom_modele}")
         y_pred = modele.predict(X_test)
@@ -91,3 +93,28 @@ def comparer_modeles(resultats_eval: Dict[str, Dict[str, float]]) -> pd.DataFram
     logger.info(df_comparaison.to_string())
     logger.info("=" * 60 + "\n")
     return df_comparaison
+
+
+def demarrer_suivi_experience(nom_experience: str = "bc03_oiseaux_migrateurs"):
+    """Active le suivi d'experience MLflow s'il est installe. Retourne le module mlflow, ou None.
+
+    Rend le suivi optionnel : le bloc reste executable avec le requirements.txt minimal.
+    Le suivi est ecrit dans modeles/mlruns/ (local au bloc, donc reproductible).
+    """
+    try:
+        import mlflow
+    except ImportError:
+        logger.warning("mlflow non installe : suivi d'experience ignore (pip install mlflow)")
+        return None
+    mlflow.set_tracking_uri((REPERTOIRE_MODELES / "mlruns").as_uri())
+    mlflow.set_experiment(nom_experience)
+    return mlflow
+
+
+def journaliser_run(mlflow, nom_modele: str, pipeline, metriques: Dict[str, float]) -> None:
+    """Enregistre un entrainement (parametres du modele + metriques) comme un run MLflow."""
+    if mlflow is None:
+        return
+    with mlflow.start_run(run_name=nom_modele):
+        mlflow.log_params(pipeline.named_steps["modele"].get_params())
+        mlflow.log_metrics({cle: float(valeur) for cle, valeur in metriques.items()})

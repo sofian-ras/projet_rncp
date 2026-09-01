@@ -112,6 +112,32 @@ class AnalyseurExploratoire:
         logger.info(f"  Carte sauvegardee : {chemin_carte.name}")
         return carte
 
+    def analyser_distributions(self, df_meteo: pd.DataFrame) -> pd.DataFrame:
+        """Analyse univariee des variables meteo : moyennes, ecarts-types, valeurs extremes (regle IQR)."""
+        logger.info("Analyse univariee (distributions meteo)...")
+        if df_meteo.empty:
+            logger.warning("  Donnees meteo absentes. Analyse univariee non calculee.")
+            return pd.DataFrame()
+
+        variables = df_meteo.select_dtypes("number").columns
+        resume = df_meteo[variables].agg(["mean", "std", "min", "max"]).T
+
+        q1, q3 = df_meteo[variables].quantile(0.25), df_meteo[variables].quantile(0.75)
+        iqr = q3 - q1
+        resume["extremes_iqr"] = (
+            (df_meteo[variables] < q1 - 1.5 * iqr) | (df_meteo[variables] > q3 + 1.5 * iqr)
+        ).sum()
+        logger.info("\n" + resume.round(2).to_string())
+
+        axes = df_meteo[variables].hist(figsize=(14, 8), bins=30, color="steelblue", edgecolor="black")
+        figure = axes.flat[0].get_figure()
+        figure.suptitle("Distributions des variables meteo", fontsize=14, fontweight="bold")
+        figure.tight_layout()
+        figure.savefig(self.repertoire_sorties / "distributions_meteo.png", dpi=150, bbox_inches="tight")
+        plt.close(figure)
+        logger.info("  Graphique distributions_meteo.png sauvegarde")
+        return resume
+
     def analyser_correlations(self, df_grille: pd.DataFrame, df_meteo: pd.DataFrame) -> pd.DataFrame:
         """Analyse correlations meteo / presence"""
         logger.info("Analyse correlations...")
@@ -189,6 +215,9 @@ def main() -> None:
     logger.info("\n--- SAISONNALITE ---")
     analyseur.analyser_saisonnalite(df_obs)
 
+    logger.info("\n--- DISTRIBUTIONS UNIVARIEES ---")
+    analyseur.analyser_distributions(df_meteo)
+
     logger.info("\n--- CARTE DENSITE ---")
     analyseur.creer_carte_densite(df_obs)
 
@@ -201,6 +230,7 @@ def main() -> None:
     print("\nPreuves produites (fichiers verifiables sur disque) :")
     for chemin in [
         analyseur.repertoire_sorties / "saisonnalite.png",
+        analyseur.repertoire_sorties / "distributions_meteo.png",
         analyseur.repertoire_sorties / "carte_densite.html",
         analyseur.repertoire_sorties / "correlations_meteo.png",
     ]:
