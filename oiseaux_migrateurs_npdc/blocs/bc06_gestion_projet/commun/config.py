@@ -73,6 +73,12 @@ class ParametresAcquisition:
     LIMITE_RESULTATS_PAR_ESPECE = 10000
     DELAI_ENTRE_REQUETES = 1  # secondes
 
+    # Reessais en cas d'erreur passagere des API (5xx, 429, timeout, coupure reseau).
+    # GBIF renvoie regulierement des 503 transitoires : sans reessai, l'acquisition
+    # repartait avec 0 observation.
+    NB_TENTATIVES_MAX = 4
+    DELAI_RETRY_INITIAL = 2  # secondes, double a chaque tentative (2, 4, 8...)
+
     API_METEO_URL = "https://archive-api.open-meteo.com/v1/archive"
     VARIABLES_METEO = [
         "temperature_2m_max",

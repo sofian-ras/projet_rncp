@@ -20,6 +20,41 @@ from commun.config import (
 )
 
 
+def get_avec_retry(url: str, parametres: Dict) -> requests.Response:
+    """GET HTTP avec reessais et backoff exponentiel.
+
+    Reessaie sur les erreurs passageres (5xx, 429, timeout, coupure reseau).
+    Ne reessaie pas sur une vraie erreur de requete (4xx hors 429), inutile.
+    Leve la derniere exception rencontree si toutes les tentatives echouent.
+    """
+    nb_tentatives = ParametresAcquisition.NB_TENTATIVES_MAX
+    delai = ParametresAcquisition.DELAI_RETRY_INITIAL
+    derniere_erreur = None
+
+    for tentative in range(1, nb_tentatives + 1):
+        try:
+            reponse = requests.get(url, params=parametres, timeout=30)
+            reponse.raise_for_status()
+            return reponse
+        except requests.HTTPError as erreur:
+            code = erreur.response.status_code if erreur.response is not None else None
+            if code is not None and code < 500 and code != 429:
+                raise  # 4xx : requete invalide, un reessai ne changera rien
+            derniere_erreur = erreur
+        except requests.RequestException as erreur:
+            derniere_erreur = erreur  # timeout, DNS, connexion refusee...
+
+        if tentative < nb_tentatives:
+            logger.warning(
+                f"  Tentative {tentative}/{nb_tentatives} echouee ({derniere_erreur}). "
+                f"Nouvel essai dans {delai}s..."
+            )
+            time.sleep(delai)
+            delai *= 2
+
+    raise derniere_erreur
+
+
 class AcquisiteurGBIF:
     """Telecharge observations d'oiseaux depuis GBIF"""
 
@@ -54,8 +89,7 @@ class AcquisiteurGBIF:
                 "offset": decalage,
             }
             try:
-                reponse = requests.get(self.url_base_gbif, params=parametres, timeout=30)
-                reponse.raise_for_status()
+                reponse = get_avec_retry(self.url_base_gbif, parametres)
                 resultats = reponse.json().get("results", [])
                 if not resultats:
                     break
@@ -64,7 +98,7 @@ class AcquisiteurGBIF:
                 logger.debug(f"  Recupere {len(observations_liste)} observations")
                 time.sleep(self.params_acquisition.DELAI_ENTRE_REQUETES)
             except Exception as erreur:
-                logger.error(f"  Erreur requete GBIF : {erreur}")
+                logger.error(f"  Erreur requete GBIF apres {self.params_acquisition.NB_TENTATIVES_MAX} tentatives : {erreur}")
                 break
 
         donnees_extraites = self._extraire_colonnes(observations_liste, nom_espece)
@@ -120,8 +154,7 @@ class AcquisiteurMeteo:
             "timezone": "Europe/Paris",
         }
         try:
-            reponse = requests.get(self.url_api, params=parametres, timeout=30)
-            reponse.raise_for_status()
+            reponse = get_avec_retry(self.url_api, parametres)
             donnees = reponse.json()
             return pd.DataFrame({
                 "date": pd.to_datetime(donnees["daily"]["time"]),
