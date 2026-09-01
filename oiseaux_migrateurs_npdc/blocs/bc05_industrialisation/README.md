@@ -3,9 +3,10 @@
 **Objectif RNCP :** rendre un modèle utilisable par un non-technicien, via une API et une application
 web, packagées de façon portable (Docker).
 
-Ce bloc est **autonome** : `run.py` fait la démonstration de la logique de prédiction sans avoir besoin
-de lancer un serveur, ce qui en fait un bloc présentable même sans les deux terminaux de l'API et du
-dashboard ouverts. Le lancement réel de l'API et du dashboard reste disponible pour la démo live.
+`run.py` fait la démonstration de la logique de prédiction sans lancer de serveur, ce qui rend le bloc
+présentable même sans les deux terminaux de l'API et du dashboard ouverts. Le lancement réel de l'API
+et du dashboard reste disponible pour la démo live. Le modèle servi (`modeles/pipeline_ml.pkl`) est
+produit par BC03.
 
 ---
 
@@ -32,8 +33,8 @@ dashboard ouverts. Le lancement réel de l'API et du dashboard reste disponible 
 ## Démonstration
 
 ```bash
+pip install -r requirements.txt   # depuis la racine du projet, une seule fois
 cd blocs/bc05_industrialisation
-pip install -r requirements.txt
 
 # Démonstration sans serveur (rapide, toujours disponible)
 python run.py

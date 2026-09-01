@@ -1,0 +1,15 @@
+# Configuration des outils (pas de packaging : les blocs se lancent par `python run.py`,
+# le package `commun/` est resolu via la racine ajoutee au sys.path dans chaque run.py).
+
+[tool.pytest.ini_options]
+pythonpath = [".", "blocs/bc01_infrastructure_donnees"]
+testpaths = ["blocs/bc06_gestion_projet/tests"]
+addopts = "-q"
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 100

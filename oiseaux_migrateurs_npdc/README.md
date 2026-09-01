@@ -13,30 +13,24 @@ climatiques ?
 Pour une explication complète, pédagogique et déjà exécutée (données réelles, graphiques, résultats de
 modèles), voir le notebook :
 [`notebooks/Notebook_Soutenance_Oiseaux_Migrateurs.ipynb`](notebooks/Notebook_Soutenance_Oiseaux_Migrateurs.ipynb).
-Ce notebook est un **document narratif figé** (résultats déjà exécutés et mis en cache) : ses cellules
-de code référencent l'ancienne organisation du projet (module `commun/` partagé, chemins d'import
-`blocs.bc0X_....run`) et ne sont plus destinées à être ré-exécutées telles quelles depuis que chaque
-bloc a été rendu autonome — seuls les `run.py` de chaque dossier `blocs/bc0X_.../` sont la version à
-jour et exécutable du code.
+Ce notebook est un **document narratif figé** (résultats déjà exécutés et mis en cache) ; la version
+à jour et exécutable du code est celle des `run.py` de chaque dossier `blocs/bc0X_.../`.
 
 ---
 
-## Le projet est organisé en 6 blocs, chacun 100% autonome
+## Le projet est organisé en 6 blocs
 
-Le référentiel RNCP est découpé en 6 blocs de compétences (BC01 à BC06). Chaque bloc vit dans son
-propre dossier et est **réellement exécutable seul** : si vous copiez/envoyez uniquement
-`blocs/bc0X_.../` (sans le reste du projet), il fonctionne quand même. Concrètement, chaque dossier
-de bloc embarque :
-- son propre sous-package `commun/` (config, chemins, logging — une copie réduite à ses besoins,
-  pas un import d'un dossier partagé situé ailleurs) ;
-- son propre `requirements.txt` (installable indépendamment) ;
-- pour les blocs qui ont besoin de données produites par un bloc précédent (BC02, BC03, BC05) : une
-  **copie figée** de ces données directement dans son dossier (`donnees/`, `modeles/`, `outputs/`) —
-  duplication assumée, au bénéfice de l'autonomie totale de chaque dossier ;
-- **un seul script exécutable** (`run.py`, ou `api.py`/`dashboard.py` pour BC05) et **un
-  `README.md`** décrivant l'objectif, le code, la commande de démonstration et les livrables produits.
+Le référentiel RNCP est découpé en 6 blocs de compétences (BC01 à BC06), un dossier par bloc dans
+`blocs/`. Le code commun (config, chemins, logging, chargement des données) vit dans **un seul
+package `commun/`** à la racine ; les données et artefacts sont dans **un seul jeu de dossiers
+racine** (`donnees/`, `modeles/`, `outputs/`). Chaque bloc a **un script exécutable** (`run.py`, plus
+`api.py` / `dashboard.py` pour BC05) et un `README.md` décrivant objectif, code, commande de
+démonstration et livrables.
 
-Chaque bloc a été testé en le copiant seul, hors de ce projet, dans un dossier vide.
+Les blocs partagent donc leurs entrées/sorties : **BC01 doit être exécuté en premier** (il produit
+`donnees/traitees/`), ensuite BC02, BC03 et BC04 dans n'importe quel ordre, puis BC05. Les parquets
+de `donnees/traitees/` et le modèle `modeles/pipeline_ml.pkl` sont **versionnés** dans le dépôt :
+après un simple clone, BC02 à BC05 tournent sans avoir à relancer BC01.
 
 | Bloc | Dossier | Ce qu'il démontre |
 |---|---|---|
@@ -58,36 +52,29 @@ Chaque bloc a été testé en le copiant seul, hors de ce projet, dans un dossie
 | BC05 | `FastAPI`, `Pydantic`, `Streamlit`, `Docker` |
 | BC06 | `pytest` |
 
-Stockage actuel : fichiers locaux (CSV, Parquet, pickle, `.keras`), embarqués dans chaque dossier de
-bloc qui en a besoin.
+Stockage : fichiers locaux (CSV, Parquet, pickle, `.keras`) dans `donnees/`, `modeles/`, `outputs/`
+à la racine du projet.
 
 ```
 oiseaux_migrateurs_npdc/
+├── commun/                          # package partage : config, journalisation, chargement
+├── donnees/
+│   ├── brutes/                      # dumps GBIF + Open-Meteo (non versionne, produit par BC01)
+│   └── traitees/                    # parquets nettoyes (VERSIONNES : fixtures d'entree BC02..BC05)
+├── modeles/                         # pipeline_ml.pkl + evaluations.csv versionnes, reste ignore
+├── outputs/                         # graphiques et cartes (non versionne, regenerable)
+├── mlruns/                          # suivi MLflow de BC03 (non versionne)
 ├── blocs/
-│   ├── bc01_infrastructure_donnees/ # acquisition.py + nettoyage.py + run.py (orchestrateur)
-│   │   ├── commun/                  # config locale (chemins, especes, zone geo, logging)
-│   │   ├── donnees/                 # brutes/ + traitees/ -- generees par ce bloc
-│   │   └── requirements.txt
-│   ├── bc02_analyse_exploratoire/   # run.py autonome : EDA, cartes, tests statistiques
-│   │   ├── commun/
-│   │   ├── donnees/traitees/        # copie figee des parquets de BC01 (fixture d'entree)
-│   │   └── requirements.txt
-│   ├── bc03_machine_learning/       # run.py + gestion_modeles.py : entrainement + comparaison ML
-│   │   ├── commun/
-│   │   ├── donnees/traitees/        # copie figee (grille + meteo) -- fixture d'entree
-│   │   └── requirements.txt
-│   ├── bc04_deep_learning/          # modele.py (Embedding+LSTM) + run.py (orchestration)
-│   │   ├── commun/
-│   │   └── requirements.txt
-│   ├── bc05_industrialisation/      # api.py, dashboard.py, prediction.py, run.py, Dockerfile
-│   │   ├── commun/
-│   │   ├── donnees/, modeles/, outputs/  # copies figees (BC01/BC02/BC03) -- fixtures d'entree
-│   │   └── requirements.txt
-│   └── bc06_gestion_projet/         # run.py + tests/ (copie locale, teste acquisition.py de BC01)
-│       ├── commun/, acquisition.py, tests/
-│       └── requirements.txt
-├── notebooks/                       # Notebook de soutenance, narratif et déjà exécuté
-└── SUJETS_RNCP35288.md              # Sujets de soutenance (document de référence)
+│   ├── bc01_infrastructure_donnees/ # acquisition.py + nettoyage.py + run.py + docs/architecture.md
+│   ├── bc02_analyse_exploratoire/   # run.py : EDA, distributions, cartes, tests statistiques
+│   ├── bc03_machine_learning/       # run.py + gestion_modeles.py + segmentation.py
+│   ├── bc04_deep_learning/          # modele.py (Embedding+LSTM) + run.py
+│   ├── bc05_industrialisation/      # api.py, dashboard.py, prediction.py, run.py, Dockerfile, docs/
+│   └── bc06_gestion_projet/         # run.py + tests/ (testent le vrai acquisition.py de BC01) + docs/
+├── notebooks/                       # Notebook de soutenance, narratif et deja execute
+├── pyproject.toml                   # config pytest / black / isort
+├── requirements.txt                 # dependances du projet complet
+└── SUJETS_RNCP35288.md
 ```
 
 ### Feuille de route infrastructure
@@ -103,26 +90,30 @@ en l'état.
 
 ## Démarrage rapide
 
-Chaque bloc s'installe et se lance **depuis son propre dossier**, indépendamment des autres :
+Installation unique, depuis la racine `oiseaux_migrateurs_npdc/` :
 
 ```bash
-cd blocs/bc0X_.../
 python -m venv .venv
 .venv\Scripts\activate      # Windows -- ou: source .venv/bin/activate sur Linux/Mac
 pip install -r requirements.txt
-python run.py
 ```
 
-### Exécuter un bloc, indépendamment des autres
+### Exécuter les blocs
+
+Chaque `run.py` se lance depuis son propre dossier. **BC01 en premier** (il produit
+`donnees/traitees/`) ; ensuite les autres dans n'importe quel ordre.
 
 ```bash
-cd blocs/bc01_infrastructure_donnees && python run.py   # BC01 - acquisition + nettoyage
+cd blocs/bc01_infrastructure_donnees && python run.py   # BC01 - acquisition + nettoyage (ETL)
 cd blocs/bc02_analyse_exploratoire   && python run.py   # BC02 - analyse exploratoire
-cd blocs/bc03_machine_learning       && python run.py   # BC03 - entraîne 3 modèles ML
-cd blocs/bc04_deep_learning          && python run.py   # BC04 - entraîne un réseau de neurones (texte)
+cd blocs/bc03_machine_learning       && python run.py   # BC03 - 3 modèles ML + K-Means + MLflow
+cd blocs/bc04_deep_learning          && python run.py   # BC04 - réseau de neurones (texte)
 cd blocs/bc05_industrialisation      && python run.py   # BC05 - démonstration de prédiction sans serveur
 cd blocs/bc06_gestion_projet         && python run.py   # BC06 - tests automatisés
 ```
+
+> Après un simple `git clone`, `donnees/traitees/` et `modeles/pipeline_ml.pkl` sont déjà présents
+> (versionnés) : BC02 à BC05 tournent sans relancer BC01.
 
 ### Lancer les services de BC05 (API + Dashboard)
 
@@ -137,10 +128,6 @@ python -m uvicorn api:app --reload
 python -m streamlit run dashboard.py
 # -> http://localhost:8501
 ```
-
-> Chaque dossier `blocs/bc0X_.../` peut être copié/envoyé **seul** (sans le reste du projet) : il
-> embarque son propre `commun/`, son propre `requirements.txt`, et — pour BC02/BC03/BC05 — une copie
-> figée des données dont il a besoin. Vérifié en copiant chaque dossier isolément hors de ce projet.
 
 ### Dépannage : TensorFlow ne s'importe pas (BC04)
 
@@ -165,21 +152,24 @@ Deux solutions :
 
 ### Docker (API uniquement)
 
-Depuis `blocs/bc05_industrialisation/` :
+Le contexte de build est la **racine du projet** (l'image a besoin de `commun/`, `modeles/` et
+`donnees/traitees/`) :
 
 ```bash
-docker build -t oiseaux-migrateurs-api .
+docker build -f blocs/bc05_industrialisation/Dockerfile -t oiseaux-migrateurs-api .
 docker run -p 8000:8000 oiseaux-migrateurs-api
 ```
 
+Déploiement public (Render + Streamlit Cloud) : voir
+[`blocs/bc05_industrialisation/docs/deploiement.md`](blocs/bc05_industrialisation/docs/deploiement.md).
+
 ### Tests
 
-Chaque bloc gère ses propres tests. BC06 embarque une copie du code de BC01 et de ses tests :
-
 ```bash
-cd blocs/bc06_gestion_projet
-python -m pytest tests/ -v
+python -m pytest        # depuis la racine (config dans pyproject.toml)
 ```
+
+Les tests portent sur le module d'acquisition de BC01 ; BC06 les rejoue via son `run.py`.
 
 ---
 

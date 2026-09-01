@@ -2,15 +2,12 @@
 BC05 - Industrialisation : demonstration hors-serveur
 ========================================================
 
-Ce script est AUTONOME (dossier envoyable/executable seul) : il ne lance
-pas de serveur (l'API et le dashboard sont des processus longue duree,
-prevus pour etre lances a la main -- voir les commandes affichees a la
-fin de ce script). A la place, il PROUVE que la chaine d'industrialisation
-fonctionne :
+Ce script ne lance pas de serveur (l'API et le dashboard sont des processus
+longue duree, lances a la main -- voir les commandes affichees a la fin).
+A la place, il PROUVE que la chaine d'industrialisation fonctionne :
 
-  1. Il charge le modele de production embarque dans ce dossier
-     (modeles/pipeline_ml.pkl, copie figee produite par BC03) exactement
-     comme le fait api.py au demarrage.
+  1. Il charge le modele de production (modeles/pipeline_ml.pkl, produit par
+     BC03) exactement comme le fait api.py au demarrage.
   2. Il rejoue, sans serveur, la logique exacte de l'endpoint POST /predict
      sur un exemple concret, et affiche le resultat.
   3. Il rappelle les commandes pour lancer reellement l'API, le dashboard,
@@ -20,7 +17,12 @@ Utilisation :
     python run.py
 """
 
+import sys
+from pathlib import Path
+
 import joblib
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # racine du projet -> package commun/
 
 from commun.config import REPERTOIRE_MODELES, ESPECES
 from commun.journalisation import configurer_logger

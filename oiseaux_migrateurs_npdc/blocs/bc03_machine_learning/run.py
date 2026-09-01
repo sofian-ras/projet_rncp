@@ -2,9 +2,8 @@
 BC03 - Machine Learning : prediction sur donnees structurees
 ================================================================
 
-Ce script est AUTONOME : donnees/traitees/ embarque une copie figee de la
-grille et de la meteo produites par BC01, pour pouvoir etre execute (et
-envoye) seul.
+Lit la grille et la meteo produites par BC01 (donnees/traitees/, versionnees
+dans le depot). Lancer BC01 d'abord si ces fichiers sont absents.
 
 Il enchaine quatre etapes :
   1. Preparation des features (position, periode, meteo) et de la cible.
@@ -20,6 +19,7 @@ Utilisation :
 Duree : ~1 a 2 minutes selon la machine.
 """
 
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -32,7 +32,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
-from commun.config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_MODELES, ParametresML
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # racine du projet -> package commun/
+
+from commun.config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_MODELES, REPERTOIRE_RACINE, ParametresML
 from commun.journalisation import configurer_logger
 from commun.chargement import charger_grille_hebdomadaire, charger_meteo_traitee
 from gestion_modeles import (
@@ -43,7 +45,7 @@ from gestion_modeles import (
 )
 from segmentation import segmenter_zones_densite
 
-RACINE_PROJET = Path(__file__).resolve().parent
+RACINE_PROJET = REPERTOIRE_RACINE
 logger = configurer_logger()
 
 MODELE_RETENU = "xgboost"                       # modele mis "en production"
@@ -174,7 +176,7 @@ def main() -> None:
 
     chemin_grille = REPERTOIRE_DONNEES_TRAITEES / "grille_presence_hebdo.parquet"
     if not chemin_grille.exists():
-        logger.error("Donnees introuvables dans donnees/traitees/ (copie figee produite par BC01, livree avec ce dossier).")
+        logger.error("Donnees introuvables dans donnees/traitees/ : lancer d'abord blocs/bc01_infrastructure_donnees/run.py.")
         return
 
     df_grille = charger_grille_hebdomadaire()

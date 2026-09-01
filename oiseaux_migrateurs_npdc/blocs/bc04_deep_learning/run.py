@@ -42,10 +42,13 @@ demonstration devant le jury. Les lancements suivants sont hors-ligne.
 """
 
 import json
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # racine du projet -> package commun/
 
 from commun.config import REPERTOIRE_MODELES, REPERTOIRE_RACINE, ParametresDL
 from commun.journalisation import configurer_logger

@@ -4,7 +4,8 @@
 le monde extérieur, de les stocker, de les nettoyer et de les transformer en un format exploitable
 par la suite du projet.
 
-Ce bloc est **autonome** : il peut être présenté et exécuté seul, sans avoir besoin des autres blocs.
+BC01 est le **premier maillon** de la chaîne : il ne dépend d'aucun autre bloc et produit les
+fichiers `donnees/traitees/*.parquet` consommés par BC02 à BC05.
 
 **Schéma d'infrastructure, choix techniques, coûts et conformité RGPD :**
 [`docs/architecture.md`](docs/architecture.md) (1 page).
@@ -38,8 +39,8 @@ Ce bloc est **autonome** : il peut être présenté et exécuté seul, sans avoi
 ## Démonstration
 
 ```bash
+pip install -r requirements.txt   # depuis la racine du projet, une seule fois
 cd blocs/bc01_infrastructure_donnees
-pip install -r requirements.txt
 python run.py
 ```
 

@@ -1,8 +1,8 @@
 """
-Tests unitaires - BC01 Acquisition
+Tests unitaires - Acquisition (code de BC01)
 
-Ce bloc (BC06) embarque sa propre copie de acquisition.py (code de BC01)
-pour pouvoir tester et etre execute seul, sans le reste du projet.
+BC06 (pilotage) execute cette suite via son run.py. Les tests portent sur
+le vrai module d'acquisition de BC01 (rendu importable par conftest.py).
 """
 
 import pytest

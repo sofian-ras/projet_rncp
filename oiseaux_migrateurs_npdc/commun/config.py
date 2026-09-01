@@ -1,27 +1,32 @@
 """
-Configuration locale a BC01 -- ce bloc est autonome (envoyable/executable
-seul, sans le reste du projet), donc cette config est une copie reduite
-aux seuls besoins de BC01, et non un import d'un commun/ partage.
+Configuration partagee par les 6 blocs.
+
+Rassemble ce qui etait auparavant duplique dans chaque `blocs/bc0X_.../commun/` :
+chemins du projet, zone geographique, especes etudiees, format de log et
+parametres de chaque etape (acquisition, nettoyage, ML, segmentation, DL, API).
 """
 
-from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 
-# ========== CHEMINS (locaux a ce bloc) ==========
+# ========== CHEMINS (racine du projet = dossier oiseaux_migrateurs_npdc/) ==========
 REPERTOIRE_RACINE = Path(__file__).resolve().parent.parent
 REPERTOIRE_DONNEES = REPERTOIRE_RACINE / "donnees"
 REPERTOIRE_DONNEES_BRUTES = REPERTOIRE_DONNEES / "brutes"
 REPERTOIRE_DONNEES_TRAITEES = REPERTOIRE_DONNEES / "traitees"
+REPERTOIRE_MODELES = REPERTOIRE_RACINE / "modeles"
+REPERTOIRE_OUTPUTS = REPERTOIRE_RACINE / "outputs"
 
-for repertoire in [REPERTOIRE_DONNEES_BRUTES, REPERTOIRE_DONNEES_TRAITEES]:
-    repertoire.mkdir(parents=True, exist_ok=True)
+for _repertoire in (REPERTOIRE_DONNEES_BRUTES, REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_MODELES):
+    _repertoire.mkdir(parents=True, exist_ok=True)
 
 
-# ========== REGION GEOGRAPHIQUE ==========
+# ========== ZONE GEOGRAPHIQUE ==========
 @dataclass
 class BoundingBoxNPdC:
-    """Bounding box Nord-Pas-de-Calais en coordonnees GPS"""
+    """Bounding box Nord-Pas-de-Calais en coordonnees GPS."""
+
     latitude_min: float = 49.5
     latitude_max: float = 51.5
     longitude_min: float = 1.5
@@ -68,16 +73,16 @@ ESPECES = {
 }
 
 
-# ========== PARAMETRES ACQUISITION ==========
+# ========== PARAMETRES ACQUISITION (BC01) ==========
 class ParametresAcquisition:
-    """Parametres pour telechargement donnees"""
+    """Telechargement GBIF + Open-Meteo."""
 
     ANNEE_DEBUT = 2015
     ANNEE_FIN = 2024
     LIMITE_RESULTATS_PAR_ESPECE = 10000
     DELAI_ENTRE_REQUETES = 1  # secondes
 
-    # Reessais en cas d'erreur passagere des API (5xx, 429, timeout, coupure reseau).
+    # Reessais sur erreur passagere des API (5xx, 429, timeout, coupure reseau).
     # GBIF renvoie regulierement des 503 transitoires : sans reessai, l'acquisition
     # repartait avec 0 observation.
     NB_TENTATIVES_MAX = 4
@@ -95,9 +100,9 @@ class ParametresAcquisition:
     ]
 
 
-# ========== PARAMETRES NETTOYAGE ==========
+# ========== PARAMETRES NETTOYAGE (BC01) ==========
 class ParametresNettoyage:
-    """Parametres pour traitement et validation donnees"""
+    """Validation et agregation des donnees brutes."""
 
     PRECISION_MIN_KM = 1
     DISTANCE_MAX_REGION_KM = 10
@@ -108,6 +113,68 @@ class ParametresNettoyage:
     LONGITUDE_MAX = ZONE_GEOGRAPHIQUE.longitude_max + 1
 
     AGREGATION_SEMAINES = True
+
+
+# ========== PARAMETRES MACHINE LEARNING (BC03) ==========
+class ParametresML:
+    """Entrainement et evaluation des modeles supervises."""
+
+    TEST_SIZE = 0.2
+    VALIDATION_SIZE = 0.1
+    RANDOM_STATE = 42
+    N_SPLITS_CV = 5  # plis pour la validation croisee du modele retenu
+
+    XGBOOST_PARAMS = {
+        "max_depth": 6,
+        "learning_rate": 0.05,
+        "n_estimators": 100,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+    }
+
+    RANDOM_FOREST_PARAMS = {
+        "n_estimators": 100,
+        "max_depth": 10,
+        "min_samples_split": 5,
+        "random_state": RANDOM_STATE,
+    }
+
+    SEUIL_PRECISION_ACCEPTABLE = 0.70
+
+
+# ========== PARAMETRES SEGMENTATION (BC03, non supervise) ==========
+class ParametresSegmentation:
+    """K-Means : on teste K de K_MIN a K_MAX et on retient le meilleur score de silhouette."""
+
+    K_MIN = 2
+    K_MAX = 8
+
+
+# ========== PARAMETRES DEEP LEARNING (BC04) ==========
+class ParametresDL:
+    """Entrainement du modele Embedding + LSTM (analyse de sentiment)."""
+
+    NB_MOTS_VOCABULAIRE = 10000
+    LONGUEUR_SEQUENCE = 200
+    TAILLE_EMBEDDING = 32
+    UNITES_LSTM = 32
+    DROPOUT_RATE = 0.3
+    BATCH_SIZE = 128
+    EPOCHS = 5
+    TAILLE_ECHANTILLON_DEMO = 6000
+    RANDOM_STATE = 42
+
+
+# ========== PARAMETRES API (BC05) ==========
+class ParametresAPI:
+    """Serveur FastAPI."""
+
+    TITRE = "API Prediction Oiseaux Migrateurs"
+    VERSION = "1.0.0"
+    DESCRIPTION = "Prediction arrivee oiseaux migrateurs - Nord-Pas-de-Calais"
+    HOST = "127.0.0.1"
+    PORT = 8000
+    LOG_LEVEL = "info"
 
 
 # ========== LOGGING ==========

@@ -1,9 +1,15 @@
-from pathlib import Path
-import sys
+"""
+Rend importables, pour les tests de BC06 :
+  - `commun`   -> depuis la racine du projet
+  - `acquisition` -> depuis le vrai code de BC01 (plus de copie dans BC06)
+"""
 
-# tests/ n'a pas de sys.path[0] automatique vers son dossier parent (contrairement a un
-# script lance directement) -- ce hack reste necessaire ici pour que
-# "from acquisition import ..." et "from commun.config import ..." resolvent.
-DOSSIER_BLOC = Path(__file__).resolve().parents[1]
-if str(DOSSIER_BLOC) not in sys.path:
-    sys.path.insert(0, str(DOSSIER_BLOC))
+import sys
+from pathlib import Path
+
+RACINE = Path(__file__).resolve().parents[3]
+BLOC_BC01 = RACINE / "blocs" / "bc01_infrastructure_donnees"
+
+for chemin in (RACINE, BLOC_BC01):
+    if str(chemin) not in sys.path:
+        sys.path.insert(0, str(chemin))

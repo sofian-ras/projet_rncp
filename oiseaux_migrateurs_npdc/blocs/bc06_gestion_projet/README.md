@@ -6,16 +6,9 @@
 bout en bout — pas seulement écrire du code, mais aussi le rendre fiable, compréhensible et
 transmissible.
 
-Ce bloc est **autonome, y compris techniquement** : ce dossier peut être copié/envoyé seul (sans le
-reste du projet) et fonctionne quand même. Il embarque pour cela sa propre copie de `acquisition.py`
-(code de BC01) et de son test associé — c'est le code que ses tests vérifient.
-
-**Changement de périmètre assumé :** dans une version précédente, ce bloc dressait aussi un "état des
-lieux" vérifiant les fichiers de preuve produits par les 5 AUTRES blocs (`donnees/`, `modeles/`,
-`outputs/` à la racine du projet). Cette vérification inter-blocs a été retirée : elle supposait que
-tous les blocs soient présents ensemble dans la même arborescence, ce qui contredit l'autonomie totale
-recherchée pour chaque dossier de bloc. Chaque bloc prouve désormais ses propres livrables
-individuellement (voir la section "Livrables produits" de son propre `README.md`).
+Ce bloc **pilote** le projet : il exécute la suite de tests automatisés et rassemble le cadrage
+(planning, risques, ROI, gouvernance). Ses tests portent sur le **vrai** module d'acquisition de
+BC01 (`blocs/bc01_infrastructure_donnees/acquisition.py`), rendu importable par `tests/conftest.py`.
 
 ---
 
@@ -27,21 +20,21 @@ individuellement (voir la section "Livrables produits" de son propre `README.md`
   jalons et dépendances, l'**analyse des risques** (probabilité / impact / mitigation / statut),
   les **coûts et bénéfices (ROI)**, et la gouvernance des données (RGPD, traçabilité,
   reproductibilité).
-- Une suite de **tests automatisés** (`tests/`, exécutée avec `pytest`) qui vérifie que le code
-  d'acquisition (copie de BC01) fait bien ce qu'il est censé faire.
+- Une suite de **tests automatisés** (`tests/`, exécutée avec `pytest`) qui vérifie le module
+  d'acquisition de BC01 (bbox WKT, extraction des colonnes GBIF, cohérence de la config).
 - Une liste de **limites assumées**, plutôt que cachées — la marque d'une bonne gestion de projet.
 
 ## Où le voir dans le code
 
 - `run.py`, fonction `executer_tests` (lance `pytest` en sous-processus et affiche le résultat).
-- `acquisition.py` : copie du code de BC01, testée ici.
-- `tests/test_acquisition.py`, `tests/conftest.py`.
+- `tests/test_acquisition.py` : les tests eux-mêmes.
+- `tests/conftest.py` : rend importables `commun` (racine) et `acquisition` (code de BC01).
 
 ## Démonstration
 
 ```bash
+pip install -r requirements.txt   # depuis la racine du projet, une seule fois
 cd blocs/bc06_gestion_projet
-pip install -r requirements.txt
 python run.py
 ```
 

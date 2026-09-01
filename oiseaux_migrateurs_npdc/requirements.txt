@@ -1,6 +1,7 @@
-# Installe TOUTES les dependances de TOUS les blocs -- pratique pour explorer l'ensemble du
-# projet ou rouvrir le notebook de soutenance. Chaque dossier blocs/bc0X_.../ a aussi son PROPRE
-# requirements.txt, plus restreint, pour une installation autonome de ce bloc seul.
+# Dependances du projet complet (les 6 blocs + notebook + outils de dev).
+#   pip install -r requirements.txt
+# Seule exception : blocs/bc05_industrialisation/requirements.txt, sous-ensemble API + dashboard
+# (sans tensorflow/jupyter) utilise pour construire l'image Docker et pour Streamlit Cloud.
 
 # Acquisition et traitement données
 pandas==2.2.2

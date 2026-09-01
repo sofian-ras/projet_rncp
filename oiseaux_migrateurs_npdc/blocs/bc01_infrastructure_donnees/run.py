@@ -25,14 +25,17 @@ re-telecharger depuis les API.
 """
 
 import argparse
+import sys
 from pathlib import Path
 
-from commun.config import REPERTOIRE_DONNEES_BRUTES, REPERTOIRE_DONNEES_TRAITEES
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # racine du projet -> package commun/
+
+from commun.config import REPERTOIRE_DONNEES_BRUTES, REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_RACINE
 from commun.journalisation import configurer_logger
 from acquisition import executer_acquisition
 from nettoyage import executer_nettoyage
 
-RACINE_PROJET = Path(__file__).resolve().parent
+RACINE_PROJET = REPERTOIRE_RACINE
 logger = configurer_logger()
 
 

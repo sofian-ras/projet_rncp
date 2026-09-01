@@ -2,18 +2,18 @@
 BC02 - Analyse exploratoire des observations et de la meteo
 =============================================================
 
-Ce script est AUTONOME : il lit les donnees deja nettoyees par BC01
-(donnees/traitees/*.parquet) et produit les visualisations et tests
-statistiques de l'analyse exploratoire. Il ne re-execute jamais le
-code de BC01 : il se contente de lire ses resultats sur disque.
+Lit les donnees nettoyees par BC01 (donnees/traitees/*.parquet) et produit
+les visualisations et tests statistiques de l'analyse exploratoire. Ne
+re-execute jamais le code de BC01 : il lit ses resultats sur disque.
 
-Ce bloc est autonome : donnees/traitees/ embarque une copie figee des
-parquets produits par BC01, pour pouvoir etre execute (et envoye) seul.
+Prerequis : BC01 doit avoir ete execute au moins une fois (les parquets
+sont aussi versionnes dans le depot, donc disponibles apres un simple clone).
 
 Utilisation :
     python blocs/bc02_analyse_exploratoire/run.py
 """
 
+import sys
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -23,6 +23,8 @@ import seaborn as sns
 import folium
 from folium.plugins import HeatMap
 from scipy import stats
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # racine du projet -> package commun/
 
 from commun.config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_RACINE, ESPECES, ZONE_GEOGRAPHIQUE
 from commun.journalisation import configurer_logger
@@ -55,8 +57,8 @@ class AnalyseurExploratoire:
 
         if not chemin_obs.exists() or not chemin_grille.exists():
             raise FileNotFoundError(
-                "Donnees introuvables dans donnees/traitees/ (copie figee produite par BC01, "
-                "livree avec ce dossier)."
+                "Donnees introuvables dans donnees/traitees/ : lancer d'abord "
+                "blocs/bc01_infrastructure_donnees/run.py."
             )
 
         df_obs = charger_observations_nettoyees()

@@ -3,9 +3,8 @@
 **Objectif RNCP :** savoir résumer, visualiser et interroger statistiquement des données avant de se
 précipiter sur un modèle d'intelligence artificielle.
 
-Ce bloc est **autonome** : il lit les fichiers déjà produits par BC01 (`donnees/traitees/*.parquet`)
-sans jamais ré-exécuter son code. Si ces fichiers n'existent pas, le script s'arrête avec un message
-clair.
+Ce bloc lit les fichiers produits par BC01 (`donnees/traitees/*.parquet`, versionnés dans le dépôt)
+sans jamais ré-exécuter son code. Si ces fichiers n'existent pas, lancer BC01 d'abord.
 
 ---
 
@@ -32,8 +31,8 @@ clair.
 ## Démonstration
 
 ```bash
+pip install -r requirements.txt   # depuis la racine du projet, une seule fois
 cd blocs/bc02_analyse_exploratoire
-pip install -r requirements.txt
 python run.py
 ```
 

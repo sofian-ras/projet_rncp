@@ -2,17 +2,13 @@
 BC06 - Gestion et pilotage du projet
 =======================================
 
-Ce script est AUTONOME (dossier envoyable/executable seul) : il embarque
-sa propre copie de acquisition.py (code de BC01) et de ses tests, pour
-demontrer la competence "piloter et fiabiliser un projet de bout en bout"
-sans dependre des autres blocs :
+Bloc de pilotage : il demontre la competence "piloter et fiabiliser un
+projet de bout en bout".
 
-  1. Il execute la suite de tests automatises (tests/) et affiche le
-     resultat, en direct.
-  2. Il rappelle le planning du projet et les limites assumees (texte
-     ecrit -- l'etat des lieux inter-blocs, qui necessiterait que tous
-     les autres blocs soient presents a cote de celui-ci, n'a plus sa
-     place ici : voir le README de ce bloc pour ce choix).
+  1. Il execute la suite de tests automatises (tests/, qui portent sur le
+     module d'acquisition de BC01) et affiche le resultat en direct.
+  2. Il rappelle le planning du projet et les limites assumees, et renvoie
+     vers docs/gestion_projet.md (retroplanning, risques, ROI).
 
 Utilisation :
     python run.py
@@ -21,6 +17,8 @@ Utilisation :
 import subprocess
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # racine du projet -> package commun/
 
 from commun.journalisation import configurer_logger
 
@@ -69,9 +67,7 @@ def main() -> None:
     print("  - Meteo seule faiblement correlee a la presence (voir BC02)")
     print("  - BC04 utilise un jeu de donnees texte generique (IMDB), distinct du theme")
     print("    ornithologique, pour demontrer specifiquement la competence donnees non structurees")
-    print("  - Ce bloc etant desormais autonome (dossier envoyable seul), il ne verifie plus")
-    print("    l'etat des lieux des AUTRES blocs sur disque -- chaque bloc prouve ses propres")
-    print("    livrables individuellement (voir son README)")
+    print("  - Deploiement cloud (URL publique de l'API/dashboard) documente mais non realise")
 
     print("\nBC06 termine.\n")
 

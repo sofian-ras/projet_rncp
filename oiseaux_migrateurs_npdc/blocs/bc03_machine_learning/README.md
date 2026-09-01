@@ -4,8 +4,8 @@
 supervisés, mesurer l'influence des variables, contrôler le sur-apprentissage, et démontrer une
 approche non supervisée — en interprétant correctement les résultats, y compris leurs limites.
 
-Ce bloc est **autonome** : il lit la grille produite par BC01 (`donnees/traitees/*.parquet`) sans
-jamais ré-exécuter son code. Si ces fichiers n'existent pas, le script s'arrête avec un message clair.
+Ce bloc lit la grille produite par BC01 (`donnees/traitees/*.parquet`, versionnée dans le dépôt) sans
+jamais ré-exécuter son code. Si ces fichiers n'existent pas, lancer BC01 d'abord.
 
 ---
 
@@ -42,8 +42,8 @@ jamais ré-exécuter son code. Si ces fichiers n'existent pas, le script s'arrê
 ## Démonstration
 
 ```bash
+pip install -r requirements.txt   # depuis la racine du projet, une seule fois
 cd blocs/bc03_machine_learning
-pip install -r requirements.txt
 python run.py
 ```
 
@@ -57,7 +57,7 @@ même (le suivi est simplement ignoré).
 - `modeles/evaluations.csv` (tableau comparatif) + `modeles/*_metadata.json` (métriques par modèle)
 - `modeles/influence_variables.csv` + `modeles/influence_variables.png`
 - `modeles/zones_densite.csv` (centres et volumes des zones K-Means)
-- `modeles/mlruns/` (suivi MLflow ; `mlflow ui --backend-store-uri modeles/mlruns` pour l'explorer)
+- `mlruns/` a la racine (suivi MLflow ; `mlflow ui --backend-store-uri mlruns` pour l'explorer)
 
 ## Statut
 

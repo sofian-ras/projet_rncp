@@ -14,7 +14,7 @@ import pandas as pd
 from loguru import logger
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, roc_auc_score
 
-from commun.config import REPERTOIRE_MODELES
+from commun.config import REPERTOIRE_MODELES, REPERTOIRE_RACINE
 
 
 class GestionnaireModeles:
@@ -98,15 +98,15 @@ def comparer_modeles(resultats_eval: Dict[str, Dict[str, float]]) -> pd.DataFram
 def demarrer_suivi_experience(nom_experience: str = "bc03_oiseaux_migrateurs"):
     """Active le suivi d'experience MLflow s'il est installe. Retourne le module mlflow, ou None.
 
-    Rend le suivi optionnel : le bloc reste executable avec le requirements.txt minimal.
-    Le suivi est ecrit dans modeles/mlruns/ (local au bloc, donc reproductible).
+    Rend le suivi optionnel : le projet reste executable sans le paquet mlflow.
+    Le suivi est ecrit dans mlruns/ a la racine du projet.
     """
     try:
         import mlflow
     except ImportError:
         logger.warning("mlflow non installe : suivi d'experience ignore (pip install mlflow)")
         return None
-    mlflow.set_tracking_uri((REPERTOIRE_MODELES / "mlruns").as_uri())
+    mlflow.set_tracking_uri((REPERTOIRE_RACINE / "mlruns").as_uri())
     mlflow.set_experiment(nom_experience)
     return mlflow
 

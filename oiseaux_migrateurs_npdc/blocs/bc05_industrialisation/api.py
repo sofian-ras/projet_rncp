@@ -12,13 +12,17 @@ Ce bloc est autonome : lancement depuis son propre dossier
 Documentation interactive une fois lancee : http://127.0.0.1:8000/docs
 """
 
+import sys
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List
 
 import joblib
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # racine du projet -> package commun/
 
 from commun.config import ESPECES, ParametresAPI, REPERTOIRE_MODELES
 from commun.journalisation import configurer_logger

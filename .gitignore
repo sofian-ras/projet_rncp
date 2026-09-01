@@ -16,19 +16,20 @@ __pycache__/
 # Suivi d'experiences MLflow (regenere par blocs/bc03_machine_learning/run.py)
 mlruns/
 
-# Logs applicatifs (chaque bloc RNCP a son propre logs/ local, cf README racine)
+# Logs applicatifs
+oiseaux_migrateurs_npdc/logs/
 oiseaux_migrateurs_npdc/blocs/*/logs/
 
-# Fichiers generes par l'execution de chaque bloc (regenerables via son run.py, cf README).
-# Chaque bloc est autonome (commun/ + donnees d'entree embarquees) : ne JAMAIS ignorer
-# les fixtures d'entree figees necessaires a son fonctionnement seul.
-oiseaux_migrateurs_npdc/blocs/bc01_infrastructure_donnees/donnees/
-oiseaux_migrateurs_npdc/blocs/bc02_analyse_exploratoire/outputs/
-oiseaux_migrateurs_npdc/blocs/bc03_machine_learning/modeles/
-oiseaux_migrateurs_npdc/blocs/bc04_deep_learning/modeles/
-oiseaux_migrateurs_npdc/blocs/bc04_deep_learning/outputs/
-# blocs/bc05_industrialisation/{donnees,modeles,outputs}/ : NE PAS ignorer, ce sont des
-# copies figees d'entree (produites par BC01/BC02/BC03), pas des sorties de ce bloc.
+# Donnees et sorties regenerables (un seul emplacement, a la racine du projet).
+# donnees/traitees/ EST versionne (fixtures d'entree pour BC02..BC05, ~1 Mo) pour que
+# le projet tourne apres un simple clone, sans re-executer BC01.
+oiseaux_migrateurs_npdc/donnees/brutes/
+oiseaux_migrateurs_npdc/outputs/
+
+# Modeles : on ne versionne que le modele de production + le comparatif des 3 modeles.
+oiseaux_migrateurs_npdc/modeles/*
+!oiseaux_migrateurs_npdc/modeles/pipeline_ml.pkl
+!oiseaux_migrateurs_npdc/modeles/evaluations.csv
 
 # OS/editor artifacts
 .DS_Store

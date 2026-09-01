@@ -3,7 +3,8 @@
 **Objectif RNCP :** démontrer une compétence Deep Learning distincte de BC03, sur des **données non
 structurées** (texte, image, son) — par opposition aux données tabulaires déjà traitées en BC03.
 
-Ce bloc est **autonome** : il ne dépend d'aucun autre bloc, ni du reste du projet ornithologique.
+Ce bloc ne dépend d'aucun autre : son jeu de données (IMDB) est téléchargé par Keras au premier
+lancement. Il n'utilise pas les données ornithologiques du projet (voir ci-dessous).
 
 ---
 
@@ -36,8 +37,8 @@ sans dépendre d'un jeu de données externe compliqué à obtenir.
 ## Démonstration
 
 ```bash
+pip install -r requirements.txt   # depuis la racine du projet, une seule fois
 cd blocs/bc04_deep_learning
-pip install -r requirements.txt
 python run.py
 ```
 

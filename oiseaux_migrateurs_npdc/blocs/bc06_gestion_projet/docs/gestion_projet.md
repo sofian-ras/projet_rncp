@@ -28,21 +28,21 @@ Planification à rebours depuis la soutenance. Dates à adapter pour une autre s
 - J2 (fin S3) : modèle de production figé (`pipeline_ml.pkl`) → feu vert pour BC05.
 - J3 (mi-S4) : API + dashboard fonctionnels en local → répétition de la démo.
 
-**Marge :** une demi-journée tampon par semaine (imprévus API, ré-entraînements). La chaîne est
-séquentielle mais chaque bloc est autonome (fixtures figées) : un retard sur un bloc ne bloque pas
-la préparation des suivants.
+**Marge :** une demi-journée tampon par semaine (imprévus API, ré-entraînements). Les parquets de
+`donnees/traitees/` et le modèle de production sont versionnés dans le dépôt : un retard sur BC01
+ne bloque pas le travail sur les blocs suivants, qui partent de la dernière version figée.
 
 ## 3. Analyse des risques
 
 | Risque | Prob. | Impact | Mitigation | Statut |
 |---|---|---|---|---|
-| API GBIF indisponible (5xx transitoires) | Élevée | Moyen | `get_avec_retry` (backoff exponentiel) + fixtures figées versionnées dans chaque bloc | **Traité** |
+| API GBIF indisponible (5xx transitoires) | Élevée | Moyen | `get_avec_retry` (backoff exponentiel) + `donnees/traitees/` versionnées dans le dépôt | **Traité** |
 | Fort déséquilibre des classes (~98,6 % d'absences) | Certaine | Élevé | Métriques adaptées (F1, AUC-ROC, matrice de confusion) plutôt que l'accuracy ; SMOTE identifié comme prochaine itération | **Traité (partiel)** |
 | Sur-apprentissage du modèle retenu | Moyenne | Moyen | Validation croisée stratifiée 5-fold + écart train/test contrôlé (< 0,05) | **Traité** |
 | Météo passée seule, peu prédictive de la présence | Moyenne | Moyen | Limite assumée et documentée ; piste : intégrer des prévisions météo | **Accepté** |
 | Biais d'effort d'observation dans les données GBIF | Certaine | Moyen | Signalé explicitement (science citoyenne) ; interprétation prudente des résultats | **Accepté** |
 | Déploiement cloud non réalisé (pas d'URL publique) | Certaine | Moyen | Fichiers de déploiement prêts (`Procfile`, `render.yaml`) + procédure documentée dans BC05 | **Ouvert** |
-| Incompatibilité de versions au `pip install` (numpy/pandas/mlflow) | Faible | Faible | `requirements.txt` par bloc, minimal ; suivi MLflow optionnel (dégradation propre) | **Traité** |
+| Incompatibilité de versions au `pip install` (numpy/pandas/mlflow) | Faible | Faible | `requirements.txt` épinglé ; suivi MLflow optionnel (dégradation propre si absent) | **Traité** |
 
 ## 4. Coûts et bénéfices (ROI)
 
@@ -69,6 +69,7 @@ publiques.
   mesures météo). Détail des sources, licences et minimisation dans le document d'architecture de
   BC01 (`bc01_infrastructure_donnees/docs/architecture.md`).
 - **Traçabilité** : les URL des API sources sont dans le code (`acquisition.py`) ; les jeux de
-  données intermédiaires sont figés et versionnés dans chaque bloc (fixtures `donnees/`, `modeles/`).
+  données intermédiaires (`donnees/traitees/`) et le modèle de production (`modeles/pipeline_ml.pkl`)
+  sont figés et versionnés à la racine du projet.
 - **Reproductibilité** : graines aléatoires fixées (`RANDOM_STATE`), hyperparamètres dans
-  `commun/config.py`, suivi des entraînements dans MLflow (`bc03_machine_learning/modeles/mlruns/`).
+  `commun/config.py`, suivi des entraînements dans MLflow (`mlruns/` a la racine).

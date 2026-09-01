@@ -11,11 +11,15 @@ Ce bloc est autonome : lancement depuis son propre dossier
 """
 
 import os
+import sys
+from pathlib import Path
 
 import pandas as pd
 import plotly.express as px
 import requests
 import streamlit as st
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # racine du projet -> package commun/
 
 from commun.config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_MODELES, REPERTOIRE_RACINE
 from commun.chargement import charger_observations_nettoyees, charger_grille_hebdomadaire
@@ -235,11 +239,10 @@ with tab4:
     - **Random Forest** : comparaison
     - **Regression logistique** : reference
 
-    ### Ce dossier (BC05 - Industrialisation)
-    Ce bloc est autonome : `api.py` (API FastAPI), `dashboard.py` (ce tableau de bord),
-    `prediction.py` (logique de prediction partagee) et une copie figee du modele de production
-    (`modeles/pipeline_ml.pkl`) et des donnees necessaires a l'affichage (`donnees/traitees/`,
-    `outputs/eda/`), produits par les blocs BC01/BC02/BC03 du meme projet RNCP.
+    ### Ce bloc (BC05 - Industrialisation)
+    `api.py` (API FastAPI), `dashboard.py` (ce tableau de bord) et `prediction.py` (logique de
+    prediction partagee). Le modele servi (`modeles/pipeline_ml.pkl`) vient de BC03, les donnees
+    d'affichage (`donnees/traitees/`, `outputs/eda/`) de BC01 et BC02.
 
     ### Utilisation API
     ```

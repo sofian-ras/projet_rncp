@@ -15,14 +15,23 @@ Deux services séparés : l'**API** (conteneur Docker) et le **dashboard** (app 
 l'API). Le dashboard lit l'adresse de l'API dans la variable d'environnement `API_URL`
 (`dashboard.py` : `API_URL = os.getenv("API_URL", "http://localhost:8000")`).
 
+Le build Docker se fait **depuis la racine du projet** (`oiseaux_migrateurs_npdc/`), car l'image a
+besoin du package `commun/`, du modèle `modeles/pipeline_ml.pkl` et de `donnees/traitees/` :
+
+```bash
+cd oiseaux_migrateurs_npdc
+docker build -f blocs/bc05_industrialisation/Dockerfile -t oiseaux-migrateurs-api .
+docker run -p 8000:8000 oiseaux-migrateurs-api
+```
+
 ## 1. Déployer l'API sur Render (Docker)
 
 1. Créer un compte sur https://dashboard.render.com (offre *free*).
 2. **New → Blueprint**, connecter ce dépôt GitHub.
-3. **Root Directory** : `oiseaux_migrateurs_npdc/blocs/bc05_industrialisation`.
-4. **Apply** : Render lit [`render.yaml`](../render.yaml), construit l'image à partir du
-   [`Dockerfile`](../Dockerfile) et lance `uvicorn api:app`.
-5. À la fin, Render affiche l'URL publique, par ex. `https://oiseaux-migrateurs-api.onrender.com`.
+3. **Apply** : Render lit [`render.yaml`](../render.yaml) (`rootDir: oiseaux_migrateurs_npdc`,
+   `dockerfilePath: ./blocs/bc05_industrialisation/Dockerfile`), construit l'image et lance
+   `uvicorn api:app`.
+4. À la fin, Render affiche l'URL publique, par ex. `https://oiseaux-migrateurs-api.onrender.com`.
    Vérifier : `…/health` renvoie `{"statut":"OK","modele_charge":true,…}` et `…/docs` affiche la
    documentation interactive.
 
@@ -50,9 +59,9 @@ l'API). Le dashboard lit l'adresse de l'API dans la variable d'environnement `AP
 ## Traçabilité du modèle (MLflow)
 
 Le modèle servi (`modeles/pipeline_ml.pkl`) est produit par BC03, où chaque entraînement est
-enregistré dans MLflow (`bc03_machine_learning/modeles/mlruns/` : paramètres, métriques, comparaison
-des 3 modèles). L'industrialisation part donc d'un modèle **tracé et reproductible**, pas d'un
-artefact opaque. Consultable avec `mlflow ui --backend-store-uri blocs/bc03_machine_learning/modeles/mlruns`.
+enregistré dans MLflow (dossier `mlruns/` à la racine du projet : paramètres, métriques,
+comparaison des 3 modèles). L'industrialisation part donc d'un modèle **tracé et reproductible**,
+pas d'un artefact opaque. Consultable avec `mlflow ui --backend-store-uri mlruns`.
 
 ## Note
 
