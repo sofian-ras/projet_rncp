@@ -18,7 +18,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # racine du projet -> package commun/
+_racine = next(p for p in Path(__file__).resolve().parents if (p / "commun").is_dir())
+sys.path.insert(0, str(_racine))  # racine du projet -> package commun/
 
 from commun.journalisation import configurer_logger
 

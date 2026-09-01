@@ -24,7 +24,8 @@ import folium
 from folium.plugins import HeatMap
 from scipy import stats
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # racine du projet -> package commun/
+_racine = next(p for p in Path(__file__).resolve().parents if (p / "commun").is_dir())
+sys.path.insert(0, str(_racine))  # racine du projet -> package commun/
 
 from commun.config import REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_RACINE, ESPECES, ZONE_GEOGRAPHIQUE
 from commun.journalisation import configurer_logger
