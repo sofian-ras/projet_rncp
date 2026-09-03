@@ -90,20 +90,32 @@ en l'état.
 
 ## Démarrage rapide
 
-Installation unique, depuis la racine `oiseaux_migrateurs_npdc/` :
+Installation unique, depuis la racine `oiseaux_migrateurs_npdc/`.
+
+### Windows
+
+```powershell
+powershell -ExecutionPolicy Bypass -File setup_venv.ps1
+& "$env:USERPROFILE\venv_rncp\Scripts\Activate.ps1"
+```
+
+`setup_venv.ps1` crée le venv **à un chemin court** (`%USERPROFILE%\venv_rncp`) — indispensable pour
+que TensorFlow (BC04) s'installe : dans un dossier profondément imbriqué, Windows dépasse la limite
+de 260 caractères et l'installation échoue. Le script installe aussi `requirements.txt` et enregistre
+le kernel Jupyter.
+
+### Linux / macOS
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate      # Windows -- ou: source .venv/bin/activate sur Linux/Mac
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> **Tout se fait dans ce venv.** Chaque commande de ce README (blocs, notebooks, `pytest`,
+> **Tout se fait dans ce venv activé.** Chaque commande de ce README (blocs, notebooks, `pytest`,
 > API/dashboard) suppose le venv **activé** — sinon `python` pointe sur l'interpréteur système, où
-> TensorFlow (BC04) n'est pas installé. Les notebooks utilisent le kernel Jupyter `python3` qui
-> pointe sur ce venv (`python -m ipykernel install --user --name python3` depuis le venv si besoin).
-> Si TensorFlow refuse de s'installer, voir *Dépannage* plus bas (limite Windows sur la longueur des
-> chemins — créer le venv à un chemin court).
+> TensorFlow n'est pas installé. Les notebooks utilisent le kernel Jupyter `python3` créé par le
+> script (ou `python -m ipykernel install --user --name python3` depuis le venv).
 
 ### Exécuter les blocs
 
@@ -138,24 +150,18 @@ python -m streamlit run dashboard.py
 
 ### Dépannage : TensorFlow ne s'importe pas (BC04)
 
-Sous Windows, si l'installation de TensorFlow échoue ou que `python blocs/bc04_deep_learning/run.py`
-lève `ModuleNotFoundError: No module named 'tensorflow.python'` ou
-`ImportError: cannot import name 'keras' from 'tensorflow'`, c'est généralement dû à la limite Windows
-sur la longueur des chemins de fichiers (TensorFlow contient des chemins internes très longs).
+Symptôme : `python blocs/bc04_deep_learning/run.py` lève
+`ModuleNotFoundError: No module named 'tensorflow...'`.
 
-Deux solutions :
-1. **Activer les chemins longs Windows** (nécessite les droits administrateur), puis réinstaller :
-   ```powershell
-   reg add "HKLM\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /t REG_DWORD /d 1
-   ```
-   Redémarrer la machine, puis `pip install --force-reinstall -r requirements.txt`.
-2. **Créer le venv à un chemin court** (ex: `C:\venv_rncp` plutôt qu'un chemin profondément imbriqué),
-   qui laisse assez de marge à TensorFlow pour ses chemins internes sans toucher au registre :
-   ```powershell
-   python -m venv C:\venv_rncp
-   C:\venv_rncp\Scripts\pip install -r requirements.txt
-   C:\venv_rncp\Scripts\python blocs/bc04_deep_learning/run.py
-   ```
+- **Cause la plus fréquente : le venv n'est pas activé.** `python` pointe alors sur l'interpréteur
+  système, sans TensorFlow. Activer le venv (`& "$env:USERPROFILE\venv_rncp\Scripts\Activate.ps1"`).
+- **Si l'installation elle-même a échoué sous Windows** (chemins internes de TensorFlow trop longs) :
+  utiliser `setup_venv.ps1` (voir *Démarrage rapide*), qui place le venv à un chemin court. En dernier
+  recours, activer les chemins longs Windows (droits administrateur), puis réinstaller :
+  ```powershell
+  reg add "HKLM\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /t REG_DWORD /d 1
+  # redémarrer, puis : pip install --force-reinstall -r requirements.txt
+  ```
 
 ### Docker (API uniquement)
 
