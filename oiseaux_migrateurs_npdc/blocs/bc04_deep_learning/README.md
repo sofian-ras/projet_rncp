@@ -28,11 +28,14 @@ sans dépendre d'un jeu de données externe compliqué à obtenir.
 
 ## Où le voir dans le code
 
+- `notebook_bc04.ipynb` : le pipeline déroulé **à plat, cellule par cellule** (chargement → décodage
+  d'une critique → `pad_sequences` → `Embedding + LSTM + Dense` → entraînement → courbes → matrice de
+  confusion → prédictions sur critiques réelles). C'est la version faite pour l'explication orale.
 - `modele.py`, fonction `construire_modele` (l'architecture du réseau).
 - `modele.py`, fonction `decoder_avis` (retraduit les identifiants de mots en texte lisible).
-- `run.py` : orchestration (chargement IMDB, split, entraînement, évaluation, sauvegardes) — la
-  définition du modèle est séparée dans `modele.py`, sur le même principe que BC01 et BC03.
-- Hyperparamètres dans `commun/config.py`, classe `ParametresDL`.
+- `run.py` : même chose que le notebook, en une commande (chargement IMDB, split, entraînement,
+  évaluation, sauvegardes) — la définition du modèle est séparée dans `modele.py`.
+- Hyperparamètres dans `commun/config.py`, classe `ParametresDL` (le notebook reprend les mêmes valeurs).
 
 ## Démonstration
 
