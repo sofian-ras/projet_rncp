@@ -7,7 +7,7 @@
 pandas==2.2.2
 numpy==1.26.4
 requests==2.31.0
-pyarrow==16.1.0
+pyarrow==15.0.2   # <16 impose par mlflow 2.14.1 ; lecture/ecriture parquet inchangee
 scipy==1.13.1
 
 # Visualisation
@@ -19,7 +19,7 @@ folium==0.16.0
 # Machine Learning
 scikit-learn==1.8.0
 xgboost==2.0.3
-imbalanced-learn==0.12.3
+imbalanced-learn==0.14.2   # 0.12.x incompatible avec scikit-learn >= 1.6 (_safe_tags supprime)
 mlflow==2.14.1
 
 # Deep Learning (utilisé par blocs/bc04_deep_learning)
@@ -44,3 +44,6 @@ pytest-cov==4.1.0
 jupyter==1.0.0
 black==23.9.1
 pylint==2.17.5
+
+# Outils de build : setuptools >= 81 supprime pkg_resources, dont mlflow 2.14 depend encore
+setuptools<81

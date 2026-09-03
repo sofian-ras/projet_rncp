@@ -15,15 +15,16 @@ fichiers `donnees/traitees/*.parquet` consommés par BC02 à BC05.
 ## Ce qui est implémenté
 
 - Téléchargement automatisé de **40 000 observations** d'oiseaux (4 espèces) depuis l'API publique
-  **GBIF**, filtrées sur la région Nord-Pas-de-Calais et la période 2015-2024.
-- Téléchargement de **10 ans de météo journalière** (température, pluie, vent, humidité, pression)
-  depuis l'API publique **Open-Meteo**.
+  **GBIF**, filtrées sur la région Nord-Pas-de-Calais et la période 2019-2024 (GBIF ne recense
+  quasiment aucune observation de ces espèces dans la zone avant 2019).
+- Téléchargement de **6 ans de météo journalière** (2 192 jours : température, pluie, vent, humidité,
+  pression) depuis l'API publique **Open-Meteo**.
 - Un pipeline **ETL** (Extract-Transform-Load) en 5 étapes : suppression des lignes incomplètes,
   validation des coordonnées GPS, filtrage géographique, uniformisation des dates, suppression des
   doublons.
 - La transformation clé du projet : construction d'une **grille hebdomadaire présence/absence**
-  (1 135 680 lignes), qui transforme des observations éparses en un jeu de données exploitable par un
-  algorithme de classification.
+  (681 408 lignes = 6 ans × 52 semaines × 4 espèces × 546 mailles), qui transforme des observations
+  éparses en un jeu de données exploitable par un algorithme de classification.
 
 ## Où le voir dans le code
 
@@ -54,9 +55,9 @@ python run.py --forcer-telechargement
 ## Livrables produits (vérifiables sur disque)
 
 - `donnees/brutes/observations_gbif.csv` (40 000 lignes)
-- `donnees/brutes/meteo_npdc.csv` (3 653 jours)
+- `donnees/brutes/meteo_npdc.csv` (2 192 jours, 2019-2024)
 - `donnees/traitees/observations_nettoyees.parquet` (39 986 lignes)
-- `donnees/traitees/grille_presence_hebdo.parquet` (1 135 680 lignes)
+- `donnees/traitees/grille_presence_hebdo.parquet` (681 408 lignes)
 - `donnees/traitees/meteo_processed.parquet`
 
 ## Statut

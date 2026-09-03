@@ -37,7 +37,7 @@ sans dépendre d'un jeu de données externe compliqué à obtenir.
 ## Démonstration
 
 ```bash
-pip install -r requirements.txt   # depuis la racine du projet, une seule fois
+# venv activé (cf. README racine "Démarrage rapide") — TensorFlow n'est que dans le venv
 cd blocs/bc04_deep_learning
 python run.py
 ```
@@ -45,6 +45,10 @@ python run.py
 Durée : environ 1 minute. **Le tout premier lancement nécessite une connexion internet** (téléchargement
 unique du jeu de données IMDB, ~17 Mo, mis en cache localement) ; les lancements suivants sont
 hors-ligne.
+
+Si `python run.py` lève `ModuleNotFoundError: No module named 'tensorflow...'`, le venv n'est pas
+activé ou TensorFlow n'a pas pu s'installer (limite Windows sur la longueur des chemins) — voir la
+section *Dépannage : TensorFlow ne s'importe pas (BC04)* du README racine.
 
 ## Livrables produits (vérifiables sur disque)
 

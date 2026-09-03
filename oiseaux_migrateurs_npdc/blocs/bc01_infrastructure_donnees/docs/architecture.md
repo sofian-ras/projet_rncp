@@ -10,7 +10,7 @@
  +------------------+          +-----------------------+          +------------------------+
  +------------------+          +-----------------------+          +------------------------+
  |  API Open-Meteo  | -------> |  AcquisiteurMeteo     | -------> |  meteo_npdc.csv        |
- |  (météo 10 ans)  |  HTTP    |  1 requête + retry    |  écrit   |                        |
+ |  (météo 6 ans)   |  HTTP    |  1 requête + retry    |  écrit   |                        |
  +------------------+          +-----------------------+          +------------------------+
                                                                             |
                                                                             v
@@ -37,7 +37,7 @@
 | Stockage exploitable (warehouse) | Fichiers **Parquet** dans `donnees/traitees/` | Colonnaire, typé, compressé, lecture directe par pandas ; requêtable sans serveur |
 | Orchestration | `run.py` (acquisition → nettoyage) | Volume actuel ~5 Mo : un script séquentiel suffit, pas besoin d'Airflow |
 | Robustesse de la collecte | `get_avec_retry` (backoff exponentiel sur 5xx / timeout) | GBIF renvoie des 503 transitoires ; sans réessai la collecte repartait vide |
-| Calcul distribué | **Non utilisé** | ~1,1 M lignes traitées en < 2 s par pandas ; Spark n'apporterait rien à ce volume |
+| Calcul distribué | **Non utilisé** | ~680 k lignes traitées en < 2 s par pandas ; Spark n'apporterait rien à ce volume |
 
 ## Coûts
 

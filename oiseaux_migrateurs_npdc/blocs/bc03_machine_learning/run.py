@@ -26,8 +26,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.base import clone
 from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
@@ -136,8 +137,19 @@ def valider_modele_retenu(pipeline, X_train, y_train, X_test, y_test) -> None:
     validation_croisee = StratifiedKFold(
         n_splits=ParametresML.N_SPLITS_CV, shuffle=True, random_state=ParametresML.RANDOM_STATE
     )
-    scores = cross_val_score(pipeline, X_train, y_train, cv=validation_croisee, scoring="roc_auc")
-    logger.info(f"AUC-ROC {ParametresML.N_SPLITS_CV}-fold : {scores.mean():.3f} +/- {scores.std():.3f}")
+    # Boucle explicite plutot que cross_val_score(scoring="roc_auc") : selon les versions
+    # de scikit-learn et xgboost, le scorer "roc_auc" ne reconnait pas toujours un
+    # XGBClassifier encapsule dans un Pipeline comme un classifieur et renvoie alors un
+    # score nan (sans lever d'erreur). En appelant nous-memes predict_proba, la
+    # validation croisee reste insensible a ce probleme de compatibilite de versions.
+    scores = []
+    for idx_entrainement, idx_validation in validation_croisee.split(X_train, y_train):
+        modele_pli = clone(pipeline)
+        modele_pli.fit(X_train.iloc[idx_entrainement], y_train.iloc[idx_entrainement])
+        proba_validation = modele_pli.predict_proba(X_train.iloc[idx_validation])[:, 1]
+        scores.append(roc_auc_score(y_train.iloc[idx_validation], proba_validation))
+    scores = pd.Series(scores)
+    logger.info(f"AUC-ROC {ParametresML.N_SPLITS_CV}-fold : {scores.mean():.3f} +/- {scores.std(ddof=0):.3f}")
 
     auc_train = roc_auc_score(y_train, pipeline.predict_proba(X_train)[:, 1])
     auc_test = roc_auc_score(y_test, pipeline.predict_proba(X_test)[:, 1])

@@ -19,7 +19,7 @@ jamais ré-exécuter son code. Si ces fichiers n'existent pas, lancer BC01 d'abo
   (référence), forêt aléatoire, XGBoost. Chaque entraînement est enregistré dans **MLflow**
   (paramètres + métriques).
 - Évaluation avec Accuracy, F1-score, AUC-ROC — lecture critique face au fort déséquilibre des
-  classes (~98,6 % d'absences).
+  classes (~97,7 % d'absences).
 - **Validation croisée stratifiée 5-fold** sur le modèle retenu + contrôle de l'**écart train/test**
   (détection du sur-apprentissage).
 - **Influence des variables** (`feature_importances_` du modèle retenu) → CSV + graphique.

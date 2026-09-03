@@ -77,7 +77,14 @@ ESPECES = {
 class ParametresAcquisition:
     """Telechargement GBIF + Open-Meteo."""
 
-    ANNEE_DEBUT = 2015
+    # GBIF ne recense quasiment aucune observation de ces 4 especes dans la zone
+    # avant 2019 (trop peu de contributeurs actifs a l'epoque). Demarrer en 2015
+    # ajoutait 4 annees entierement vides a la grille presence/absence : 40 % de
+    # lignes toutes a "absence" qui n'etaient pas de vraies absences ecologiques
+    # mais des trous de collecte, faussant l'equilibre des classes et donnant a
+    # BC03 un separateur artificiel (annee <= 2018 -> absence). On borne donc a
+    # la premiere annee reellement couverte par la source.
+    ANNEE_DEBUT = 2019
     ANNEE_FIN = 2024
     LIMITE_RESULTATS_PAR_ESPECE = 10000
     DELAI_ENTRE_REQUETES = 1  # secondes

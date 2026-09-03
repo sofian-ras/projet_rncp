@@ -98,9 +98,16 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+> **Tout se fait dans ce venv.** Chaque commande de ce README (blocs, notebooks, `pytest`,
+> API/dashboard) suppose le venv **activé** — sinon `python` pointe sur l'interpréteur système, où
+> TensorFlow (BC04) n'est pas installé. Les notebooks utilisent le kernel Jupyter `python3` qui
+> pointe sur ce venv (`python -m ipykernel install --user --name python3` depuis le venv si besoin).
+> Si TensorFlow refuse de s'installer, voir *Dépannage* plus bas (limite Windows sur la longueur des
+> chemins — créer le venv à un chemin court).
+
 ### Exécuter les blocs
 
-Chaque `run.py` se lance depuis son propre dossier. **BC01 en premier** (il produit
+Chaque `run.py` se lance depuis son propre dossier, **venv activé**. **BC01 en premier** (il produit
 `donnees/traitees/`) ; ensuite les autres dans n'importe quel ordre.
 
 ```bash
@@ -176,16 +183,17 @@ Les tests portent sur le module d'acquisition de BC01 ; BC06 les rejoue via son 
 ## Données utilisées
 
 - **Observations d'oiseaux** — source : GBIF (Global Biodiversity Information Facility), 40 000
-  observations, 4 espèces, période 2015-2024, région Nord-Pas-de-Calais (49.5°N-51.5°N, 1.5°E-4°E).
-- **Météo** — source : Open-Meteo, 10 ans de données journalières (température, précipitations, vent,
-  humidité, pression).
+  observations, 4 espèces, période 2019-2024, région Nord-Pas-de-Calais (49.5°N-51.5°N, 1.5°E-4°E).
+  GBIF ne recense quasiment aucune observation de ces espèces dans la zone avant 2019.
+- **Météo** — source : Open-Meteo, 6 ans de données journalières (2 192 jours : température,
+  précipitations, vent, humidité, pression).
 - **Espèces étudiées :** Hirondelle rustique (*Hirundo rustica*), Cigogne blanche (*Ciconia ciconia*),
   Martinet noir (*Apus apus*), Bergeronnette printanière (*Motacilla alba*).
 
 ## Résultats clés
 
 - 3 modèles de Machine Learning comparés (BC03) : Régression logistique, Forêt aléatoire, XGBoost —
-  XGBoost retenu en production (AUC-ROC ≈ 0.94).
+  XGBoost retenu en production (AUC-ROC ≈ 0.91).
 - Un réseau Embedding + LSTM (BC04) sur données textuelles (analyse de sentiment), démontrant la
   compétence Deep Learning sur données non structurées, distincte de BC03.
 - Une API et un tableau de bord interactif (BC05) exposant le modèle à un utilisateur non technique.

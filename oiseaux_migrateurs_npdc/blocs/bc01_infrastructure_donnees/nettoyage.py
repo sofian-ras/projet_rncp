@@ -92,7 +92,7 @@ class AggregeurTemporel:
     """Agrege observations par semaine + localite en grille presence/absence"""
 
     @staticmethod
-    def creer_grille_hebdomadaire(df_observations: pd.DataFrame, annee_debut: int = 2015, annee_fin: int = 2024) -> pd.DataFrame:
+    def creer_grille_hebdomadaire(df_observations: pd.DataFrame, annee_debut: int = 2019, annee_fin: int = 2024) -> pd.DataFrame:
         """Cree grille complete (semaine x espece x localite) et assigne presence/absence"""
         logger.info("Creation grille hebdomadaire...")
 
