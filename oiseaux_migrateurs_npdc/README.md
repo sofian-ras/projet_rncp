@@ -119,16 +119,16 @@ pip install -r requirements.txt
 
 ### Exécuter les blocs
 
-Chaque `run.py` se lance depuis son propre dossier, **venv activé**. **BC01 en premier** (il produit
-`donnees/traitees/`) ; ensuite les autres dans n'importe quel ordre.
+Chacun se lance indépendamment, **venv activé**, depuis la racine `oiseaux_migrateurs_npdc/`.
+**BC01 en premier** (il produit `donnees/traitees/`) ; ensuite les autres dans n'importe quel ordre.
 
 ```bash
-cd blocs/bc01_infrastructure_donnees && python run.py   # BC01 - acquisition + nettoyage (ETL)
-cd blocs/bc02_analyse_exploratoire   && python run.py   # BC02 - analyse exploratoire
-cd blocs/bc03_machine_learning       && python run.py   # BC03 - 3 modèles ML + K-Means + MLflow
-cd blocs/bc04_deep_learning          && python run.py   # BC04 - réseau de neurones (texte)
-cd blocs/bc05_industrialisation      && python run.py   # BC05 - démonstration de prédiction sans serveur
-cd blocs/bc06_gestion_projet         && python run.py   # BC06 - tests automatisés
+python blocs/bc01_infrastructure_donnees/run.py   # BC01 - acquisition + nettoyage (ETL)
+python blocs/bc02_analyse_exploratoire/run.py     # BC02 - analyse exploratoire
+python blocs/bc03_machine_learning/run.py         # BC03 - 3 modèles ML + K-Means + MLflow
+python blocs/bc04_deep_learning/run.py            # BC04 - réseau de neurones (texte)
+python blocs/bc05_industrialisation/run.py        # BC05 - démonstration de prédiction sans serveur
+python blocs/bc06_gestion_projet/run.py           # BC06 - tests automatisés
 ```
 
 > Après un simple `git clone`, `donnees/traitees/` et `modeles/pipeline_ml.pkl` sont déjà présents
