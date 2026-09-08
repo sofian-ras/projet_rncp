@@ -1,65 +1,105 @@
 # BC04 — Deep Learning (prédiction sur données non structurées)
 
 **Objectif RNCP :** démontrer une compétence Deep Learning distincte de BC03, sur des **données non
-structurées** (texte, image, son) — par opposition aux données tabulaires déjà traitées en BC03.
+structurées** (texte, image, son) — par opposition aux données tabulaires de BC03 — avec une
+architecture de réseau conçue, entraînée, évaluée, et **une analyse d'explicabilité**.
 
-Ce bloc ne dépend d'aucun autre : son jeu de données (IMDB) est téléchargé par Keras au premier
-lancement. Il n'utilise pas les données ornithologiques du projet (voir ci-dessous).
+Ce bloc propose **deux démonstrations** :
+
+| Version | Données | Modèle | Fichiers |
+|---|---|---|---|
+| **Images** (dans le thème du projet) | photos GBIF des **4 espèces** du projet | CNN — *transfer learning* MobileNetV2 + Grad-CAM | `notebook_bc04_images.ipynb`, `acquisition_images.py` |
+| **Texte** (repli léger, 100 % hors-ligne) | jeu **IMDB** (critiques de films) | Embedding + LSTM + Dense | `notebook_bc04.ipynb`, `run.py`, `modele.py` |
+
+La version **images** est la démonstration principale : elle reste sur le sujet ornithologique du
+projet et couvre l'explicabilité (Grad-CAM). La version **texte** est conservée parce qu'elle est
+figée, rapide et reproductible sans dépendre d'un téléchargement d'images (utile si le réseau est
+indisponible le jour de la démo).
 
 ---
 
-## Pourquoi un jeu de données différent du reste du projet ?
+## Version images — reconnaître l'espèce sur une photo
 
-Le référentiel RNCP distingue explicitement deux compétences : BC03 porte sur des données
-**structurées** (un tableau de colonnes numériques — déjà démontré sur les observations d'oiseaux), et
-BC04 porte sur des données **non structurées**. Le jeu de données ornithologique de ce projet est un
-tableau : il ne permet donc pas de démontrer la compétence BC04 telle qu'attendue. Le jeu **IMDB**
-(25 000 critiques de films, étiquetées positif/négatif) est un choix standard, gratuit et intégré à
-TensorFlow, qui permet de construire une vraie architecture de réseau de neurones sur du texte brut,
-sans dépendre d'un jeu de données externe compliqué à obtenir.
+### Ce qui est implémenté
 
-## Ce qui est implémenté
+- **Acquisition** de ~120 photos par espèce depuis **GBIF** (`mediaType=StillImage` : iNaturalist /
+  Flickr), mises en cache dans `donnees/images_oiseaux/` (`acquisition_images.py`).
+- **Chargement** avec `image_dataset_from_directory` (redimensionnement 160×160, split 80/20).
+- **Data augmentation** (`RandomFlip`, `RandomRotation`, `RandomZoom`, `RandomContrast`).
+- **Transfer learning** : `MobileNetV2` pré-entraîné sur ImageNet, **gelé**, + tête
+  `GlobalAveragePooling2D → Dropout → Dense(4, softmax)`. Seuls ~5 000 paramètres sont entraînés.
+- **Entraînement** (10 epochs, ~1–2 min sur CPU) + courbes loss / accuracy.
+- **Évaluation** : accuracy de validation + **matrice de confusion** 4×4.
+- **Explicabilité** : **Grad-CAM** — visualise les zones de la photo qui pèsent le plus dans la
+  décision (« où le modèle regarde »).
 
-- Chargement du jeu de données IMDB (critiques de films), sous-échantillonné pour un entraînement
-  rapide en démonstration.
-- Une architecture de réseau de neurones **Embedding + LSTM + Dense**, construite avec Keras/TensorFlow.
-- Entraînement réel (5 epochs), évaluation avec Accuracy, F1-score, AUC-ROC.
-- Une démonstration lisible : une critique du jeu de test est redécodée en texte, avec sa prédiction.
+### Où le voir dans le code
 
-## Où le voir dans le code
+- `notebook_bc04_images.ipynb` : le pipeline déroulé **de haut en bas, façon cours** (récupérer les
+  photos → charger → augmentation → transfer learning → entraînement → confusion → prédictions →
+  Grad-CAM), chaque section expliquée avant le code, interprétée après.
+- `acquisition_images.py`, fonction `telecharger_images` : requête GBIF + téléchargement en cache.
 
-- `notebook_bc04.ipynb` : le pipeline déroulé **à plat, cellule par cellule** (chargement → décodage
-  d'une critique → `pad_sequences` → `Embedding + LSTM + Dense` → entraînement → courbes → matrice de
-  confusion → prédictions sur critiques réelles). C'est la version faite pour l'explication orale.
-- `modele.py`, fonction `construire_modele` (l'architecture du réseau).
-- `modele.py`, fonction `decoder_avis` (retraduit les identifiants de mots en texte lisible).
-- `run.py` : même chose que le notebook, en une commande (chargement IMDB, split, entraînement,
-  évaluation, sauvegardes) — la définition du modèle est séparée dans `modele.py`.
-- Hyperparamètres dans `commun/config.py`, classe `ParametresDL` (le notebook reprend les mêmes valeurs).
-
-## Démonstration
+### Démonstration
 
 ```bash
-# venv activé (cf. README racine "Démarrage rapide") — TensorFlow n'est que dans le venv
-cd blocs/bc04_deep_learning
-python run.py
+# venv activé (cf. README racine) ; ouvrir notebook_bc04_images.ipynb
 ```
 
-Durée : environ 1 minute. **Le tout premier lancement nécessite une connexion internet** (téléchargement
-unique du jeu de données IMDB, ~17 Mo, mis en cache localement) ; les lancements suivants sont
-hors-ligne.
+Le **tout premier lancement nécessite une connexion internet** (téléchargement des photos, ~450 Mo
+pour 480 images, puis en cache ; + poids de MobileNetV2, ~10 Mo, cache Keras). Résultat typique :
+**accuracy de validation ≈ 0,74** (hasard = 0,25 pour 4 classes), sur des photos de science
+citoyenne volontairement bruitées.
 
-Si `python run.py` lève `ModuleNotFoundError: No module named 'tensorflow...'`, le venv n'est pas
-activé ou TensorFlow n'a pas pu s'installer (limite Windows sur la longueur des chemins) — voir la
-section *Dépannage : TensorFlow ne s'importe pas (BC04)* du README racine.
+---
 
-## Livrables produits (vérifiables sur disque)
+## Version texte — analyse de sentiment (IMDB)
 
-- `modeles/deep_learning_sentiment.keras`
-- `modeles/deep_learning_sentiment_metadata.json`
+### Pourquoi un jeu de données différent du reste du projet ?
+
+Le référentiel distingue BC03 (données **structurées** — déjà démontré sur les observations
+d'oiseaux) et BC04 (données **non structurées**). Le jeu **IMDB** (25 000 critiques de films,
+étiquetées positif/négatif), intégré à TensorFlow, permet de construire un vrai réseau sur du
+**texte brut** sans dépendre d'un téléchargement d'images : c'est la version de repli, figée et
+reproductible.
+
+### Ce qui est implémenté
+
+- Chargement IMDB (sous-échantillonné pour un entraînement rapide).
+- Architecture **Embedding + LSTM + Dense**.
+- Entraînement réel (5 epochs), évaluation Accuracy / F1-score / AUC-ROC.
+- Démonstration lisible : une critique du jeu de test redécodée en texte, avec sa prédiction.
+
+### Où le voir dans le code
+
+- `notebook_bc04.ipynb` : pipeline à plat (chargement → décodage d'une critique → `pad_sequences`
+  → `Embedding + LSTM + Dense` → entraînement → courbes → confusion → prédictions).
+- `modele.py`, `construire_modele` (l'architecture) et `decoder_avis` (numéros de mots → texte).
+- `run.py` : la même chose en une commande.
+- Hyperparamètres dans `commun/config.py`, classe `ParametresDL`.
+
+### Démonstration
+
+```bash
+# venv activé
+python blocs/bc04_deep_learning/run.py
+```
+
+Durée ~1 minute. Premier lancement : téléchargement unique d'IMDB (~17 Mo), ensuite hors-ligne.
+Si `ModuleNotFoundError: No module named 'tensorflow...'` : venv non activé ou TensorFlow non
+installé — voir *Dépannage* du README racine.
+
+### Livrables produits
+
+- `modeles/deep_learning_sentiment.keras`, `modeles/deep_learning_sentiment_metadata.json`
 - `outputs/dl/entrainement_et_confusion.png`
+- Métriques : Accuracy ≈ 0,83, AUC-ROC ≈ 0,92 sur l'échantillon de démonstration.
+
+---
 
 ## Statut
 
-**Complet.** Le modèle est réellement entraîné à chaque exécution, avec de vraies métriques (Accuracy
-≈ 0.83, AUC-ROC ≈ 0.92 sur l'échantillon de démonstration).
+**Complet.** Deux réseaux réellement entraînés à chaque exécution : un CNN (transfer learning) sur
+images d'oiseaux avec explicabilité Grad-CAM, et un Embedding + LSTM sur texte. Limites assumées :
+photos de science citoyenne bruitées et dataset volontairement petit côté images ; jeu générique
+(IMDB) côté texte.

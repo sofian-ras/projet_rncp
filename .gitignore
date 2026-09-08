@@ -24,6 +24,7 @@ oiseaux_migrateurs_npdc/blocs/*/logs/
 # donnees/traitees/ EST versionne (fixtures d'entree pour BC02..BC05, ~1 Mo) pour que
 # le projet tourne apres un simple clone, sans re-executer BC01.
 oiseaux_migrateurs_npdc/donnees/brutes/
+oiseaux_migrateurs_npdc/donnees/images_oiseaux/
 oiseaux_migrateurs_npdc/outputs/
 
 # Modeles : on ne versionne que le modele de production + le comparatif des 3 modeles.
