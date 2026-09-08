@@ -22,9 +22,11 @@ sans jamais ré-exécuter son code. Si ces fichiers n'existent pas, lancer BC01 
 
 ## Où le voir dans le code
 
-- `notebook_bc02.ipynb` : les analyses déroulées **à plat, en 6 étapes numérotées** (chargement →
-  saisonnalité → carte de densité → distributions météo → corrélations → test du χ²), chaque étape
-  charge / calcule / visualise / interprète, avec un bilan. C'est la version faite pour l'explication.
+- `notebook_bc02.ipynb` : les 6 analyses déroulées **de haut en bas, façon cours** (chargement →
+  saisonnalité → carte de densité → distributions météo → corrélations → test du χ²). Chaque section
+  explique *pourquoi on le fait* et *ce qu'on veut savoir* avant le code, puis *ce que le résultat
+  veut dire* après, et renvoie à la méthode correspondante de `run.py`. C'est la version pour
+  l'explication orale.
 - `run.py`, classe `AnalyseurExploratoire.analyser_saisonnalite`.
 - `run.py`, classe `AnalyseurExploratoire.analyser_distributions` (univarié : moyennes/variances/IQR).
 - `run.py`, classe `AnalyseurExploratoire.creer_carte_densite`.
