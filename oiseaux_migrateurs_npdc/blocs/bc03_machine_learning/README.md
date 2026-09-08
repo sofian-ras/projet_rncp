@@ -30,6 +30,11 @@ jamais ré-exécuter son code. Si ces fichiers n'existent pas, lancer BC01 d'abo
 
 ## Où le voir dans le code
 
+- `notebook_bc03.ipynb` : les 10 étapes déroulées **de haut en bas, façon cours** (charger →
+  features/cible → split → 3 modèles → comparaison + piège de l'accuracy → matrice de confusion →
+  courbe ROC → validation croisée → influence des variables → K-Means). Chaque section explique
+  *pourquoi* et *ce qu'on veut* avant le code, *ce que le résultat veut dire* après, et renvoie à la
+  fonction correspondante de `run.py`. Version pour l'explication orale.
 - `run.py`, `preparer_features` : construction de X / y.
 - `run.py`, `construire_modeles` / `entrainer_modeles` : les 3 pipelines scikit-learn + suivi MLflow.
 - `run.py`, `valider_modele_retenu` : validation croisée + écart train/test.
@@ -42,10 +47,11 @@ jamais ré-exécuter son code. Si ces fichiers n'existent pas, lancer BC01 d'abo
 ## Démonstration
 
 ```bash
-pip install -r requirements.txt   # depuis la racine du projet, une seule fois
-cd blocs/bc03_machine_learning
-python run.py
+# venv activé (cf. README racine)
+python blocs/bc03_machine_learning/run.py
 ```
+
+`notebook_bc03.ipynb` fait les mêmes analyses, cellule par cellule, avec les explications.
 
 Durée : ~1 minute. Le suivi MLflow est optionnel : sans le paquet `mlflow`, le bloc tourne quand
 même (le suivi est simplement ignoré).
