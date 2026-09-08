@@ -159,16 +159,14 @@ class ParametresSegmentation:
 
 # ========== PARAMETRES DEEP LEARNING (BC04) ==========
 class ParametresDL:
-    """Entrainement du modele Embedding + LSTM (analyse de sentiment)."""
+    """Entrainement du CNN (transfer learning MobileNetV2) sur photos d'oiseaux."""
 
-    NB_MOTS_VOCABULAIRE = 10000
-    LONGUEUR_SEQUENCE = 200
-    TAILLE_EMBEDDING = 32
-    UNITES_LSTM = 32
-    DROPOUT_RATE = 0.3
-    BATCH_SIZE = 128
-    EPOCHS = 5
-    TAILLE_ECHANTILLON_DEMO = 6000
+    NB_IMAGES_PAR_ESPECE = 120   # photos telechargees depuis GBIF par espece
+    TAILLE_IMAGE = 160           # photos redimensionnees en TAILLE_IMAGE x TAILLE_IMAGE
+    BATCH_SIZE = 32
+    EPOCHS = 10
+    VALIDATION_SPLIT = 0.2
+    DROPOUT_RATE = 0.2
     RANDOM_STATE = 42
 
 

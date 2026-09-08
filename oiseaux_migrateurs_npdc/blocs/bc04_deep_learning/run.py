@@ -1,44 +1,23 @@
 """
-BC04 - Deep Learning : prediction sur donnees NON structurees (texte)
-========================================================================
+BC04 - Deep Learning : prediction sur donnees NON structurees (images)
+======================================================================
 
-Ce script est AUTONOME : contrairement a BC01-BC03 (qui travaillent sur les
-donnees tabulaires du projet ornithologique), il demontre la competence RNCP
-"prediction par IA sur donnees non structurees" avec un cas d'usage classique
-et reproductible : l'analyse de sentiment de critiques de films (jeu de
-donnees IMDB, integre a TensorFlow/Keras).
+Classe une photo d'oiseau parmi les 4 especes du projet, avec un CNN en
+transfer learning : MobileNetV2 pre-entraine sur ImageNet, corps gele,
+seule une petite tete de classification est entrainee.
 
-Pourquoi un jeu de donnees different du reste du projet ?
-------------------------------------------------------------
-Le referentiel RNCP distingue explicitement deux competences :
-  - BC03 : prediction sur donnees STRUCTUREES (un tableau de colonnes
-    numeriques) -> deja demontre sur les donnees d'observations d'oiseaux
-    (voir blocs/bc03_machine_learning).
-  - BC04 : prediction sur donnees NON STRUCTUREES (texte, image, son) -> le
-    jeu de donnees ornithologique de ce projet est un tableau, il ne
-    convient donc pas pour demontrer CETTE competence precise. Le jeu IMDB
-    (25 000 critiques de films en anglais, etiquetees positif/negatif) est
-    un choix standard, gratuit, et integre a TensorFlow (pas de
-    telechargement manuel a organiser), qui permet de montrer une vraie
-    architecture de reseau de neurones sur du texte brut.
-
-Architecture du modele (voir modele.py::construire_modele) :
-  1. Embedding : transforme chaque mot (represente par un simple numero)
-     en un vecteur de nombres qui capture un peu de son "sens"
-     statistique -- deux mots au sens proche auront des vecteurs proches.
-  2. LSTM (Long Short-Term Memory) : lit la critique mot par mot, en
-     gardant en memoire le contexte des mots precedents. Utile pour du
-     texte, ou l'ordre des mots change le sens ("pas bien" != "bien").
-  3. Dense (1 neurone, activation sigmoide) : sortie finale, une
-     probabilite entre 0 (critique negative) et 1 (critique positive).
+  1. Acquisition : ~120 photos par espece depuis GBIF (mediaType=StillImage).
+  2. Chargement en jeux entrainement / validation (image_dataset_from_directory).
+  3. Modele : data augmentation -> MobileNetV2 gele -> tete Dense(4).
+  4. Entrainement, evaluation (accuracy + matrice de confusion), sauvegarde.
+  5. Explicabilite : Grad-CAM sur quelques photos ("ou le modele regarde").
 
 Utilisation :
     python blocs/bc04_deep_learning/run.py
 
-Remarque : le premier lancement telecharge le jeu de donnees IMDB (~17 Mo,
-une seule fois, mis en cache localement par Keras dans ~/.keras/) -- une
-connexion internet est donc necessaire au moins une fois avant la
-demonstration devant le jury. Les lancements suivants sont hors-ligne.
+Le premier lancement telecharge les photos (connexion internet requise, mises
+en cache dans donnees/images_oiseaux/) ainsi que les poids de MobileNetV2 ;
+les lancements suivants sont hors-ligne.
 """
 
 import json
@@ -49,129 +28,149 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 _racine = next(p for p in Path(__file__).resolve().parents if (p / "commun").is_dir())
-sys.path.insert(0, str(_racine))  # racine du projet -> package commun/
+sys.path.insert(0, str(_racine))                      # -> package commun/
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # -> acquisition_images, modele
 
 from commun.config import REPERTOIRE_MODELES, REPERTOIRE_RACINE, ParametresDL
 from commun.journalisation import configurer_logger
-from modele import construire_modele, decoder_avis
+from acquisition_images import telecharger_images, REPERTOIRE_IMAGES
+from modele import construire_modele
 
-RACINE_PROJET = REPERTOIRE_RACINE
 logger = configurer_logger()
+
+
+def _grad_cam(modele_gradcam, image):
+    """Carte de chaleur Grad-CAM (redimensionnee a la taille de l'image) + classe predite."""
+    import tensorflow as tf
+
+    lot = image[None, ...]
+    with tf.GradientTape() as tape:
+        cartes, predictions = modele_gradcam(lot)
+        classe = tf.argmax(predictions[0])
+        score = predictions[:, classe]
+    gradients = tape.gradient(score, cartes)
+    poids = tf.reduce_mean(gradients, axis=(0, 1, 2))
+    chaleur = tf.reduce_sum(cartes[0] * poids, axis=-1)
+    chaleur = tf.maximum(chaleur, 0) / (tf.reduce_max(chaleur) + 1e-8)
+    chaleur = tf.image.resize(chaleur[..., None], lot.shape[1:3]).numpy().squeeze()
+    return chaleur, int(classe)
 
 
 def main() -> None:
     print("\n" + "#" * 70)
-    print("# BC04 - DEEP LEARNING (donnees non structurees : texte)")
+    print("# BC04 - DEEP LEARNING (donnees non structurees : images)")
     print("#" * 70 + "\n")
 
     logger.info("Chargement de TensorFlow/Keras (peut prendre quelques secondes)...")
+    import tensorflow as tf
     from tensorflow import keras
-    from tensorflow.keras.datasets import imdb
-    from tensorflow.keras.preprocessing.sequence import pad_sequences
-    from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, roc_auc_score
+    from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 
-    keras.utils.set_random_seed(ParametresDL.RANDOM_STATE)
+    tf.random.set_seed(ParametresDL.RANDOM_STATE)
 
-    logger.info("Chargement du jeu de donnees IMDB (25 000 critiques de films)...")
-    (X_train_brut, y_train), (X_test_brut, y_test) = imdb.load_data(num_words=ParametresDL.NB_MOTS_VOCABULAIRE)
+    # 1. Acquisition des photos (skip si deja en cache)
+    telecharger_images(ParametresDL.NB_IMAGES_PAR_ESPECE)
 
-    # Sous-echantillonnage pour un entrainement rapide en demonstration
-    rng = np.random.default_rng(ParametresDL.RANDOM_STATE)
-    idx_train = rng.choice(len(X_train_brut), size=min(ParametresDL.TAILLE_ECHANTILLON_DEMO, len(X_train_brut)), replace=False)
-    idx_test = rng.choice(len(X_test_brut), size=min(ParametresDL.TAILLE_ECHANTILLON_DEMO // 3, len(X_test_brut)), replace=False)
-    X_train_brut, y_train = X_train_brut[idx_train], y_train[idx_train]
-    X_test_brut, y_test = X_test_brut[idx_test], y_test[idx_test]
+    # 2. Jeux d'entrainement / validation
+    parametres_ds = dict(
+        validation_split=ParametresDL.VALIDATION_SPLIT,
+        seed=ParametresDL.RANDOM_STATE,
+        image_size=(ParametresDL.TAILLE_IMAGE, ParametresDL.TAILLE_IMAGE),
+        batch_size=ParametresDL.BATCH_SIZE,
+    )
+    train_ds = keras.utils.image_dataset_from_directory(REPERTOIRE_IMAGES, subset="training", **parametres_ds)
+    val_ds = keras.utils.image_dataset_from_directory(REPERTOIRE_IMAGES, subset="validation", **parametres_ds)
+    noms_classes = train_ds.class_names
+    logger.info(f"Classes : {noms_classes}")
 
-    logger.info(f"  Jeu d'entrainement : {len(X_train_brut)} critiques (sous-echantillon, pour une demo rapide)")
-    logger.info(f"  Jeu de test         : {len(X_test_brut)} critiques")
-    logger.info(f"  Vocabulaire retenu  : {ParametresDL.NB_MOTS_VOCABULAIRE} mots les plus frequents")
+    autotune = tf.data.AUTOTUNE
+    train_ds = train_ds.cache().shuffle(500).prefetch(autotune)
+    val_ds = val_ds.cache().prefetch(autotune)
 
-    X_train = pad_sequences(X_train_brut, maxlen=ParametresDL.LONGUEUR_SEQUENCE)
-    X_test = pad_sequences(X_test_brut, maxlen=ParametresDL.LONGUEUR_SEQUENCE)
-
-    logger.info("Construction du modele (Embedding + LSTM + Dense)...")
-    modele = construire_modele(ParametresDL.NB_MOTS_VOCABULAIRE, ParametresDL.LONGUEUR_SEQUENCE)
+    # 3. Modele : transfer learning MobileNetV2
+    logger.info("Construction du modele (MobileNetV2 gele + tete Dense)...")
+    modele, modele_gradcam = construire_modele(len(noms_classes))
     modele.summary()
 
+    # 4. Entrainement
     logger.info(f"Entrainement ({ParametresDL.EPOCHS} epochs)...")
-    historique = modele.fit(
-        X_train, y_train,
-        validation_data=(X_test, y_test),
-        epochs=ParametresDL.EPOCHS,
-        batch_size=ParametresDL.BATCH_SIZE,
-        verbose=2,
-    )
+    historique = modele.fit(train_ds, validation_data=val_ds, epochs=ParametresDL.EPOCHS, verbose=2)
 
-    logger.info("Evaluation sur le jeu de test...")
-    y_proba = modele.predict(X_test, verbose=0).ravel()
-    y_pred = (y_proba > 0.5).astype(int)
-
+    # Evaluation sur la validation
+    y_vrai = np.concatenate([y.numpy() for _, y in val_ds])
+    y_proba = modele.predict(val_ds, verbose=0)
+    y_pred = y_proba.argmax(axis=1)
     metriques = {
-        "accuracy": float(accuracy_score(y_test, y_pred)),
-        "f1_score": float(f1_score(y_test, y_pred)),
-        "auc_roc": float(roc_auc_score(y_test, y_proba)),
+        "accuracy": float(accuracy_score(y_vrai, y_pred)),
+        "f1_macro": float(f1_score(y_vrai, y_pred, average="macro")),
     }
-    logger.info(f"  Accuracy : {metriques['accuracy']:.4f}")
-    logger.info(f"  F1-Score : {metriques['f1_score']:.4f}")
-    logger.info(f"  AUC-ROC  : {metriques['auc_roc']:.4f}")
+    logger.info(f"  Accuracy validation : {metriques['accuracy']:.4f}")
+    logger.info(f"  F1-macro            : {metriques['f1_macro']:.4f}")
 
-    # --- Sauvegardes : modele, metriques, courbe d'apprentissage, matrice de confusion ---
+    # --- Sauvegardes : modele, metriques, courbes + confusion, Grad-CAM ---
     repertoire_dl = REPERTOIRE_RACINE / "outputs" / "dl"
     repertoire_dl.mkdir(parents=True, exist_ok=True)
 
-    chemin_modele = REPERTOIRE_MODELES / "deep_learning_sentiment.keras"
+    chemin_modele = REPERTOIRE_MODELES / "deep_learning_oiseaux.keras"
     modele.save(chemin_modele)
     logger.info(f"Modele sauvegarde : {chemin_modele}")
+    with open(REPERTOIRE_MODELES / "deep_learning_oiseaux_metadata.json", "w", encoding="utf-8") as f:
+        json.dump({
+            "nom_modele": "deep_learning_oiseaux",
+            "metriques": metriques,
+            "architecture": "MobileNetV2 (transfer learning, corps gele) + Dense",
+            "classes": noms_classes,
+            "dataset": "photos GBIF (4 especes du projet)",
+        }, f, indent=2, ensure_ascii=False)
 
-    with open(REPERTOIRE_MODELES / "deep_learning_sentiment_metadata.json", "w", encoding="utf-8") as f:
-        json.dump({"nom_modele": "deep_learning_sentiment", "metriques": metriques,
-                    "architecture": "Embedding + LSTM + Dense", "dataset": "IMDB (sentiment, texte)"},
-                   f, indent=2, ensure_ascii=False)
-
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
-    axes[0].plot(historique.history["accuracy"], label="Entrainement", marker="o")
-    axes[0].plot(historique.history["val_accuracy"], label="Test", marker="o")
+    n = len(noms_classes)
+    fig, axes = plt.subplots(1, 2, figsize=(13, 4.5))
+    axes[0].plot(historique.history["accuracy"], marker="o", label="entrainement")
+    axes[0].plot(historique.history["val_accuracy"], marker="o", label="validation")
+    axes[0].axhline(1 / n, color="gray", linestyle="--", label=f"hasard ({n} classes)")
     axes[0].set_title("Accuracy au fil des epochs", fontweight="bold")
-    axes[0].set_xlabel("Epoch")
-    axes[0].set_ylabel("Accuracy")
-    axes[0].legend()
+    axes[0].set_xlabel("epoch"); axes[0].legend()
 
-    matrice = confusion_matrix(y_test, y_pred)
-    im = axes[1].imshow(matrice, cmap="Blues")
-    axes[1].set_title("Matrice de confusion (test)", fontweight="bold")
-    axes[1].set_xticks([0, 1], ["Negatif predit", "Positif predit"])
-    axes[1].set_yticks([0, 1], ["Negatif reel", "Positif reel"])
-    for i in range(2):
-        for j in range(2):
-            axes[1].text(j, i, f"{matrice[i, j]}", ha="center", va="center", fontsize=13)
+    cm = confusion_matrix(y_vrai, y_pred)
+    axes[1].imshow(cm, cmap="Blues")
+    axes[1].set_title("Matrice de confusion (validation)", fontweight="bold")
+    axes[1].set_xticks(range(n)); axes[1].set_xticklabels(noms_classes, rotation=45, ha="right")
+    axes[1].set_yticks(range(n)); axes[1].set_yticklabels(noms_classes)
+    for i in range(n):
+        for j in range(n):
+            axes[1].text(j, i, cm[i, j], ha="center", va="center")
     plt.tight_layout()
-    plt.savefig(repertoire_dl / "entrainement_et_confusion.png", dpi=200, bbox_inches="tight")
+    plt.savefig(repertoire_dl / "entrainement_et_confusion.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
 
-    # --- Demonstration lisible : un exemple decode + sa prediction ---
-    # On choisit le premier exemple correctement classe (plus clair pour la demo),
-    # sans cacher le taux d'erreur reel qui est donne juste au-dessus (accuracy/F1/AUC).
-    index_mots = imdb.get_word_index()
-    indices_corrects = np.where(y_pred == y_test)[0]
-    idx_exemple = int(indices_corrects[0]) if len(indices_corrects) > 0 else 0
+    # Grad-CAM sur 4 photos de validation
+    images, _ = next(iter(val_ds))
+    fig, axes = plt.subplots(2, 4, figsize=(14, 7))
+    for k in range(4):
+        chaleur, classe = _grad_cam(modele_gradcam, images[k])
+        photo = tf.cast(images[k], tf.uint8).numpy()
+        axes[0, k].imshow(photo); axes[0, k].axis("off")
+        axes[0, k].set_title(f"predit : {noms_classes[classe]}", fontsize=9)
+        axes[1, k].imshow(photo); axes[1, k].imshow(chaleur, cmap="jet", alpha=0.45)
+        axes[1, k].axis("off")
+    plt.suptitle("Grad-CAM : ou le modele regarde", fontweight="bold")
+    plt.tight_layout()
+    plt.savefig(repertoire_dl / "grad_cam.png", dpi=150, bbox_inches="tight")
+    plt.close(fig)
 
-    exemple_texte = decoder_avis(X_test_brut[idx_exemple], index_mots)
-    exemple_reel = "positive" if y_test[idx_exemple] == 1 else "negative"
-    exemple_predite = "positive" if y_pred[idx_exemple] == 1 else "negative"
-
-    logger.info("Exemple concret (une critique du jeu de test, decodee en texte lisible) :")
-    logger.info(f'  Extrait : "{exemple_texte[:300]}..."')
-    logger.info(f"  Sentiment reel     : {exemple_reel}")
-    logger.info(f"  Sentiment predit   : {exemple_predite} (probabilite = {y_proba[idx_exemple]:.2f})")
+    print("\nExemple : une photo du jeu de validation, sa prediction.")
+    chaleur, classe = _grad_cam(modele_gradcam, images[0])
+    logger.info(f"  Espece predite : {noms_classes[classe]}")
 
     print("\nPreuves produites (fichiers verifiables sur disque) :")
     for chemin in [
         chemin_modele,
-        REPERTOIRE_MODELES / "deep_learning_sentiment_metadata.json",
+        REPERTOIRE_MODELES / "deep_learning_oiseaux_metadata.json",
         repertoire_dl / "entrainement_et_confusion.png",
+        repertoire_dl / "grad_cam.png",
     ]:
         marque = "OK" if chemin.exists() else "MANQUANT"
-        print(f"  [{marque}] {chemin.relative_to(RACINE_PROJET)}")
+        print(f"  [{marque}] {chemin.relative_to(REPERTOIRE_RACINE)}")
 
     print("\nBC04 termine.\n")
 

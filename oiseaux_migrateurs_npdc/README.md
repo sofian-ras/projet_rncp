@@ -37,7 +37,7 @@ après un simple clone, BC02 à BC05 tournent sans avoir à relancer BC01.
 | BC01 | [`blocs/bc01_infrastructure_donnees/`](blocs/bc01_infrastructure_donnees/README.md) | Acquisition (GBIF + Open-Meteo), nettoyage (ETL), [schéma d'architecture + RGPD](blocs/bc01_infrastructure_donnees/docs/architecture.md) |
 | BC02 | [`blocs/bc02_analyse_exploratoire/`](blocs/bc02_analyse_exploratoire/README.md) | Analyse univariée, corrélations, tests statistiques, visualisations |
 | BC03 | [`blocs/bc03_machine_learning/`](blocs/bc03_machine_learning/README.md) | Supervisé (3 modèles + MLflow + validation croisée + importance des variables) et non supervisé (K-Means) |
-| BC04 | [`blocs/bc04_deep_learning/`](blocs/bc04_deep_learning/README.md) | Prédiction sur données non structurées (réseau de neurones sur texte) |
+| BC04 | [`blocs/bc04_deep_learning/`](blocs/bc04_deep_learning/README.md) | Prédiction sur données non structurées (CNN sur images d'oiseaux, transfer learning) |
 | BC05 | [`blocs/bc05_industrialisation/`](blocs/bc05_industrialisation/README.md) | API FastAPI + Dashboard Streamlit + Docker + [procédure de déploiement](blocs/bc05_industrialisation/docs/deploiement.md) |
 | BC06 | [`blocs/bc06_gestion_projet/`](blocs/bc06_gestion_projet/README.md) | Tests automatisés, [rétroplanning + risques + ROI](blocs/bc06_gestion_projet/docs/gestion_projet.md), limites assumées |
 
@@ -48,7 +48,7 @@ après un simple clone, BC02 à BC05 tournent sans avoir à relancer BC01.
 | BC01 | `requests` (API GBIF + Open-Meteo), `pandas` (ETL), `loguru` |
 | BC02 | `pandas`, `matplotlib`/`seaborn`, `folium` (carte), `scipy` (tests statistiques) |
 | BC03 | `scikit-learn` (régression logistique, forêt aléatoire, K-Means), `xgboost`, `mlflow` |
-| BC04 | `TensorFlow`/`Keras` (Embedding + LSTM) |
+| BC04 | `TensorFlow`/`Keras` (CNN, transfer learning MobileNetV2) |
 | BC05 | `FastAPI`, `Pydantic`, `Streamlit`, `Docker` |
 | BC06 | `pytest` |
 
@@ -68,7 +68,7 @@ oiseaux_migrateurs_npdc/
 │   ├── bc01_infrastructure_donnees/ # acquisition.py + nettoyage.py + run.py + docs/architecture.md
 │   ├── bc02_analyse_exploratoire/   # run.py : EDA, distributions, cartes, tests statistiques
 │   ├── bc03_machine_learning/       # run.py + gestion_modeles.py + segmentation.py
-│   ├── bc04_deep_learning/          # modele.py (Embedding+LSTM) + run.py
+│   ├── bc04_deep_learning/          # acquisition_images.py + modele.py (MobileNetV2) + run.py
 │   ├── bc05_industrialisation/      # api.py, dashboard.py, prediction.py, run.py, Dockerfile, docs/
 │   └── bc06_gestion_projet/         # run.py + tests/ (testent le vrai acquisition.py de BC01) + docs/
 ├── notebooks/                       # Notebook de soutenance, narratif et deja execute
@@ -126,7 +126,7 @@ Chacun se lance indépendamment, **venv activé**, depuis la racine `oiseaux_mig
 python blocs/bc01_infrastructure_donnees/run.py   # BC01 - acquisition + nettoyage (ETL)
 python blocs/bc02_analyse_exploratoire/run.py     # BC02 - analyse exploratoire
 python blocs/bc03_machine_learning/run.py         # BC03 - 3 modèles ML + K-Means + MLflow
-python blocs/bc04_deep_learning/run.py            # BC04 - réseau de neurones (texte)
+python blocs/bc04_deep_learning/run.py            # BC04 - CNN sur images d'oiseaux (transfer learning)
 python blocs/bc05_industrialisation/run.py        # BC05 - démonstration de prédiction sans serveur
 python blocs/bc06_gestion_projet/run.py           # BC06 - tests automatisés
 ```
@@ -200,7 +200,7 @@ Les tests portent sur le module d'acquisition de BC01 ; BC06 les rejoue via son 
 
 - 3 modèles de Machine Learning comparés (BC03) : Régression logistique, Forêt aléatoire, XGBoost —
   XGBoost retenu en production (AUC-ROC ≈ 0.91).
-- Un réseau Embedding + LSTM (BC04) sur données textuelles (analyse de sentiment), démontrant la
+- Un CNN en transfer learning (BC04, MobileNetV2) qui reconnaît l'espèce d'oiseau sur une photo, démontrant la
   compétence Deep Learning sur données non structurées, distincte de BC03.
 - Une API et un tableau de bord interactif (BC05) exposant le modèle à un utilisateur non technique.
 

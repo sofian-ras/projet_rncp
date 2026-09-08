@@ -66,8 +66,8 @@ def main() -> None:
     print("\nLimites assumees et pistes d'amelioration (voir le README de ce bloc) :")
     print("  - Fort desequilibre des classes en BC03 (rappel des presences reelles perfectible)")
     print("  - Meteo seule faiblement correlee a la presence (voir BC02)")
-    print("  - BC04 utilise un jeu de donnees texte generique (IMDB), distinct du theme")
-    print("    ornithologique, pour demontrer specifiquement la competence donnees non structurees")
+    print("  - BC04 (CNN images) : dataset volontairement petit (~120 photos/espece) et")
+    print("    photos de science citoyenne bruitees -> accuracy ~0,75 sur 4 classes")
     print("  - Deploiement cloud (URL publique de l'API/dashboard) documente mais non realise")
 
     print("\nBC06 termine.\n")

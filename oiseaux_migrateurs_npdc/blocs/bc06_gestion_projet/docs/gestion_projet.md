@@ -19,7 +19,7 @@ Planification à rebours depuis la soutenance. Dates à adapter pour une autre s
 |---|---|---|---|---|
 | S1 | 11–15 août 2026 | BC01 | Acquisition GBIF + Open-Meteo, pipeline ETL, grille présence/absence | — |
 | S2 | 18–22 août 2026 | BC02 | Saisonnalité, distributions univariées, corrélations, test χ² | BC01 |
-| S3 | 25–29 août 2026 | BC03 + BC04 | 3 modèles ML comparés + validation croisée + segmentation ; réseau LSTM de sentiment | BC01 |
+| S3 | 25–29 août 2026 | BC03 + BC04 | 3 modèles ML comparés + validation croisée + segmentation ; CNN transfer learning sur photos d'oiseaux (Grad-CAM) | BC01 |
 | S4 | 1–5 sept. 2026 | BC05 + BC06 | API FastAPI, dashboard Streamlit, Docker ; tests, documentation, cette note | BC03 (+ BC04) |
 | Soutenance | semaine du 8 sept. 2026 | — | Support oral (10 min) + démo live | tous |
 
