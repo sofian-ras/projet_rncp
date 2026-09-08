@@ -8,16 +8,15 @@ le vrai module d'acquisition de BC01 (rendu importable par conftest.py).
 import pytest
 
 from commun.config import ESPECES, ZONE_GEOGRAPHIQUE
-from acquisition import AcquisiteurGBIF
+from acquisition import creer_bbox_geometrie, extraire_colonnes
 
 
-class TestAcquisiteurGBIF:
-    """Tests pour acquisition GBIF"""
+class TestAcquisitionGBIF:
+    """Tests pour l'acquisition GBIF"""
 
     def test_creation_bbox(self):
         """Test creation bounding box WKT"""
-        acquisiteur = AcquisiteurGBIF()
-        bbox = acquisiteur._creer_bbox_geometrie()
+        bbox = creer_bbox_geometrie()
 
         # Verifier format WKT
         assert bbox.startswith("POLYGON")
@@ -38,10 +37,7 @@ class TestAcquisiteurGBIF:
             }
         ]
 
-        resultat = AcquisiteurGBIF._extraire_colonnes(
-            observations_mock,
-            "hirondelle_rustique"
-        )
+        resultat = extraire_colonnes(observations_mock, "hirondelle_rustique")
 
         assert len(resultat) == 1
         assert resultat[0]["espece"] == "hirondelle_rustique"

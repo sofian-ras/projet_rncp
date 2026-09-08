@@ -1,8 +1,8 @@
 """
 BC01 - Acquisition : telechargement GBIF (observations) + Open-Meteo (meteo).
 
-Separe de run.py (qui orchestre acquisition + nettoyage) pour ne pas
-melanger les deux metiers dans le meme fichier.
+Code plat (pas de classe) : une fonction = une etape, lisible de haut en bas.
+Separe de run.py (qui orchestre) et de nettoyage.py (l'ETL).
 """
 
 import time
@@ -18,6 +18,16 @@ from commun.config import (
     REPERTOIRE_DONNEES_BRUTES,
     ParametresAcquisition,
 )
+
+# URL des deux API publiques utilisees (aucune cle necessaire)
+URL_GBIF = "https://api.gbif.org/v1/occurrence/search"
+URL_OPEN_METEO = ParametresAcquisition.API_METEO_URL
+
+# Colonnes du CSV d'observations produit par l'acquisition
+COLONNES_OBSERVATIONS = [
+    "espece", "nom_scientifique", "date_observation", "latitude", "longitude",
+    "precision_coordinate", "pays", "source", "id_gbif",
+]
 
 
 def get_avec_retry(url: str, parametres: Dict) -> requests.Response:
@@ -55,126 +65,120 @@ def get_avec_retry(url: str, parametres: Dict) -> requests.Response:
     raise derniere_erreur
 
 
-class AcquisiteurGBIF:
-    """Telecharge observations d'oiseaux depuis GBIF"""
+# ---------------------------------------------------------------------------
+# GBIF : observations d'oiseaux
+# ---------------------------------------------------------------------------
 
-    COLONNES_OBSERVATIONS = [
-        "espece", "nom_scientifique", "date_observation", "latitude", "longitude",
-        "precision_coordinate", "pays", "source", "id_gbif",
-    ]
-
-    def __init__(self):
-        self.url_base_gbif = "https://api.gbif.org/v1/occurrence/search"
-        self.params_acquisition = ParametresAcquisition()
-
-    def telecharger_observations_espece(self, nom_espece: str, infos_espece: Dict) -> pd.DataFrame:
-        """Telecharge toutes les observations GBIF pour une espece dans la region NPDC"""
-        logger.info(f"Telechargement {infos_espece['nom_francais']}...")
-
-        observations_liste = []
-        decalage = 0
-        limite = self.params_acquisition.LIMITE_RESULTATS_PAR_ESPECE
-        taille_page = 300
-
-        while decalage < limite:
-            parametres = {
-                "taxonKey": infos_espece["code_gbif"],
-                "geometry": self._creer_bbox_geometrie(),
-                "year": f"{self.params_acquisition.ANNEE_DEBUT},{self.params_acquisition.ANNEE_FIN}",
-                "hasCoordinate": "true",
-                "hasGeospatialIssue": "false",
-                "occurrenceStatus": "PRESENT",
-                "fields": "gbifID,scientificName,eventDate,decimalLatitude,decimalLongitude,coordinateUncertaintyInMeters,country",
-                "limit": min(taille_page, limite - decalage),
-                "offset": decalage,
-            }
-            try:
-                reponse = get_avec_retry(self.url_base_gbif, parametres)
-                resultats = reponse.json().get("results", [])
-                if not resultats:
-                    break
-                observations_liste.extend(resultats)
-                decalage += len(resultats)
-                logger.debug(f"  Recupere {len(observations_liste)} observations")
-                time.sleep(self.params_acquisition.DELAI_ENTRE_REQUETES)
-            except Exception as erreur:
-                logger.error(f"  Erreur requete GBIF apres {self.params_acquisition.NB_TENTATIVES_MAX} tentatives : {erreur}")
-                break
-
-        donnees_extraites = self._extraire_colonnes(observations_liste, nom_espece)
-        df = pd.DataFrame(donnees_extraites, columns=self.COLONNES_OBSERVATIONS)
-        logger.info(f"  {len(df)} observations telechargees pour {infos_espece['nom_francais']}")
-        return df
-
-    def _creer_bbox_geometrie(self) -> str:
-        """Cree geometrie WKT pour filtrer par region"""
-        zone = ZONE_GEOGRAPHIQUE
-        return (
-            f"POLYGON(("
-            f"{zone.longitude_min} {zone.latitude_min},"
-            f"{zone.longitude_max} {zone.latitude_min},"
-            f"{zone.longitude_max} {zone.latitude_max},"
-            f"{zone.longitude_min} {zone.latitude_max},"
-            f"{zone.longitude_min} {zone.latitude_min}"
-            f"))"
-        )
-
-    @staticmethod
-    def _extraire_colonnes(observations: List[Dict], nom_espece: str) -> List[Dict]:
-        donnees = []
-        for obs in observations:
-            donnees.append({
-                "espece": nom_espece,
-                "nom_scientifique": obs.get("scientificName", ""),
-                "date_observation": obs.get("eventDate", ""),
-                "latitude": obs.get("decimalLatitude"),
-                "longitude": obs.get("decimalLongitude"),
-                "precision_coordinate": obs.get("coordinateUncertaintyInMeters"),
-                "pays": obs.get("country", ""),
-                "source": "GBIF",
-                "id_gbif": obs.get("gbifID"),
-            })
-        return donnees
+def creer_bbox_geometrie() -> str:
+    """Rectangle de la zone d'etude au format WKT, envoye a GBIF pour le filtre spatial."""
+    zone = ZONE_GEOGRAPHIQUE
+    return (
+        f"POLYGON(("
+        f"{zone.longitude_min} {zone.latitude_min},"
+        f"{zone.longitude_max} {zone.latitude_min},"
+        f"{zone.longitude_max} {zone.latitude_max},"
+        f"{zone.longitude_min} {zone.latitude_max},"
+        f"{zone.longitude_min} {zone.latitude_min}"
+        f"))"
+    )
 
 
-class AcquisiteurMeteo:
-    """Telecharge donnees meteorologiques depuis Open-Meteo"""
+def extraire_colonnes(observations: List[Dict], nom_espece: str) -> List[Dict]:
+    """Ne garde de chaque observation GBIF que les champs utiles au projet."""
+    donnees = []
+    for obs in observations:
+        donnees.append({
+            "espece": nom_espece,
+            "nom_scientifique": obs.get("scientificName", ""),
+            "date_observation": obs.get("eventDate", ""),
+            "latitude": obs.get("decimalLatitude"),
+            "longitude": obs.get("decimalLongitude"),
+            "precision_coordinate": obs.get("coordinateUncertaintyInMeters"),
+            "pays": obs.get("country", ""),
+            "source": "GBIF",
+            "id_gbif": obs.get("gbifID"),
+        })
+    return donnees
 
-    def __init__(self):
-        self.url_api = ParametresAcquisition.API_METEO_URL
 
-    def telecharger_meteo(self, latitude: float, longitude: float, date_debut: str, date_fin: str) -> pd.DataFrame:
-        """Telecharge historique meteo pour une localite et periode (format date : YYYY-MM-DD)"""
+def telecharger_observations_espece(nom_espece: str, infos_espece: Dict) -> pd.DataFrame:
+    """Telecharge les observations GBIF d'une espece dans la zone, page par page (300 par page)."""
+    logger.info(f"Telechargement {infos_espece['nom_francais']}...")
+
+    observations_liste = []
+    decalage = 0
+    limite = ParametresAcquisition.LIMITE_RESULTATS_PAR_ESPECE
+    taille_page = 300
+
+    while decalage < limite:
         parametres = {
-            "latitude": latitude,
-            "longitude": longitude,
-            "start_date": date_debut,
-            "end_date": date_fin,
-            "daily": ",".join(ParametresAcquisition.VARIABLES_METEO),
-            "timezone": "Europe/Paris",
+            "taxonKey": infos_espece["code_gbif"],
+            "geometry": creer_bbox_geometrie(),
+            "year": f"{ParametresAcquisition.ANNEE_DEBUT},{ParametresAcquisition.ANNEE_FIN}",
+            "hasCoordinate": "true",
+            "hasGeospatialIssue": "false",
+            "occurrenceStatus": "PRESENT",
+            "fields": "gbifID,scientificName,eventDate,decimalLatitude,decimalLongitude,coordinateUncertaintyInMeters,country",
+            "limit": min(taille_page, limite - decalage),
+            "offset": decalage,
         }
         try:
-            reponse = get_avec_retry(self.url_api, parametres)
-            donnees = reponse.json()
-            return pd.DataFrame({
-                "date": pd.to_datetime(donnees["daily"]["time"]),
-                "temperature_max": donnees["daily"]["temperature_2m_max"],
-                "temperature_min": donnees["daily"]["temperature_2m_min"],
-                "temperature_moyenne": donnees["daily"]["temperature_2m_mean"],
-                "precipitation_sum": donnees["daily"]["precipitation_sum"],
-                "vent_max": donnees["daily"]["windspeed_10m_max"],
-                "humidite_moyenne": donnees["daily"]["relative_humidity_2m_mean"],
-                "pression_moyenne": donnees["daily"]["pressure_msl_mean"],
-                "latitude": latitude,
-                "longitude": longitude,
-            })
+            reponse = get_avec_retry(URL_GBIF, parametres)
+            resultats = reponse.json().get("results", [])
+            if not resultats:
+                break
+            observations_liste.extend(resultats)
+            decalage += len(resultats)
+            logger.debug(f"  Recupere {len(observations_liste)} observations")
+            time.sleep(ParametresAcquisition.DELAI_ENTRE_REQUETES)  # on menage le serveur public
         except Exception as erreur:
-            logger.error(f"Erreur telechargement meteo : {erreur}")
-            return pd.DataFrame()
+            logger.error(f"  Erreur requete GBIF apres {ParametresAcquisition.NB_TENTATIVES_MAX} tentatives : {erreur}")
+            break
 
+    df = pd.DataFrame(extraire_colonnes(observations_liste, nom_espece), columns=COLONNES_OBSERVATIONS)
+    logger.info(f"  {len(df)} observations telechargees pour {infos_espece['nom_francais']}")
+    return df
+
+
+# ---------------------------------------------------------------------------
+# Open-Meteo : historique meteo
+# ---------------------------------------------------------------------------
+
+def telecharger_meteo(latitude: float, longitude: float, date_debut: str, date_fin: str) -> pd.DataFrame:
+    """Telecharge l'historique meteo journalier d'un point (dates au format YYYY-MM-DD)."""
+    parametres = {
+        "latitude": latitude,
+        "longitude": longitude,
+        "start_date": date_debut,
+        "end_date": date_fin,
+        "daily": ",".join(ParametresAcquisition.VARIABLES_METEO),
+        "timezone": "Europe/Paris",
+    }
+    try:
+        donnees = get_avec_retry(URL_OPEN_METEO, parametres).json()
+        return pd.DataFrame({
+            "date": pd.to_datetime(donnees["daily"]["time"]),
+            "temperature_max": donnees["daily"]["temperature_2m_max"],
+            "temperature_min": donnees["daily"]["temperature_2m_min"],
+            "temperature_moyenne": donnees["daily"]["temperature_2m_mean"],
+            "precipitation_sum": donnees["daily"]["precipitation_sum"],
+            "vent_max": donnees["daily"]["windspeed_10m_max"],
+            "humidite_moyenne": donnees["daily"]["relative_humidity_2m_mean"],
+            "pression_moyenne": donnees["daily"]["pressure_msl_mean"],
+            "latitude": latitude,
+            "longitude": longitude,
+        })
+    except Exception as erreur:
+        logger.error(f"Erreur telechargement meteo : {erreur}")
+        return pd.DataFrame()
+
+
+# ---------------------------------------------------------------------------
+# Orchestration
+# ---------------------------------------------------------------------------
 
 def executer_acquisition(forcer: bool = False) -> None:
-    """Telecharge les donnees brutes GBIF + Open-Meteo, sauf si deja presentes sur disque"""
+    """Telecharge les donnees brutes GBIF + Open-Meteo, sauf si deja presentes sur disque."""
     fichier_obs = REPERTOIRE_DONNEES_BRUTES / "observations_gbif.csv"
     fichier_meteo = REPERTOIRE_DONNEES_BRUTES / "meteo_npdc.csv"
 
@@ -187,24 +191,23 @@ def executer_acquisition(forcer: bool = False) -> None:
     logger.info("ACQUISITION - Telechargement GBIF + Open-Meteo")
     logger.info("=" * 60)
 
-    acquisiteur_gbif = AcquisiteurGBIF()
-    donnees_gbif_liste = [
-        acquisiteur_gbif.telecharger_observations_espece(nom_espece, infos)
+    # 1. GBIF : une requete paginee par espece, puis on concatene tout
+    tables_par_espece = [
+        telecharger_observations_espece(nom_espece, infos)
         for nom_espece, infos in ESPECES.items()
     ]
-
-    donnees_non_vides = [df for df in donnees_gbif_liste if not df.empty]
-    donnees_gbif_globales = (
-        pd.concat(donnees_non_vides, ignore_index=True) if donnees_non_vides
-        else pd.DataFrame(columns=AcquisiteurGBIF.COLONNES_OBSERVATIONS)
+    tables_non_vides = [df for df in tables_par_espece if not df.empty]
+    observations = (
+        pd.concat(tables_non_vides, ignore_index=True) if tables_non_vides
+        else pd.DataFrame(columns=COLONNES_OBSERVATIONS)
     )
-    donnees_gbif_globales = donnees_gbif_globales.reindex(columns=AcquisiteurGBIF.COLONNES_OBSERVATIONS)
-    donnees_gbif_globales.to_csv(fichier_obs, index=False)
+    observations = observations.reindex(columns=COLONNES_OBSERVATIONS)
+    observations.to_csv(fichier_obs, index=False)
     logger.info(f"Donnees GBIF sauvegardees : {fichier_obs}")
 
+    # 2. Open-Meteo : une seule requete pour tout l'historique au centre de la zone
     logger.info("Telechargement meteo Open-Meteo...")
-    acquisiteur_meteo = AcquisiteurMeteo()
-    df_meteo = acquisiteur_meteo.telecharger_meteo(
+    df_meteo = telecharger_meteo(
         latitude=ZONE_GEOGRAPHIQUE.centre_latitude,
         longitude=ZONE_GEOGRAPHIQUE.centre_longitude,
         date_debut=f"{ParametresAcquisition.ANNEE_DEBUT}-01-01",
