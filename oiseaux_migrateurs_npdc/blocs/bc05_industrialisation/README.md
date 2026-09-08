@@ -21,6 +21,11 @@ produit par BC03.
 
 ## Où le voir dans le code
 
+- `notebook_bc05.ipynb` : déroulé **de haut en bas, façon cours** (charger le modèle de BC03 →
+  reproduire `/predict` sans serveur → faire varier la saison → interroger l'API pour de vrai via un
+  client de test, validation Pydantic comprise → présentation du dashboard et de Docker). Chaque
+  section explique *pourquoi* / *ce qu'on veut* avant le code, *ce que le résultat veut dire* après,
+  avec des liens vers `prediction.py` / `api.py`. Version pour l'explication orale.
 - `api.py` : schémas Pydantic (`ObservationMeteo`, `DemandePredicton`), les 3 endpoints.
 - `dashboard.py` : formulaire de prédiction, appel HTTP à l'API, affichage des statistiques.
 - `Dockerfile` (dans ce dossier) : image de base, dépendances, commande de démarrage.
@@ -33,7 +38,7 @@ produit par BC03.
 ## Démonstration
 
 ```bash
-pip install -r requirements.txt   # depuis la racine du projet, une seule fois
+# venv activé (cf. README racine) ; ou notebook_bc05.ipynb pour la version expliquée
 cd blocs/bc05_industrialisation
 
 # Démonstration sans serveur (rapide, toujours disponible)
