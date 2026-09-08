@@ -26,6 +26,9 @@ BC01 (`blocs/bc01_infrastructure_donnees/acquisition.py`), rendu importable par 
 
 ## Où le voir dans le code
 
+- `notebook_bc06.ipynb` : le pilotage déroulé **de haut en bas, façon cours** (problématique métier
+  → data → rétroplanning → tests exécutés en direct → documentation par bloc → risques → ROI →
+  RGPD). Version commentée de `docs/gestion_projet.md`, avec les tests réellement rejoués.
 - `run.py`, fonction `executer_tests` (lance `pytest` en sous-processus et affiche le résultat).
 - `tests/test_acquisition.py` : les tests eux-mêmes.
 - `tests/conftest.py` : rend importables `commun` (racine) et `acquisition` (code de BC01).
@@ -33,9 +36,8 @@ BC01 (`blocs/bc01_infrastructure_donnees/acquisition.py`), rendu importable par 
 ## Démonstration
 
 ```bash
-pip install -r requirements.txt   # depuis la racine du projet, une seule fois
-cd blocs/bc06_gestion_projet
-python run.py
+# venv activé (cf. README racine) ; ou notebook_bc06.ipynb pour la version expliquée
+python blocs/bc06_gestion_projet/run.py
 ```
 
 ## Livrables produits
