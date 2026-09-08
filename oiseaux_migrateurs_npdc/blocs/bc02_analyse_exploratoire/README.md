@@ -22,6 +22,9 @@ sans jamais ré-exécuter son code. Si ces fichiers n'existent pas, lancer BC01 
 
 ## Où le voir dans le code
 
+- `notebook_bc02.ipynb` : les analyses déroulées **à plat, en 6 étapes numérotées** (chargement →
+  saisonnalité → carte de densité → distributions météo → corrélations → test du χ²), chaque étape
+  charge / calcule / visualise / interprète, avec un bilan. C'est la version faite pour l'explication.
 - `run.py`, classe `AnalyseurExploratoire.analyser_saisonnalite`.
 - `run.py`, classe `AnalyseurExploratoire.analyser_distributions` (univarié : moyennes/variances/IQR).
 - `run.py`, classe `AnalyseurExploratoire.creer_carte_densite`.
@@ -31,12 +34,12 @@ sans jamais ré-exécuter son code. Si ces fichiers n'existent pas, lancer BC01 
 ## Démonstration
 
 ```bash
-pip install -r requirements.txt   # depuis la racine du projet, une seule fois
-cd blocs/bc02_analyse_exploratoire
-python run.py
+# venv activé (cf. README racine)
+python blocs/bc02_analyse_exploratoire/run.py
 ```
 
-Puis ouvrir `outputs/eda/carte_densite.html` dans un navigateur pour la carte interactive.
+Puis ouvrir `outputs/eda/carte_densite.html` dans un navigateur pour la carte interactive. Le
+`notebook_bc02.ipynb` fait les mêmes analyses, cellule par cellule, avec les explications.
 
 ## Livrables produits (vérifiables sur disque)
 
@@ -45,7 +48,7 @@ Puis ouvrir `outputs/eda/carte_densite.html` dans un navigateur pour la carte in
 - `outputs/eda/carte_densite.html`
 - `outputs/eda/correlations_meteo.png`
 - Tableau des statistiques univariées (moyenne / écart-type / min / max / valeurs extrêmes) et
-  résultat du test χ² affichés dans la console (χ² ≈ 11 477, p-value < 0.05)
+  résultat du test χ² affichés dans la console (χ² ≈ 11 535, ddl = 33, p-value < 0.05)
 
 ## Note sur le périmètre
 
