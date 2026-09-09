@@ -21,11 +21,19 @@ from commun.config import REPERTOIRE_MODELES, ParametresML, ParametresSegmentati
 def choisir_nombre_zones(coordonnees: pd.DataFrame) -> int:
     """Retient le K (entre K_MIN et K_MAX) qui maximise le score de silhouette."""
     scores = {}
+    # silhouette_score construit une matrice de distances N x N : sur ~16 000
+    # points de presence, cela alloue ~2 Go d'un coup (OOM en conteneur a
+    # memoire limitee). On l'estime sur un echantillon de 2 000 points
+    # (sample_size), ce qui donne le meme K retenu pour une fraction du cout.
+    taille_echantillon = min(2000, len(coordonnees))
     for k in range(ParametresSegmentation.K_MIN, ParametresSegmentation.K_MAX + 1):
         etiquettes = KMeans(
             n_clusters=k, n_init=10, random_state=ParametresML.RANDOM_STATE
         ).fit_predict(coordonnees)
-        scores[k] = silhouette_score(coordonnees, etiquettes)
+        scores[k] = silhouette_score(
+            coordonnees, etiquettes,
+            sample_size=taille_echantillon, random_state=ParametresML.RANDOM_STATE,
+        )
         logger.info(f"  K={k} : silhouette={scores[k]:.3f}")
     meilleur = max(scores, key=scores.get)
     logger.info(f"  -> {meilleur} zones retenues (silhouette={scores[meilleur]:.3f})")
