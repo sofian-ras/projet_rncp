@@ -18,6 +18,7 @@ from commun.config import (
     REPERTOIRE_DONNEES_TRAITEES,
     ZONE_GEOGRAPHIQUE,
     ParametresNettoyage,
+    ParametresStockage,
 )
 
 COLONNES_OBSERVATIONS = [
@@ -182,6 +183,48 @@ def traiter_meteo(chemin_fichier_meteo: Path) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
+# Chargement dans le stockage objet (data lake MinIO + entrepot MongoDB)
+# ---------------------------------------------------------------------------
+
+def charger_dans_stockage_objet(
+    df_observations: pd.DataFrame, df_grille: pd.DataFrame, df_meteo: pd.DataFrame
+) -> None:
+    """Depose les fichiers dans MinIO et les tables dans MongoDB.
+
+    Ne fait rien si STORAGE_BACKEND != objet. En cas d'infra injoignable, on
+    logue un avertissement sans interrompre l'ETL : les parquets locaux
+    restent la source de repli.
+    """
+    if not ParametresStockage.backend_objet():
+        return
+
+    logger.info("=" * 60)
+    logger.info("CHARGEMENT STOCKAGE OBJET (MinIO data lake + MongoDB entrepot)")
+    logger.info("=" * 60)
+    try:
+        from commun.stockage import ClientMinio, ClientMongo
+
+        minio = ClientMinio()
+        minio.televerser_dossier(REPERTOIRE_DONNEES_BRUTES, ParametresStockage.BUCKET_BRUTES, "*.csv")
+        minio.televerser_dossier(REPERTOIRE_DONNEES_TRAITEES, ParametresStockage.BUCKET_TRAITEES, "*.parquet")
+
+        mongo = ClientMongo()
+        try:
+            nb_obs = mongo.ecrire_dataframe("observations_nettoyees", df_observations)
+            nb_grille = mongo.ecrire_dataframe("grille_presence_hebdo", df_grille)
+            nb_meteo = mongo.ecrire_dataframe("meteo_processed", df_meteo)
+            mongo.journaliser_etl(
+                "succes",
+                {"observations": nb_obs, "grille": nb_grille, "meteo": nb_meteo},
+            )
+        finally:
+            mongo.fermer()
+        logger.info("Chargement stockage objet : OK")
+    except Exception as erreur:  # infra absente : on continue avec les fichiers locaux
+        logger.warning(f"Stockage objet indisponible ({erreur}). Fichiers locaux conserves.")
+
+
+# ---------------------------------------------------------------------------
 # Orchestration
 # ---------------------------------------------------------------------------
 
@@ -216,6 +259,8 @@ def executer_nettoyage() -> None:
     if not df_meteo.empty:
         df_meteo.to_parquet(REPERTOIRE_DONNEES_TRAITEES / "meteo_processed.parquet")
         logger.info("Donnees meteo traitees sauvegardees")
+
+    charger_dans_stockage_objet(df_observations, df_grille, df_meteo)
 
     logger.info("=" * 60)
     logger.info("BILAN BC01")

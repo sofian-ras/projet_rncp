@@ -38,6 +38,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Variables d'environnement locales (infra MinIO / MongoDB / MLflow)
+oiseaux_migrateurs_npdc/.env
+
 # Claude Code local settings
 .claude/
 

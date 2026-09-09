@@ -1,0 +1,11 @@
+# Serveur de suivi MLflow (service "mlflow" de docker-compose.yml).
+# Backend-store : SQLite sur volume ; artefacts : bucket s3://mlflow de MinIO.
+FROM python:3.11-slim
+
+RUN pip install --no-cache-dir mlflow==2.14.1 boto3==1.34.162 pymysql==1.1.0
+
+WORKDIR /mlflow
+EXPOSE 5000
+
+# La commande complete (mlflow server ...) est fournie par docker-compose.yml.
+CMD ["mlflow", "--version"]

@@ -25,7 +25,7 @@ from pydantic import BaseModel, Field
 _racine = next(p for p in Path(__file__).resolve().parents if (p / "commun").is_dir())
 sys.path.insert(0, str(_racine))  # racine du projet -> package commun/
 
-from commun.config import ESPECES, ParametresAPI, REPERTOIRE_MODELES
+from commun.config import ESPECES, ParametresAPI, ParametresStockage, REPERTOIRE_MODELES
 from commun.journalisation import configurer_logger
 from prediction import predire
 
@@ -113,17 +113,38 @@ app = FastAPI(
     version=ParametresAPI.VERSION,
 )
 
-MODELE_CHARGE = None
-try:
+def _charger_modele():
+    """Charge pipeline_ml.pkl : depuis MinIO si STORAGE_BACKEND=objet, sinon le fichier local.
+
+    En mode objet, le modele vient du data lake alimente par BC03 (bucket
+    'modeles') : l'image Docker de l'API n'a plus a embarquer une copie figee.
+    Repli automatique sur le fichier local si MinIO est injoignable.
+    """
     chemin_modele = REPERTOIRE_MODELES / "pipeline_ml.pkl"
-    if chemin_modele.exists():
-        MODELE_CHARGE = joblib.load(chemin_modele)
-        logger.info(f"Modele charge : {chemin_modele}")
-    else:
+    if ParametresStockage.backend_objet():
+        try:
+            from commun.stockage import ClientMinio
+
+            ClientMinio().telecharger_fichier(
+                ParametresStockage.BUCKET_MODELES, "pipeline_ml.pkl", chemin_modele
+            )
+            logger.info("Modele recupere depuis MinIO (bucket 'modeles')")
+        except Exception as e:
+            logger.warning(f"Modele absent de MinIO ou MinIO injoignable ({e}) : repli sur le fichier local")
+
+    if not chemin_modele.exists():
         logger.warning(f"Modele non trouve : {chemin_modele} (lancez d'abord blocs/bc03_machine_learning/run.py)")
-except Exception as e:
-    logger.error(f"Erreur chargement modele : {e}")
-    MODELE_CHARGE = None
+        return None
+    try:
+        modele = joblib.load(chemin_modele)
+        logger.info(f"Modele charge : {chemin_modele}")
+        return modele
+    except Exception as e:
+        logger.error(f"Erreur chargement modele : {e}")
+        return None
+
+
+MODELE_CHARGE = _charger_modele()
 
 
 # ========== ENDPOINTS ==========

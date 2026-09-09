@@ -18,6 +18,10 @@ produit par BC03.
   savoir coder pour l'utiliser.
 - Un **Dockerfile** qui empaquette l'API pour qu'elle fonctionne à l'identique sur n'importe quelle
   machine compatible Docker.
+- Un **`docker-compose.yml`** (à la racine du projet) qui lève toute la chaîne d'un coup : data lake
+  **MinIO**, entrepôt **MongoDB**, serveur **MLflow** (artefacts sur MinIO), API et dashboard. En
+  mode `STORAGE_BACKEND=objet`, l'API récupère `pipeline_ml.pkl` depuis MinIO et le dashboard lit
+  MongoDB — l'image n'embarque plus de copie figée comme source unique.
 
 ## Où le voir dans le code
 
@@ -52,9 +56,13 @@ python -m uvicorn api:app --reload
 python -m streamlit run dashboard.py
 # -> http://localhost:8501
 
-# Construire et lancer le conteneur Docker
-docker build -t oiseaux-migrateurs-api .
+# Construire et lancer le conteneur Docker (API seule)
+docker build -f blocs/bc05_industrialisation/Dockerfile -t oiseaux-migrateurs-api .
 docker run -p 8000:8000 oiseaux-migrateurs-api
+
+# OU toute la chaine (MinIO + MongoDB + MLflow + API + dashboard), depuis la racine
+docker compose up -d --build
+docker compose --profile pipeline run --rm bc01   # peupler MinIO/MongoDB
 ```
 
 ## Livrables produits

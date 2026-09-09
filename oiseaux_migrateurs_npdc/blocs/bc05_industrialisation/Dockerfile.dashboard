@@ -1,0 +1,20 @@
+# Image du dashboard Streamlit de BC05 (service "dashboard" de docker-compose.yml).
+# Contexte de build = la racine du projet (oiseaux_migrateurs_npdc/) :
+#   docker build -f blocs/bc05_industrialisation/Dockerfile.dashboard -t oiseaux-dashboard .
+FROM python:3.11-slim
+
+WORKDIR /app
+ENV PYTHONPATH=/app
+
+COPY blocs/bc05_industrialisation/requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Package partage + le dashboard. Les donnees traitees sont embarquees comme
+# repli hors ligne ; en mode STORAGE_BACKEND=objet elles viennent de MongoDB.
+COPY commun/ ./commun/
+COPY blocs/bc05_industrialisation/dashboard.py ./
+COPY donnees/traitees/ ./donnees/traitees/
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "dashboard.py", "--server.address=0.0.0.0", "--server.port=8501"]

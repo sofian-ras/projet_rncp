@@ -45,31 +45,35 @@ après un simple clone, BC02 à BC05 tournent sans avoir à relancer BC01.
 
 | Bloc | Technologies clés |
 |---|---|
-| BC01 | `requests` (API GBIF + Open-Meteo), `pandas` (ETL), `loguru` |
+| BC01 | `requests` (API GBIF + Open-Meteo), `pandas` (ETL), `minio` + `pymongo` (data lake / entrepôt), `docker compose`, `loguru` |
 | BC02 | `pandas`, `matplotlib`/`seaborn`, `folium` (carte), `scipy` (tests statistiques) |
 | BC03 | `scikit-learn` (régression logistique, forêt aléatoire, K-Means), `xgboost`, `mlflow` |
 | BC04 | `TensorFlow`/`Keras` (CNN, transfer learning MobileNetV2) |
 | BC05 | `FastAPI`, `Pydantic`, `Streamlit`, `Docker` |
 | BC06 | `pytest` |
 
-Stockage : fichiers locaux (CSV, Parquet, pickle, `.keras`) dans `donnees/`, `modeles/`, `outputs/`
-à la racine du projet.
+Stockage : par défaut fichiers locaux (CSV, Parquet, pickle, `.keras`) dans `donnees/`, `modeles/`,
+`outputs/`. Avec `STORAGE_BACKEND=objet` (docker compose), BC01 alimente un data lake **MinIO** et un
+entrepôt **MongoDB**, que BC02–BC05 consomment ensuite ; les fichiers locaux restent le repli.
 
 ```
 oiseaux_migrateurs_npdc/
-├── commun/                          # package partage : config, journalisation, chargement
+├── commun/                          # package partage : config, journalisation, chargement, stockage
+├── docker-compose.yml               # MinIO + MongoDB + MLflow + API + dashboard
+├── .env.example                     # variables STORAGE_BACKEND / MinIO / MongoDB (usage hors Docker)
+├── infra/                           # Dockerfile.pipeline (BC01) + Dockerfile.mlflow
 ├── donnees/
 │   ├── brutes/                      # dumps GBIF + Open-Meteo (non versionne, produit par BC01)
 │   └── traitees/                    # parquets nettoyes (VERSIONNES : fixtures d'entree BC02..BC05)
 ├── modeles/                         # pipeline_ml.pkl + evaluations.csv versionnes, reste ignore
 ├── outputs/                         # graphiques et cartes (non versionne, regenerable)
-├── mlruns/                          # suivi MLflow de BC03 (non versionne)
+├── mlruns/                          # suivi MLflow local de BC03 (non versionne ; sinon conteneur mlflow)
 ├── blocs/
 │   ├── bc01_infrastructure_donnees/ # acquisition.py + nettoyage.py + run.py + docs/architecture.md
 │   ├── bc02_analyse_exploratoire/   # run.py : EDA, distributions, cartes, tests statistiques
 │   ├── bc03_machine_learning/       # run.py + gestion_modeles.py + segmentation.py
 │   ├── bc04_deep_learning/          # acquisition_images.py + modele.py (MobileNetV2) + run.py
-│   ├── bc05_industrialisation/      # api.py, dashboard.py, prediction.py, run.py, Dockerfile, docs/
+│   ├── bc05_industrialisation/      # api.py, dashboard.py, prediction.py, run.py, Dockerfile(.dashboard), docs/
 │   └── bc06_gestion_projet/         # run.py + tests/ (testent le vrai acquisition.py de BC01) + docs/
 ├── notebooks/                       # Notebook de soutenance, narratif et deja execute
 ├── pyproject.toml                   # config pytest / black / isort
@@ -77,14 +81,21 @@ oiseaux_migrateurs_npdc/
 └── SUJETS_RNCP35288.md
 ```
 
-### Feuille de route infrastructure
+### Infrastructure objet (docker compose)
 
-Le stockage est aujourd'hui local (fichiers CSV/Parquet/pickle). Le schéma d'infrastructure actuel,
-les choix techniques, les coûts et la cible d'industrialisation (**MinIO** data lake, **PostgreSQL**
-métadonnées, **Spark** si le volume le justifie) sont détaillés dans
+```bash
+cd oiseaux_migrateurs_npdc
+docker compose up -d --build                      # MinIO + MongoDB + MLflow + API + dashboard
+docker compose --profile pipeline run --rm bc01   # acquisition + ETL -> MinIO + MongoDB
+```
+
+Consoles : MinIO `http://localhost:9001` · Mongo Express `http://localhost:8081` ·
+MLflow `http://localhost:5000` · API `http://localhost:8000/docs` · dashboard `http://localhost:8501`.
+
+Les choix techniques (data lake **MinIO**, entrepôt **MongoDB**, bascule `STORAGE_BACKEND`, coûts,
+cap Spark si le volume le justifiait) sont détaillés dans
 [`blocs/bc01_infrastructure_donnees/docs/architecture.md`](blocs/bc01_infrastructure_donnees/docs/architecture.md).
-Le volume actuel (~5 Mo) est traité instantanément par pandas et ne nécessite pas de calcul distribué
-en l'état.
+Le volume actuel (~5 Mo, ~680 k lignes) ne nécessite pas de calcul distribué.
 
 ---
 

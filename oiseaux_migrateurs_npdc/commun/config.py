@@ -6,6 +6,7 @@ chemins du projet, zone geographique, especes etudiees, format de log et
 parametres de chaque etape (acquisition, nettoyage, ML, segmentation, DL, API).
 """
 
+import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -20,6 +21,15 @@ REPERTOIRE_OUTPUTS = REPERTOIRE_RACINE / "outputs"
 
 for _repertoire in (REPERTOIRE_DONNEES_BRUTES, REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_MODELES):
     _repertoire.mkdir(parents=True, exist_ok=True)
+
+# Charge un fichier .env a la racine si present (usage hors Docker). Optionnel :
+# dans docker-compose.yml les variables sont injectees directement.
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(REPERTOIRE_RACINE / ".env")
+except ImportError:
+    pass
 
 
 # ========== ZONE GEOGRAPHIQUE ==========
@@ -168,6 +178,47 @@ class ParametresDL:
     VALIDATION_SPLIT = 0.2
     DROPOUT_RATE = 0.2
     RANDOM_STATE = 42
+
+
+# ========== PARAMETRES STOCKAGE OBJET (BC01 : data lake MinIO + entrepot MongoDB) ==========
+class ParametresStockage:
+    """Data lake MinIO (fichiers) + entrepot MongoDB (donnees requetables).
+
+    Actif quand STORAGE_BACKEND=objet (cf. docker-compose.yml a la racine).
+    Sinon ("local", defaut), les blocs lisent/ecrivent uniquement les fichiers
+    de donnees/ : le projet reste executable apres un simple clone, sans Docker.
+    Patron repris du cours "AWS S3 et MinIO" (paquets minio + pymongo).
+    """
+
+    BACKEND = os.getenv("STORAGE_BACKEND", "local")  # "local" ou "objet"
+
+    # --- MinIO / S3 ---
+    MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "localhost:9000")
+    MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
+    MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "minioadmin123")
+    MINIO_SECURE = os.getenv("MINIO_SECURE", "false").lower() == "true"
+
+    BUCKET_BRUTES = "donnees-brutes"      # data lake : dumps GBIF + Open-Meteo (CSV)
+    BUCKET_TRAITEES = "donnees-traitees"  # parquets produits par l'ETL
+    BUCKET_MODELES = "modeles"            # pipeline_ml.pkl et autres modeles
+    BUCKET_SORTIES = "outputs"            # graphiques, cartes, images
+    BUCKET_MLFLOW = "mlflow"              # artefacts MLflow (servis par le conteneur mlflow)
+
+    # --- MongoDB ---
+    MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
+    MONGO_PORT = int(os.getenv("MONGO_PORT", "27017"))
+    MONGO_USER = os.getenv("MONGO_USER", "admin")
+    MONGO_PASSWORD = os.getenv("MONGO_PASSWORD", "admin123")
+    MONGO_DB = os.getenv("MONGO_DB", "oiseaux_migrateurs")
+
+    @classmethod
+    def backend_objet(cls) -> bool:
+        """True si les blocs doivent lire/ecrire dans MinIO + MongoDB."""
+        return cls.BACKEND.lower() == "objet"
+
+    @classmethod
+    def uri_mongo(cls) -> str:
+        return f"mongodb://{cls.MONGO_USER}:{cls.MONGO_PASSWORD}@{cls.MONGO_HOST}:{cls.MONGO_PORT}/"
 
 
 # ========== PARAMETRES API (BC05) ==========

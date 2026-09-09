@@ -1,0 +1,173 @@
+# Infrastructure du projet "Oiseaux migrateurs NPdC"
+# ==================================================
+# Data lake MinIO + entrepot MongoDB + suivi MLflow, plus les deux services
+# applicatifs de BC05 (API FastAPI + dashboard Streamlit).
+#
+#   docker compose up -d --build              # infra + API + dashboard
+#   docker compose --profile pipeline run --rm bc01
+#                                             # (re)genere les donnees -> MinIO + MongoDB
+#   docker compose down                       # arret (les volumes persistent)
+#   docker compose down -v                    # arret + purge des donnees
+#
+# Consoles :
+#   MinIO        http://localhost:9001   (minioadmin / minioadmin123)
+#   Mongo Express http://localhost:8081
+#   MLflow       http://localhost:5000
+#   API          http://localhost:8000/docs
+#   Dashboard    http://localhost:8501
+
+services:
+
+  # ----- Data lake : stockage objet S3-compatible -----
+  minio:
+    image: minio/minio:latest
+    container_name: oiseaux-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"   # API S3
+      - "9001:9001"   # console web
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    volumes:
+      - minio_data:/data
+
+  # ----- Creation des buckets au demarrage (one-shot) -----
+  minio-init:
+    image: minio/mc:latest
+    container_name: oiseaux-minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 minioadmin minioadmin123; do
+        echo 'attente de MinIO...'; sleep 2;
+      done &&
+      mc mb --ignore-existing local/donnees-brutes local/donnees-traitees local/modeles local/outputs local/mlflow &&
+      echo 'Buckets prets' "
+
+  # ----- Entrepot requetable : donnees nettoyees par l'ETL -----
+  mongodb:
+    image: mongo:7.0
+    container_name: oiseaux-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: oiseaux_migrateurs
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # ----- Interface web de consultation de MongoDB -----
+  mongo-express:
+    image: mongo-express:latest
+    container_name: oiseaux-mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin123@mongodb:27017/
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongodb
+
+  # ----- Suivi d'experiences (C5.1) : serveur MLflow, artefacts sur MinIO -----
+  mlflow:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.mlflow
+    container_name: oiseaux-mlflow
+    ports:
+      - "5000:5000"
+    environment:
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin123
+    command: >
+      mlflow server --host 0.0.0.0 --port 5000
+      --backend-store-uri sqlite:////mlflow/mlflow.db
+      --artifacts-destination s3://mlflow/ --serve-artifacts
+    volumes:
+      - mlflow_data:/mlflow
+    depends_on:
+      minio-init:
+        condition: service_completed_successfully
+
+  # ----- BC01 : acquisition + ETL + chargement MinIO/MongoDB (profil "pipeline") -----
+  bc01:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.pipeline
+    container_name: oiseaux-bc01
+    profiles: ["pipeline"]
+    environment:
+      STORAGE_BACKEND: objet
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin123
+      MONGO_HOST: mongodb
+      MONGO_USER: admin
+      MONGO_PASSWORD: admin123
+      MONGO_DB: oiseaux_migrateurs
+    depends_on:
+      minio-init:
+        condition: service_completed_successfully
+      mongodb:
+        condition: service_healthy
+
+  # ----- BC05 : API FastAPI (modele recupere depuis MinIO) -----
+  api:
+    build:
+      context: .
+      dockerfile: blocs/bc05_industrialisation/Dockerfile
+    container_name: oiseaux-api
+    ports:
+      - "8000:8000"
+    environment:
+      STORAGE_BACKEND: objet
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin123
+      MONGO_HOST: mongodb
+      MONGO_USER: admin
+      MONGO_PASSWORD: admin123
+      MONGO_DB: oiseaux_migrateurs
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    depends_on:
+      minio-init:
+        condition: service_completed_successfully
+      mongodb:
+        condition: service_healthy
+
+  # ----- BC05 : dashboard Streamlit (appelle l'API) -----
+  dashboard:
+    build:
+      context: .
+      dockerfile: blocs/bc05_industrialisation/Dockerfile.dashboard
+    container_name: oiseaux-dashboard
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://api:8000
+      STORAGE_BACKEND: objet
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin123
+      MONGO_HOST: mongodb
+      MONGO_USER: admin
+      MONGO_PASSWORD: admin123
+      MONGO_DB: oiseaux_migrateurs
+    depends_on:
+      - api
+
+volumes:
+  minio_data:
+  mongo_data:
+  mlflow_data:

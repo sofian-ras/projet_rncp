@@ -3,61 +3,88 @@
 ## Vue d'ensemble
 
 ```
-   SOURCES EXTERNES              INGESTION (acquisition.py)         DATA LAKE (donnees/brutes/)
- +------------------+          +-----------------------+          +------------------------+
- |  API GBIF        | -------> |  AcquisiteurGBIF      | -------> |  observations_gbif.csv |
- |  (observations)  |  HTTP    |  pagination + retry   |  écrit   |                        |
- +------------------+          +-----------------------+          +------------------------+
- +------------------+          +-----------------------+          +------------------------+
- |  API Open-Meteo  | -------> |  AcquisiteurMeteo     | -------> |  meteo_npdc.csv        |
- |  (météo 6 ans)   |  HTTP    |  1 requête + retry    |  écrit   |                        |
- +------------------+          +-----------------------+          +------------------------+
+   SOURCES EXTERNES              INGESTION (acquisition.py)     DATA LAKE
+ +------------------+          +-----------------------+       MinIO bucket donnees-brutes
+ |  API GBIF        | -------> |  telecharger GBIF     | ----> observations_gbif.csv
+ |  (observations)  |  HTTP    |  pagination + retry   |       (repli : donnees/brutes/)
+ +------------------+          +-----------------------+
+ +------------------+          +-----------------------+
+ |  API Open-Meteo  | -------> |  telecharger meteo    | ----> meteo_npdc.csv
+ |  (météo 6 ans)   |  HTTP    |  1 requête + retry    |
+ +------------------+          +-----------------------+
                                                                             |
                                                                             v
-                              ETL (nettoyage.py)                  DATA WAREHOUSE (donnees/traitees/)
- +----------------------------------------------+          +-----------------------------------+
- | 1. suppression des lignes incomplètes        |          | observations_nettoyees.parquet    |
- | 2. validation des coordonnées GPS            | -------> | grille_presence_hebdo.parquet     |
- | 3. filtrage géographique (zone NPDC)          |  écrit   | meteo_processed.parquet           |
- | 4. uniformisation des dates                   |          |                                   |
- | 5. déduplication                              |          | format colonnaire, typé, requêtable|
- | 6. agrégation -> grille hebdo présence/absence|          |                                   |
- +----------------------------------------------+          +-----------------------------------+
+                              ETL (nettoyage.py)              DATA WAREHOUSE
+ +----------------------------------------------+       MongoDB (repli : donnees/traitees/*.parquet)
+ | 1. suppression des lignes incomplètes        |       + MinIO bucket donnees-traitees
+ | 2. validation des coordonnées GPS            | ----> observations_nettoyees
+ | 3. filtrage géographique (zone NPDC)          |       grille_presence_hebdo
+ | 4. uniformisation des dates                   |       meteo_processed
+ | 5. déduplication                              |       etl_journal (trace des passages)
+ | 6. agrégation -> grille hebdo présence/absence|
+ +----------------------------------------------+
                                                                             |
                                                                             v
                                                           CONSOMMATEURS
                                           BC02 (analyse) · BC03 (ML) · BC05 (API + dashboard)
 ```
 
+> `STORAGE_BACKEND=local` (défaut) : seuls les fichiers de `donnees/` sont écrits/lus.
+> `STORAGE_BACKEND=objet` (docker-compose) : MinIO + MongoDB deviennent la source de vérité,
+> les fichiers locaux servent de repli.
+
 ## Choix techniques et justification
 
-| Besoin | Choix actuel | Pourquoi |
+| Besoin | Choix | Pourquoi |
 |---|---|---|
-| Stockage brut (data lake) | Fichiers CSV dans `donnees/brutes/` | Données semi-structurées telles que renvoyées par les API, aucune perte |
-| Stockage exploitable (warehouse) | Fichiers **Parquet** dans `donnees/traitees/` | Colonnaire, typé, compressé, lecture directe par pandas ; requêtable sans serveur |
-| Orchestration | `run.py` (acquisition → nettoyage) | Volume actuel ~5 Mo : un script séquentiel suffit, pas besoin d'Airflow |
+| Stockage brut (data lake) | **MinIO** (objet, S3-compatible), bucket `donnees-brutes` — repli fichiers `donnees/brutes/*.csv` | Données semi-structurées telles que renvoyées par les API, aucune perte ; stockage objet = cible standard d'un data lake (C1.1) |
+| Stockage exploitable (warehouse) | **MongoDB**, collections `observations_nettoyees` / `grille_presence_hebdo` / `meteo_processed` — repli **Parquet** `donnees/traitees/` | Base requêtable par les autres équipes (C1.4) ; le Parquet colonnaire reste la fixture d'entrée versionnée pour un clone sans Docker |
+| Orchestration | `run.py` (acquisition → nettoyage → chargement MinIO/MongoDB) | Volume actuel ~5 Mo : un script séquentiel suffit, pas besoin d'Airflow |
+| Environnement | **docker-compose** (`docker-compose.yml` à la racine) : MinIO + MongoDB + MLflow + API + dashboard | Un seul `docker compose up` lève toute l'infra, reproductible sur toute machine (rejoint C5.1) |
 | Robustesse de la collecte | `get_avec_retry` (backoff exponentiel sur 5xx / timeout) | GBIF renvoie des 503 transitoires ; sans réessai la collecte repartait vide |
 | Calcul distribué | **Non utilisé** | ~680 k lignes traitées en < 2 s par pandas ; Spark n'apporterait rien à ce volume |
+
+### Bascule local / objet
+
+Le pipeline écrit et lit au choix sur disque ou dans MinIO/MongoDB, via la variable
+`STORAGE_BACKEND` (`commun/config.py::ParametresStockage`) :
+
+- `local` (défaut) : uniquement les fichiers de `donnees/` — le projet tourne après un simple `git clone`.
+- `objet` : BC01 dépose en plus les CSV/Parquet dans MinIO et les tables dans MongoDB ;
+  `commun/chargement.py` sert alors BC02–BC05 depuis MongoDB (avec repli automatique sur le
+  Parquet local si l'infra est absente). Les clients (`commun/stockage.py`, classes `ClientMinio` /
+  `ClientMongo`) reprennent le patron du cours *AWS S3 et MinIO* (paquets `minio` + `pymongo`).
 
 ## Coûts
 
 Infrastructure actuelle : **0 € / mois**. Sources 100 % publiques et gratuites (GBIF, Open-Meteo, sans clé d'API), stockage sur disque local, aucun service cloud.
 
-## Cible d'industrialisation (si le volume le justifiait)
+## Infrastructure `objet` (docker-compose)
 
 ```
-  Sources ---> Ingestion ---> MinIO (data lake S3)  ---> Spark (ETL distribué)
-                                                            |
-                                                            v
-                                          PostgreSQL (data warehouse + métadonnées)
-                                                            |
-                                                            v
-                                          BC03 / BC05 (via connecteurs SQL)
+  Sources ---> acquisition.py ---> MinIO  bucket donnees-brutes    (CSV : data lake)
+   GBIF                      \
+   Open-Meteo                 `-> nettoyage.py (ETL)
+                                     |
+                                     +-> MinIO  bucket donnees-traitees  (Parquet)
+                                     +-> MongoDB  observations_nettoyees
+                                     +-> MongoDB  grille_presence_hebdo   <-- BC03 / BC05 lisent ici
+                                     +-> MongoDB  meteo_processed
+                                     +-> MongoDB  etl_journal  (trace de chaque passage)
+
+  BC03 --> MLflow (conteneur, artefacts sur MinIO bucket mlflow) + push pipeline_ml.pkl -> MinIO bucket modeles
+  BC05 --> API récupère pipeline_ml.pkl depuis MinIO ; dashboard lit MongoDB via commun/chargement.py
 ```
 
-Bascule envisagée au-delà de ~10 Go de données brutes ou d'un besoin de fraîcheur temps réel.
-Ordre de grandeur : MinIO + PostgreSQL managés ≈ 20–40 € / mois ; cluster Spark à la demande
-uniquement pendant les recalculs.
+Lancement : `docker compose up -d --build` (infra + API + dashboard), puis
+`docker compose --profile pipeline run --rm bc01` pour peupler MinIO/MongoDB.
+Consoles : MinIO `:9001`, Mongo Express `:8081`, MLflow `:5000`, API `:8000/docs`, dashboard `:8501`.
+
+### Au-delà (si le volume le justifiait)
+
+Spark pour l'ETL distribué et un entrepôt colonne (Redshift / BigQuery) deviennent pertinents
+au-delà de ~10 Go de données brutes ou d'un besoin de fraîcheur temps réel. En l'état
+(~5 Mo, ~680 k lignes), MinIO + MongoDB couvrent le besoin sans calcul distribué.
 
 ## Conformité RGPD
 

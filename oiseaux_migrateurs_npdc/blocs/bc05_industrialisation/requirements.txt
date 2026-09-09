@@ -10,3 +10,8 @@ joblib
 scikit-learn==1.8.0
 xgboost==2.0.3
 loguru==0.7.2
+
+# Stockage objet (API : modele depuis MinIO ; dashboard : donnees depuis MongoDB)
+minio==7.2.3
+pymongo==4.6.1
+python-dotenv==1.0.1

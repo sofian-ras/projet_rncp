@@ -5,6 +5,7 @@ fait partie du meme bloc (pas partage avec les autres blocs).
 """
 
 import json
+import os
 import pickle
 from datetime import datetime
 from pathlib import Path
@@ -14,7 +15,23 @@ import pandas as pd
 from loguru import logger
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, roc_auc_score
 
-from commun.config import REPERTOIRE_MODELES, REPERTOIRE_RACINE
+from commun.config import REPERTOIRE_MODELES, REPERTOIRE_RACINE, ParametresStockage
+
+
+def _televerser_modele_minio(chemin_modele: Path) -> None:
+    """Pousse un .pkl dans le bucket 'modeles' de MinIO si STORAGE_BACKEND=objet.
+
+    Permet a l'API BC05 de recuperer le modele depuis le data lake plutot que
+    depuis une copie figee dans son image Docker.
+    """
+    if not ParametresStockage.backend_objet():
+        return
+    try:
+        from commun.stockage import ClientMinio
+
+        ClientMinio().televerser_fichier(chemin_modele, ParametresStockage.BUCKET_MODELES)
+    except Exception as erreur:  # infra absente : le fichier local suffit
+        logger.warning(f"MinIO indisponible, modele non pousse ({erreur})")
 
 
 class GestionnaireModeles:
@@ -34,6 +51,7 @@ class GestionnaireModeles:
 
         if metriques or metadata:
             self._sauvegarder_metadata(nom_modele, metriques, metadata)
+        _televerser_modele_minio(chemin_modele)
         return chemin_modele
 
     def charger_modele(self, nom_modele: str) -> Any:
@@ -99,15 +117,18 @@ def demarrer_suivi_experience(nom_experience: str = "bc03_oiseaux_migrateurs"):
     """Active le suivi d'experience MLflow s'il est installe. Retourne le module mlflow, ou None.
 
     Rend le suivi optionnel : le projet reste executable sans le paquet mlflow.
-    Le suivi est ecrit dans mlruns/ a la racine du projet.
+    Destination : le serveur MLFLOW_TRACKING_URI s'il est defini (conteneur
+    mlflow du docker-compose, artefacts sur MinIO), sinon mlruns/ en local.
     """
     try:
         import mlflow
     except ImportError:
         logger.warning("mlflow non installe : suivi d'experience ignore (pip install mlflow)")
         return None
-    mlflow.set_tracking_uri((REPERTOIRE_RACINE / "mlruns").as_uri())
+    uri = os.getenv("MLFLOW_TRACKING_URI") or (REPERTOIRE_RACINE / "mlruns").as_uri()
+    mlflow.set_tracking_uri(uri)
     mlflow.set_experiment(nom_experience)
+    logger.info(f"MLflow : suivi d'experience -> {uri}")
     return mlflow
 
 

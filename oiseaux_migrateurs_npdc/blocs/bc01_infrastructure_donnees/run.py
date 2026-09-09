@@ -31,7 +31,12 @@ from pathlib import Path
 _racine = next(p for p in Path(__file__).resolve().parents if (p / "commun").is_dir())
 sys.path.insert(0, str(_racine))  # racine du projet -> package commun/
 
-from commun.config import REPERTOIRE_DONNEES_BRUTES, REPERTOIRE_DONNEES_TRAITEES, REPERTOIRE_RACINE
+from commun.config import (
+    REPERTOIRE_DONNEES_BRUTES,
+    REPERTOIRE_DONNEES_TRAITEES,
+    REPERTOIRE_RACINE,
+    ParametresStockage,
+)
 from commun.journalisation import configurer_logger
 from acquisition import executer_acquisition
 from nettoyage import executer_nettoyage
@@ -65,6 +70,23 @@ def main() -> None:
     ]:
         marque = "OK" if chemin.exists() else "MANQUANT"
         print(f"  [{marque}] {chemin.relative_to(RACINE_PROJET)}")
+
+    if ParametresStockage.backend_objet():
+        print("\nStockage objet (STORAGE_BACKEND=objet) :")
+        try:
+            from commun.stockage import ClientMinio, ClientMongo
+
+            minio = ClientMinio()
+            for bucket in (ParametresStockage.BUCKET_BRUTES, ParametresStockage.BUCKET_TRAITEES):
+                print(f"  [MinIO] {bucket} : {len(minio.lister(bucket))} objet(s)")
+            mongo = ClientMongo()
+            try:
+                for collection in ("observations_nettoyees", "grille_presence_hebdo", "meteo_processed"):
+                    print(f"  [Mongo] {collection} : {mongo.compter(collection)} document(s)")
+            finally:
+                mongo.fermer()
+        except Exception as erreur:
+            print(f"  (stockage objet injoignable : {erreur})")
 
     print("\nBC01 termine.\n")
 

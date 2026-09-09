@@ -1,0 +1,17 @@
+# Conteneur d'ingestion + ETL de BC01 (service "bc01" de docker-compose.yml).
+# Contexte de build = la racine du projet (oiseaux_migrateurs_npdc/) :
+#   docker compose --profile pipeline run --rm bc01
+FROM python:3.11-slim
+
+WORKDIR /app
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+COPY infra/requirements-pipeline.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Package partage + le bloc BC01 (acquisition.py, nettoyage.py, run.py)
+COPY commun/ ./commun/
+COPY blocs/bc01_infrastructure_donnees/ ./blocs/bc01_infrastructure_donnees/
+
+CMD ["python", "blocs/bc01_infrastructure_donnees/run.py"]

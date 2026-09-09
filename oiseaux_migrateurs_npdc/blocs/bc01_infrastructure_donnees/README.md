@@ -25,6 +25,10 @@ fichiers `donnees/traitees/*.parquet` consommés par BC02 à BC05.
 - La transformation clé du projet : construction d'une **grille hebdomadaire présence/absence**
   (681 408 lignes = 6 ans × 52 semaines × 4 espèces × 546 mailles), qui transforme des observations
   éparses en un jeu de données exploitable par un algorithme de classification.
+- Un **stockage objet** activable (`STORAGE_BACKEND=objet`) : dépôt des CSV/Parquet dans un data lake
+  **MinIO** et des tables nettoyées dans un entrepôt **MongoDB** (`commun/stockage.py`), le tout
+  orchestré par un **docker compose** à la racine du projet. En mode `local` (défaut), seuls les
+  fichiers de `donnees/` sont écrits — le projet reste exécutable après un simple clone.
 
 ## Où le voir dans le code
 
@@ -52,6 +56,16 @@ sauté et seul le nettoyage est rejoué (rapide, ne dépend pas d'internet). Pou
 python run.py --forcer-telechargement
 ```
 
+**Vers MinIO + MongoDB** (data lake + entrepôt), depuis la racine du projet :
+
+```bash
+docker compose up -d minio minio-init mongodb        # lève l'infra
+docker compose --profile pipeline run --rm bc01      # acquisition + ETL + chargement objet
+```
+
+En fin d'exécution, `run.py` affiche le nombre d'objets par bucket MinIO et de documents par
+collection MongoDB.
+
 ## Livrables produits (vérifiables sur disque)
 
 - `donnees/brutes/observations_gbif.csv` (40 000 lignes)
@@ -59,6 +73,8 @@ python run.py --forcer-telechargement
 - `donnees/traitees/observations_nettoyees.parquet` (39 986 lignes)
 - `donnees/traitees/grille_presence_hebdo.parquet` (681 408 lignes)
 - `donnees/traitees/meteo_processed.parquet`
+- en mode `objet` : buckets MinIO `donnees-brutes` / `donnees-traitees` + collections MongoDB
+  `observations_nettoyees`, `grille_presence_hebdo`, `meteo_processed`, `etl_journal`
 
 ## Statut
 
