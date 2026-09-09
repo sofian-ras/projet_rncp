@@ -39,7 +39,7 @@ après un simple clone, BC02 à BC05 tournent sans avoir à relancer BC01.
 | BC03 | [`blocs/bc03_machine_learning/`](blocs/bc03_machine_learning/README.md) | Supervisé (3 modèles + MLflow + validation croisée + importance des variables) et non supervisé (K-Means) |
 | BC04 | [`blocs/bc04_deep_learning/`](blocs/bc04_deep_learning/README.md) | Prédiction sur données non structurées (CNN sur images d'oiseaux, transfer learning) |
 | BC05 | [`blocs/bc05_industrialisation/`](blocs/bc05_industrialisation/README.md) | API FastAPI + Dashboard Streamlit + Docker + [procédure de déploiement](blocs/bc05_industrialisation/docs/deploiement.md) |
-| BC06 | [`blocs/bc06_gestion_projet/`](blocs/bc06_gestion_projet/README.md) | Tests automatisés, [rétroplanning + risques + ROI](blocs/bc06_gestion_projet/docs/gestion_projet.md), limites assumées |
+| BC06 | [`blocs/bc06_gestion_projet/`](blocs/bc06_gestion_projet/README.md) | Tests automatisés, [cadrage : parties prenantes, équipe/RACI, rétroplanning, budget, risques, ROI](blocs/bc06_gestion_projet/docs/gestion_projet.md), limites assumées |
 
 ### Stack technique par bloc
 

@@ -14,6 +14,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY commun/ ./commun/
 COPY blocs/bc05_industrialisation/dashboard.py ./
 COPY donnees/traitees/ ./donnees/traitees/
+# Comparatif des modeles (BC03) + graphiques (BC02/BC04) pour l'onglet "Statistiques".
+COPY modeles/evaluations.csv ./modeles/evaluations.csv
+COPY outputs/ ./outputs/
 
 EXPOSE 8501
 

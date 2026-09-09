@@ -1,35 +1,49 @@
-# BC06 — Gestion et pilotage du projet
+# BC06 — Direction de projet
 
 **Dépôt GitHub (tout le code du projet) :** https://github.com/sofian-ras/projet_rncp
 
-**Objectif RNCP :** cadrer, planifier, documenter et fiabiliser un projet de science des données de
-bout en bout — pas seulement écrire du code, mais aussi le rendre fiable, compréhensible et
-transmissible.
+**Objectif RNCP :** cadrer, dimensionner, planifier, documenter et fiabiliser un projet de science
+des données de bout en bout — pas seulement écrire du code, mais aussi le rendre fiable,
+compréhensible et transmissible.
 
 Ce bloc **pilote** le projet : il exécute la suite de tests automatisés et rassemble le cadrage
-(planning, risques, ROI, gouvernance). Ses tests portent sur le **vrai** module d'acquisition de
-BC01 (`blocs/bc01_infrastructure_donnees/acquisition.py`), rendu importable par `tests/conftest.py`.
+(commanditaire, équipe, planning, budget, risques, ROI, gouvernance). Ses tests portent sur le
+**vrai** module d'acquisition de BC01 (`blocs/bc01_infrastructure_donnees/acquisition.py`), rendu
+importable par `tests/conftest.py`.
+
+> **Convention.** Le projet a été réalisé **seul, en formation**. Le bloc « direction de projet »
+> attendant un vrai dimensionnement, l'**équipe, le budget et le ROI sont une hypothèse** : *si ce
+> POC était mené pour un commanditaire réel, voici ce qu'on proposerait.* Les chiffres (effectifs,
+> TJM, gains) sont estimés et assumés comme tels. Le reste (problématique, planning, risques,
+> RGPD) décrit le projet effectivement livré.
 
 ---
 
 ## Ce qui est implémenté
 
-- Un **planning agile** sur 4 semaines, une itération par bloc de compétence.
-- Un document de cadrage — [`docs/gestion_projet.md`](docs/gestion_projet.md) — contenant : la
-  traduction de la problématique métier en problématique data, le **rétroplanning daté** avec
-  jalons et dépendances, l'**analyse des risques** (probabilité / impact / mitigation / statut),
-  les **coûts et bénéfices (ROI)**, et la gouvernance des données (RGPD, traçabilité,
-  reproductibilité).
+- Un **cadrage commanditaire** : parties prenantes, périmètre, besoin métier traduit en
+  problématique data.
+- Une **équipe projet** (3 profils + chef de projet à temps partiel) avec une **matrice RACI**
+  par bloc.
+- Un **planning agile** en 4 itérations (une par bloc technique), avec **jalons** J1/J2/J3,
+  dépendances et mini-Gantt.
+- Un **budget chiffré** : charge en jours-homme × TJM par profil + infra + contingence
+  (~52 k€ projet), et un **ROI** (coût récurrent ~7,1 k€/an, bénéfice ~21,7 k€/an, retour ~3,5 ans)
+  — calculs reproduits dans le notebook.
+- L'**analyse des risques** (probabilité / impact / mitigation / statut) et la gouvernance des
+  données (RGPD, traçabilité, reproductibilité), dans [`docs/gestion_projet.md`](docs/gestion_projet.md).
 - Une suite de **tests automatisés** (`tests/`, exécutée avec `pytest`) qui vérifie le module
   d'acquisition de BC01 (bbox WKT, extraction des colonnes GBIF, cohérence de la config).
-- Une liste de **limites assumées**, plutôt que cachées — la marque d'une bonne gestion de projet.
+- Une liste de **limites assumées**, plutôt que cachées — la marque d'une bonne direction de projet.
 
 ## Où le voir dans le code
 
 - `notebook_bc06.ipynb` : le pilotage déroulé **de haut en bas, façon cours** (problématique métier
-  → data → rétroplanning → tests exécutés en direct → documentation par bloc → risques → ROI →
-  RGPD). Version commentée de `docs/gestion_projet.md`, avec les tests réellement rejoués.
-- `run.py`, fonction `executer_tests` (lance `pytest` en sous-processus et affiche le résultat).
+  → data → commanditaire & parties prenantes → équipe & RACI → rétroplanning → **budget et ROI
+  calculés en Python** → risques → tests exécutés en direct → documentation par bloc → RGPD).
+  Version commentée de `docs/gestion_projet.md`, avec les tests réellement rejoués.
+- `run.py` : `executer_tests` (lance `pytest` et affiche le résultat), `afficher_planning` et
+  `afficher_equipe_et_budget` (rappellent le planning, l'équipe, le budget et le ROI en console).
 - `tests/test_acquisition.py` : les tests eux-mêmes.
 - `tests/conftest.py` : rend importables `commun` (racine) et `acquisition` (code de BC01).
 
@@ -43,7 +57,8 @@ python blocs/bc06_gestion_projet/run.py
 ## Livrables produits
 
 - Résultat des tests affiché en direct dans la console (6/6 tests passants).
-- Planning et limites assumées affichés en console.
+- Planning, équipe, budget (~52 k€), ROI (~3,5 ans) et limites assumées affichés en console.
+- Document de cadrage complet : [`docs/gestion_projet.md`](docs/gestion_projet.md).
 
 ## Statut
 

@@ -65,9 +65,9 @@ def get_avec_retry(url: str, parametres: Dict) -> requests.Response:
     raise derniere_erreur
 
 
-# ---------------------------------------------------------------------------
+# -------------------------------
 # GBIF : observations d'oiseaux
-# ---------------------------------------------------------------------------
+# -------------------------------
 
 def creer_bbox_geometrie() -> str:
     """Rectangle de la zone d'etude au format WKT, envoye a GBIF pour le filtre spatial."""
@@ -140,9 +140,9 @@ def telecharger_observations_espece(nom_espece: str, infos_espece: Dict) -> pd.D
     return df
 
 
-# ---------------------------------------------------------------------------
+# ------------------------------
 # Open-Meteo : historique meteo
-# ---------------------------------------------------------------------------
+# ------------------------------
 
 def telecharger_meteo(latitude: float, longitude: float, date_debut: str, date_fin: str) -> pd.DataFrame:
     """Telecharge l'historique meteo journalier d'un point (dates au format YYYY-MM-DD)."""
@@ -173,9 +173,9 @@ def telecharger_meteo(latitude: float, longitude: float, date_debut: str, date_f
         return pd.DataFrame()
 
 
-# ---------------------------------------------------------------------------
+# --------------
 # Orchestration
-# ---------------------------------------------------------------------------
+# --------------
 
 def executer_acquisition(forcer: bool = False) -> None:
     """Telecharge les donnees brutes GBIF + Open-Meteo, sauf si deja presentes sur disque."""

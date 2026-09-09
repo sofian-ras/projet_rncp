@@ -32,13 +32,22 @@ fichiers `donnees/traitees/*.parquet` consommés par BC02 à BC05.
 
 ## Où le voir dans le code
 
-- `acquisition.py`, classe `AcquisiteurGBIF` : pagination de l'API GBIF, filtre géographique WKT.
-- `acquisition.py`, classe `AcquisiteurMeteo` : appel à l'API Open-Meteo.
-- `nettoyage.py`, classe `NettoyeurObservations` : les 5 étapes de nettoyage, dans l'ordre.
-- `nettoyage.py`, classe `AggregeurTemporel.creer_grille_hebdomadaire` : le cœur de la transformation
-  (discrétisation spatiale à 0.1°, grille complète par produit cartésien, marquage présence/absence).
-- `run.py` : orchestrateur mince (argparse + appel de `acquisition.executer_acquisition` puis
-  `nettoyage.executer_nettoyage`) — acquisition et nettoyage sont deux métiers séparés en deux fichiers.
+Code **plat** (une fonction = une étape, lisible de haut en bas), acquisition et nettoyage séparés
+en deux fichiers.
+
+- `acquisition.py`, `telecharger_observations_espece` : pagination de l'API GBIF (300 résultats par
+  page), avec `creer_bbox_geometrie` (filtre géographique WKT) et `get_avec_retry` (réessais +
+  backoff exponentiel sur les erreurs passagères).
+- `acquisition.py`, `telecharger_meteo` : appel à l'API Open-Meteo.
+- `nettoyage.py`, `charger_et_nettoyer` : enchaîne les 5 étapes dans l'ordre —
+  `supprimer_valeurs_nulles`, `valider_coordonnees`, `filtrer_region`, uniformisation des dates,
+  puis `drop_duplicates`.
+- `nettoyage.py`, `creer_grille_hebdomadaire` : le cœur de la transformation (discrétisation spatiale
+  à 0.1°, grille complète par produit cartésien, marquage présence/absence).
+- `nettoyage.py`, `charger_dans_stockage_objet` : dépôt des fichiers dans MinIO et des tables dans
+  MongoDB (ne fait rien si `STORAGE_BACKEND != objet` ; infra injoignable = avertissement, pas d'arrêt).
+- `run.py` : orchestrateur mince (argparse + appel de `executer_acquisition` puis
+  `executer_nettoyage`).
 - Configuration centrale utilisée : `commun/config.py` (zone géographique, espèces, paramètres).
 
 ## Démonstration
