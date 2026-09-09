@@ -61,7 +61,7 @@ oiseaux_migrateurs_npdc/
 ├── commun/                          # package partage : config, journalisation, chargement, stockage
 ├── docker-compose.yml               # MinIO + MongoDB + MLflow + API + dashboard
 ├── .env.example                     # variables STORAGE_BACKEND / MinIO / MongoDB (usage hors Docker)
-├── infra/                           # Dockerfile.pipeline (BC01) + Dockerfile.mlflow
+├── infra/                           # Dockerfile.pipeline (BC01), Dockerfile.ml (BC03), Dockerfile.mlflow
 ├── donnees/
 │   ├── brutes/                      # dumps GBIF + Open-Meteo (non versionne, produit par BC01)
 │   └── traitees/                    # parquets nettoyes (VERSIONNES : fixtures d'entree BC02..BC05)
@@ -89,7 +89,7 @@ dashboard. `bc01` et `bc03` sont des services *one-shot*.
 
 ```bash
 cd oiseaux_migrateurs_npdc
-docker compose up -d --build       # tout ; ~4-6 min à froid (prévoir >= 6 Go de RAM pour Docker)
+docker compose up -d --build       # tout ; ~4-6 min à froid (~4 Go de RAM Docker suffisent, testé OK sur 3,5 Go)
 docker compose logs -f bc01 bc03   # suivre la pipeline puis l'entraînement
 ```
 

@@ -12,9 +12,12 @@
 # Rejouer seulement les apps sans relancer la pipeline :
 #   docker compose up -d --no-deps api dashboard
 #
-# Prevoir >= 6 Go de RAM pour Docker (l'entrainement BC03 + K-Means sur 681k lignes
-# est gourmand). api / dashboard ne dependent PAS de bc03 : si l'entrainement echoue
-# faute de memoire, l'API sert quand meme le modele deja present (MinIO ou image).
+# Memoire : ~4 Go de RAM Docker suffisent (teste OK sur 3,5 Go). bc01 et bc03
+# sont one-shot : ils liberent leur RAM en sortant. Si OOM sur une machine plus
+# petite : `docker compose stop mongo-express`, puis lancer la pipeline seule
+# (`docker compose up -d bc01 bc03`) avant `docker compose up -d api dashboard`.
+# api / dashboard ne dependent PAS de bc03 : si l'entrainement echoue, l'API sert
+# quand meme le modele deja present (bucket MinIO 'modeles', sinon copie de l'image).
 #
 # Consoles :
 #   MinIO        http://localhost:9001   (minioadmin / minioadmin123)

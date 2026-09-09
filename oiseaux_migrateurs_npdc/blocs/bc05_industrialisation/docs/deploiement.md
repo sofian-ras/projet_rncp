@@ -21,7 +21,7 @@ enchaîne : data lake **MinIO**, entrepôt **MongoDB**, suivi **MLflow**, pipeli
 
 ```bash
 cd oiseaux_migrateurs_npdc
-docker compose up -d --build     # tout ; ~4-6 min à froid (prévoir >= 6 Go de RAM pour Docker)
+docker compose up -d --build     # tout ; ~4-6 min à froid (~4 Go de RAM Docker suffisent, testé OK sur 3,5 Go)
 docker compose logs -f bc01 bc03 # suivre la pipeline de données puis l'entraînement
 ```
 
