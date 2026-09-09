@@ -1,13 +1,20 @@
 # Infrastructure du projet "Oiseaux migrateurs NPdC"
 # ==================================================
-# Data lake MinIO + entrepot MongoDB + suivi MLflow, plus les deux services
-# applicatifs de BC05 (API FastAPI + dashboard Streamlit).
+# UN SEUL lancement fait tout : infra (MinIO + MongoDB + MLflow), pipeline de
+# donnees (BC01), entrainement + suivi + publication du modele (BC03), puis
+# l'API et le dashboard de BC05.
 #
-#   docker compose up -d --build              # infra + API + dashboard
-#   docker compose --profile pipeline run --rm bc01
-#                                             # (re)genere les donnees -> MinIO + MongoDB
-#   docker compose down                       # arret (les volumes persistent)
-#   docker compose down -v                    # arret + purge des donnees
+#   docker compose up -d --build     # tout : ~4-6 min a froid (BC01 telecharge, BC03 entraine)
+#   docker compose logs -f bc01 bc03 # suivre la pipeline
+#   docker compose down              # arret (volumes conserves)
+#   docker compose down -v           # arret + purge des donnees
+#
+# Rejouer seulement les apps sans relancer la pipeline :
+#   docker compose up -d --no-deps api dashboard
+#
+# Prevoir >= 6 Go de RAM pour Docker (l'entrainement BC03 + K-Means sur 681k lignes
+# est gourmand). api / dashboard ne dependent PAS de bc03 : si l'entrainement echoue
+# faute de memoire, l'API sert quand meme le modele deja present (MinIO ou image).
 #
 # Consoles :
 #   MinIO        http://localhost:9001   (minioadmin / minioadmin123)
@@ -15,6 +22,16 @@
 #   MLflow       http://localhost:5000
 #   API          http://localhost:8000/docs
 #   Dashboard    http://localhost:8501
+
+x-objet-env: &objet-env
+  STORAGE_BACKEND: objet
+  MINIO_ENDPOINT: minio:9000
+  MINIO_ACCESS_KEY: minioadmin
+  MINIO_SECRET_KEY: minioadmin123
+  MONGO_HOST: mongodb
+  MONGO_USER: admin
+  MONGO_PASSWORD: admin123
+  MONGO_DB: oiseaux_migrateurs
 
 services:
 
@@ -100,25 +117,40 @@ services:
       minio-init:
         condition: service_completed_successfully
 
-  # ----- BC01 : acquisition + ETL + chargement MinIO/MongoDB (profil "pipeline") -----
+  # ----- BC01 : acquisition + ETL + chargement MinIO/MongoDB (one-shot) -----
   bc01:
     build:
       context: .
       dockerfile: infra/Dockerfile.pipeline
     container_name: oiseaux-bc01
-    profiles: ["pipeline"]
     environment:
-      STORAGE_BACKEND: objet
-      MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin123
-      MONGO_HOST: mongodb
-      MONGO_USER: admin
-      MONGO_PASSWORD: admin123
-      MONGO_DB: oiseaux_migrateurs
+      <<: *objet-env
+    volumes:
+      - donnees_brutes:/app/donnees/brutes       # cache : evite de re-telecharger a chaque up
+      - donnees_traitees:/app/donnees/traitees   # partage vers bc03
     depends_on:
       minio-init:
         condition: service_completed_successfully
+      mongodb:
+        condition: service_healthy
+
+  # ----- BC03 : entrainement 3 modeles + MLflow + push pipeline_ml.pkl -> MinIO (one-shot) -----
+  bc03:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.ml
+    container_name: oiseaux-bc03
+    environment:
+      <<: *objet-env
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    volumes:
+      - donnees_traitees:/app/donnees/traitees   # lit la grille produite par bc01
+      - modeles_data:/app/modeles                # conserve les artefacts d'evaluation
+    depends_on:
+      bc01:
+        condition: service_completed_successfully
+      mlflow:
+        condition: service_started
       mongodb:
         condition: service_healthy
 
@@ -131,20 +163,16 @@ services:
     ports:
       - "8000:8000"
     environment:
-      STORAGE_BACKEND: objet
-      MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin123
-      MONGO_HOST: mongodb
-      MONGO_USER: admin
-      MONGO_PASSWORD: admin123
-      MONGO_DB: oiseaux_migrateurs
+      <<: *objet-env
       MLFLOW_TRACKING_URI: http://mlflow:5000
+    # Depend de bc01 (donnees) mais PAS de bc03 : l'API a un modele de repli
+    # (bucket MinIO 'modeles' ou copie de l'image). Pour servir le modele
+    # fraichement reentraine : `docker compose restart api` apres bc03.
     depends_on:
+      bc01:
+        condition: service_completed_successfully
       minio-init:
         condition: service_completed_successfully
-      mongodb:
-        condition: service_healthy
 
   # ----- BC05 : dashboard Streamlit (appelle l'API) -----
   dashboard:
@@ -155,19 +183,18 @@ services:
     ports:
       - "8501:8501"
     environment:
+      <<: *objet-env
       API_URL: http://api:8000
-      STORAGE_BACKEND: objet
-      MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin123
-      MONGO_HOST: mongodb
-      MONGO_USER: admin
-      MONGO_PASSWORD: admin123
-      MONGO_DB: oiseaux_migrateurs
     depends_on:
-      - api
+      api:
+        condition: service_started
+      bc01:
+        condition: service_completed_successfully
 
 volumes:
   minio_data:
   mongo_data:
   mlflow_data:
+  donnees_brutes:
+  donnees_traitees:
+  modeles_data:

@@ -76,8 +76,9 @@ Infrastructure actuelle : **0 € / mois**. Sources 100 % publiques et gratuites
   BC05 --> API récupère pipeline_ml.pkl depuis MinIO ; dashboard lit MongoDB via commun/chargement.py
 ```
 
-Lancement : `docker compose up -d --build` (infra + API + dashboard), puis
-`docker compose --profile pipeline run --rm bc01` pour peupler MinIO/MongoDB.
+Lancement : **un seul** `docker compose up -d --build` enchaîne infra → BC01 (acquisition + ETL +
+chargement MinIO/MongoDB) → BC03 (entraînement + MLflow + push du modèle vers MinIO) → API +
+dashboard. `bc01` et `bc03` sont des services *one-shot* (ils s'exécutent puis sortent).
 Consoles : MinIO `:9001`, Mongo Express `:8081`, MLflow `:5000`, API `:8000/docs`, dashboard `:8501`.
 
 ### Au-delà (si le volume le justifiait)

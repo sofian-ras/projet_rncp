@@ -60,9 +60,9 @@ python -m streamlit run dashboard.py
 docker build -f blocs/bc05_industrialisation/Dockerfile -t oiseaux-migrateurs-api .
 docker run -p 8000:8000 oiseaux-migrateurs-api
 
-# OU toute la chaine (MinIO + MongoDB + MLflow + API + dashboard), depuis la racine
+# OU toute la chaine en une commande, depuis la racine :
+# infra (MinIO + MongoDB + MLflow) + BC01 (données) + BC03 (entraînement) + API + dashboard
 docker compose up -d --build
-docker compose --profile pipeline run --rm bc01   # peupler MinIO/MongoDB
 ```
 
 ## Livrables produits

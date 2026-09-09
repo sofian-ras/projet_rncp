@@ -133,9 +133,20 @@ def demarrer_suivi_experience(nom_experience: str = "bc03_oiseaux_migrateurs"):
 
 
 def journaliser_run(mlflow, nom_modele: str, pipeline, metriques: Dict[str, float]) -> None:
-    """Enregistre un entrainement (parametres du modele + metriques) comme un run MLflow."""
+    """Enregistre un entrainement (parametres + metriques + modele) comme un run MLflow.
+
+    Le modele lui-meme est journalise comme artefact : avec un serveur MLflow
+    configure (MLFLOW_TRACKING_URI), il est stocke dans le bucket 'mlflow' de
+    MinIO -> tracabilite complete, pas seulement les chiffres.
+    """
     if mlflow is None:
         return
     with mlflow.start_run(run_name=nom_modele):
         mlflow.log_params(pipeline.named_steps["modele"].get_params())
         mlflow.log_metrics({cle: float(valeur) for cle, valeur in metriques.items()})
+        try:
+            import mlflow.sklearn
+
+            mlflow.sklearn.log_model(pipeline, "modele")
+        except Exception as erreur:  # backend sans support artefacts, version, etc.
+            logger.warning(f"MLflow : artefact modele non journalise ({erreur})")

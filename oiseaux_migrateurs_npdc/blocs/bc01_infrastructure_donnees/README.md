@@ -56,15 +56,16 @@ sauté et seul le nettoyage est rejoué (rapide, ne dépend pas d'internet). Pou
 python run.py --forcer-telechargement
 ```
 
-**Vers MinIO + MongoDB** (data lake + entrepôt), depuis la racine du projet :
+**Vers MinIO + MongoDB** (data lake + entrepôt), depuis la racine du projet — `bc01` est un service
+du `docker compose`, exécuté automatiquement par :
 
 ```bash
-docker compose up -d minio minio-init mongodb        # lève l'infra
-docker compose --profile pipeline run --rm bc01      # acquisition + ETL + chargement objet
+docker compose up -d --build     # infra + BC01 (ce bloc) + BC03 + API + dashboard
+docker compose logs bc01         # voir le déroulé de l'acquisition + ETL + chargement objet
 ```
 
 En fin d'exécution, `run.py` affiche le nombre d'objets par bucket MinIO et de documents par
-collection MongoDB.
+collection MongoDB. Pour rejouer seulement ce bloc : `docker compose up -d --force-recreate bc01`.
 
 ## Livrables produits (vérifiables sur disque)
 

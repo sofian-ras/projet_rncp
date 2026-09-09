@@ -83,10 +83,14 @@ oiseaux_migrateurs_npdc/
 
 ### Infrastructure objet (docker compose)
 
+**Un seul lancement** monte tout : infra (MinIO + MongoDB + MLflow) → BC01 (acquisition + ETL +
+chargement MinIO/MongoDB) → BC03 (entraînement + MLflow + push du modèle vers MinIO) → API +
+dashboard. `bc01` et `bc03` sont des services *one-shot*.
+
 ```bash
 cd oiseaux_migrateurs_npdc
-docker compose up -d --build                      # MinIO + MongoDB + MLflow + API + dashboard
-docker compose --profile pipeline run --rm bc01   # acquisition + ETL -> MinIO + MongoDB
+docker compose up -d --build       # tout ; ~4-6 min à froid (prévoir >= 6 Go de RAM pour Docker)
+docker compose logs -f bc01 bc03   # suivre la pipeline puis l'entraînement
 ```
 
 Consoles : MinIO `http://localhost:9001` · Mongo Express `http://localhost:8081` ·

@@ -13,14 +13,16 @@ dans ce dossier ; il ne reste qu'à créer les comptes (gratuits) et à connecte
 
 ## 0. Stack complète en local (docker compose)
 
-Avant tout déploiement public, toute l'infra tourne en local via
-[`docker-compose.yml`](../../../docker-compose.yml) (à la racine du projet) : data lake
-**MinIO**, entrepôt **MongoDB**, suivi **MLflow**, plus l'API et le dashboard.
+Avant tout déploiement public, toute la chaîne tourne en local via
+[`docker-compose.yml`](../../../docker-compose.yml) (à la racine du projet). **Un seul lancement**
+enchaîne : data lake **MinIO**, entrepôt **MongoDB**, suivi **MLflow**, pipeline **BC01**
+(acquisition + ETL), entraînement **BC03** (+ push du modèle vers MinIO), puis l'**API** et le
+**dashboard**.
 
 ```bash
 cd oiseaux_migrateurs_npdc
-docker compose up -d --build                      # MinIO + MongoDB + MLflow + API + dashboard
-docker compose --profile pipeline run --rm bc01   # peuple MinIO/MongoDB (acquisition + ETL BC01)
+docker compose up -d --build     # tout ; ~4-6 min à froid (prévoir >= 6 Go de RAM pour Docker)
+docker compose logs -f bc01 bc03 # suivre la pipeline de données puis l'entraînement
 ```
 
 | Service | URL | Rôle |
@@ -32,7 +34,10 @@ docker compose --profile pipeline run --rm bc01   # peuple MinIO/MongoDB (acquis
 | Dashboard | http://localhost:8501 | Interface non-technicien ; lit MongoDB via `commun/chargement.py` |
 
 Les conteneurs `api` / `dashboard` reçoivent `STORAGE_BACKEND=objet` et les noms d'hôtes
-internes (`minio`, `mongodb`, `mlflow`). `docker compose down -v` purge les volumes.
+internes (`minio`, `mongodb`, `mlflow`). Ils ne dépendent **pas** de `bc03` : si l'entraînement
+échoue (mémoire), l'API sert quand même le modèle déjà présent (bucket MinIO `modeles`, sinon la
+copie de l'image). Pour servir le modèle réentraîné : `docker compose restart api`.
+`docker compose down -v` purge les volumes.
 
 Deux services séparés : l'**API** (conteneur Docker) et le **dashboard** (app Streamlit qui appelle
 l'API). Le dashboard lit l'adresse de l'API dans la variable d'environnement `API_URL`
